@@ -306,9 +306,9 @@ MonoBehaviour:
   m_PersistentViewDataDictionary: {fileID: 0}
   m_TreeViewState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 
-    m_LastClickedID: 0
-    m_ExpandedIDs: f0fbffff00000000
+    m_SelectedIDs: ee2f0000
+    m_LastClickedID: 12270
+    m_ExpandedIDs: 7ccafffff0fbffff00000000f00d0000f40d0000ea2f0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -394,20 +394,20 @@ MonoBehaviour:
     m_ShowAllHits: 0
     m_SearchArea: 0
     m_Folders:
-    - Assets
+    - Assets/Compute shader example
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets
+  - Assets/Compute shader example
   m_LastFoldersGridSize: 16
   m_LastProjectPath: C:\Users\hollingb\eclipse-workspace\InfiniteArtGallery
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 36090000
-    m_LastClickedID: 2358
-    m_ExpandedIDs: 0000000036090000880a0000d20c000000ca9a3bffffff7f
+    m_SelectedIDs: 0e2f0000
+    m_LastClickedID: 12046
+    m_ExpandedIDs: 0000000036090000880a0000d20c00000e2f000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -460,9 +460,9 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: 
-    m_LastClickedInstanceID: 0
-    m_HadKeyboardFocusLastEvent: 0
+    m_SelectedInstanceIDs: ee2f0000
+    m_LastClickedInstanceID: 12270
+    m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs: 
     m_RenameOverlay:
       m_UserAcceptedRename: 0

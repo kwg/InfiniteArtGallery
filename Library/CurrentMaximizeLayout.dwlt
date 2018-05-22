@@ -22,10 +22,10 @@ MonoBehaviour:
     y: 30
     width: 1920
     height: 947
-  m_MinSize: {x: 913, y: 442}
-  m_MaxSize: {x: 22008, y: 10000}
+  m_MinSize: {x: 917, y: 442}
+  m_MaxSize: {x: 22012, y: 10021}
   vertical: 0
-  controlID: 4882
+  controlID: 9432
 --- !u!114 &2
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -124,7 +124,7 @@ MonoBehaviour:
   m_MinSize: {x: 202, y: 442}
   m_MaxSize: {x: 4002, y: 8042}
   vertical: 1
-  controlID: 4861
+  controlID: 9433
 --- !u!114 &4
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -181,9 +181,9 @@ MonoBehaviour:
   m_isRotationLocked: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 14.850016, y: -24.234505, z: -49.89019}
+    m_Target: {x: 34.23815, y: -57.59411, z: 32.67408}
     speed: 2
-    m_Value: {x: 14.850016, y: -24.234505, z: -49.89019}
+    m_Value: {x: 34.23815, y: -57.59411, z: 32.67408}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -211,13 +211,13 @@ MonoBehaviour:
       speed: 2
       m_Value: 0
   m_Rotation:
-    m_Target: {x: 0.0056724437, y: 0.96658456, z: -0.2553844, w: 0.021469433}
+    m_Target: {x: 0.37319973, y: 0.39747477, z: -0.18123807, w: 0.81846726}
     speed: 2
-    m_Value: {x: 0.005672444, y: 0.96658456, z: -0.2553844, w: 0.021469433}
+    m_Value: {x: 0.37319976, y: 0.39747477, z: -0.18123807, w: 0.8184673}
   m_Size:
-    m_Target: 90.42732
+    m_Target: 94.49655
     speed: 2
-    m_Value: 90.42732
+    m_Value: 94.49655
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -272,8 +272,8 @@ MonoBehaviour:
     y: 0
     width: 330
     height: 947
-  m_MinSize: {x: 204, y: 221}
-  m_MaxSize: {x: 4004, y: 4021}
+  m_MinSize: {x: 200, y: 200}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 8}
   m_Panes:
   - {fileID: 8}
@@ -306,8 +306,8 @@ MonoBehaviour:
   m_PersistentViewDataDictionary: {fileID: 0}
   m_TreeViewState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: ae96ffff
-    m_LastClickedID: -26962
+    m_SelectedIDs: 100e0000
+    m_LastClickedID: 3600
     m_ExpandedIDs: f0fbffff00000000d20d00000a0e0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -350,8 +350,8 @@ MonoBehaviour:
     y: 0
     width: 441
     height: 947
-  m_MinSize: {x: 230, y: 250}
-  m_MaxSize: {x: 10000, y: 10000}
+  m_MinSize: {x: 234, y: 271}
+  m_MaxSize: {x: 10004, y: 10021}
   m_ActualView: {fileID: 10}
   m_Panes:
   - {fileID: 10}
@@ -394,19 +394,19 @@ MonoBehaviour:
     m_ShowAllHits: 0
     m_SearchArea: 0
     m_Folders:
-    - Assets/Scripts
+    - Assets/Materials
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/Scripts
+  - Assets/Materials
   m_LastFoldersGridSize: 16
   m_LastProjectPath: C:\Users\hollingb\eclipse-workspace\InfiniteArtGallery
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 0c0c0000
-    m_LastClickedID: 3084
+    m_SelectedIDs: 7a090000
+    m_LastClickedID: 2426
     m_ExpandedIDs: 000000003e090000900a0000de0c000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -460,8 +460,8 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: ae96ffff
-    m_LastClickedInstanceID: -26962
+    m_SelectedInstanceIDs: 100e0000
+    m_LastClickedInstanceID: 3600
     m_HadKeyboardFocusLastEvent: 0
     m_ExpandedInstanceIDs: 
     m_RenameOverlay:

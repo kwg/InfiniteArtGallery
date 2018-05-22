@@ -660,12 +660,13 @@ PlayerSettings:
       daydreamIconForeground: {fileID: 0}
       daydreamIconBackground: {fileID: 0}
   cloudServicesEnabled:
+    Collab: 1
     UNet: 1
   facebookSdkVersion: 7.9.4
   apiCompatibilityLevel: 2
-  cloudProjectId: 
-  projectName: Template_3D
-  organizationId: 
+  cloudProjectId: 57bbc20d-eab7-4ee2-956d-5e7aa40f0a94
+  projectName: InfiniteArtGallery
+  organizationId: scopesu2018
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0
   disableOldInputManagerSupport: 0

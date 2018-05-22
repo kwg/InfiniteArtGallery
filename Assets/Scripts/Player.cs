@@ -8,6 +8,8 @@ public class Player : MonoBehaviour {
     {
         if(collider.gameObject.tag == "portal")
         {
+            Color newColor = new Color(Random.value, Random.value, Random.value);
+            collider.gameObject.GetComponent<ColorChanger>().SetColor(newColor);
 
             Vector3 newDestination = collider.gameObject.GetComponent<Portal>().Destination;
 

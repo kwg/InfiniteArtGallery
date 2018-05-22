@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class ColorChanger : MonoBehaviour
 {
     private Color color;
-    private float lerpFactor = 0.9f;
+    private float lerpFactor = 0.7f;
 
     private void Start()
     {
@@ -13,6 +14,7 @@ public class ColorChanger : MonoBehaviour
     public void SetColor(Color newColor)
     {
         color = newColor;
+        UpdateColor();
     }
 
     public Color GetCurrentColor()
@@ -20,17 +22,32 @@ public class ColorChanger : MonoBehaviour
         return color;
     }
 
-    public void EvolveColor(Color selectedColor)
+    public void EvolveColor(Portal entryPortal, Color selectedColor)
     {
-        foreach(Portal portal in FindObjectsOfType<Portal>())
+        ArrayList oldColors = new ArrayList();
+
+
+        foreach (Portal portal in FindObjectsOfType<Portal>())
         {
-            Color oldColor = portal.GetComponent<ColorChanger>().GetCurrentColor();
-            Color newColor = Color.Lerp(selectedColor, oldColor, lerpFactor);
-            portal.GetComponent<ColorChanger>().SetColor(newColor);
+            oldColors.Add(portal.GetComponent<ColorChanger>().color);
+        }
+
+        foreach (Portal portal in FindObjectsOfType<Portal>())
+        {
+            if(portal.portalID != entryPortal.destinationID)
+            {
+                Color oldColor = portal.GetComponent<ColorChanger>().GetCurrentColor();
+                Color newColor = Color.Lerp(selectedColor, oldColor, lerpFactor);
+                portal.GetComponent<ColorChanger>().SetColor(newColor);
+            }
+            else
+            {
+
+            }
         }
     }
 
-    void Update()
+    void UpdateColor()
     {
         //        gameObject.GetComponent<Material>().SetColor("_Color", color);
         Renderer rend = gameObject.GetComponent<Renderer>();

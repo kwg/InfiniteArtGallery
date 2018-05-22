@@ -9,49 +9,59 @@ public class Portal : MonoBehaviour
     public int destinationID;
     private Vector3 destination;
 
-
-    public Vector3 Destination
+    public void Start()
     {
-        get
+
+    }
+
+    public void SetDestination(int newDestinationID)
+    {
+        destinationID = newDestinationID;
+    }
+
+    public void SelectPortal(Player player)
+    {
+        ChangeColors();
+        Teleport(player);
+    }
+
+    private void ChangeColors()
+    {
+        ColorChanger colorChanger = gameObject.GetComponent<ColorChanger>();
+        colorChanger.EvolveColor(this, colorChanger.GetCurrentColor());
+    }
+
+    private void Teleport(Player player)
+    {
+        foreach (Portal portal in FindObjectsOfType<Portal>())
         {
-            Vector3 destination = new Vector3(0, 0, 0); // Initialize destination vector
-
-            // Find matching exit portal
-            foreach (Portal portal in FindObjectsOfType<Portal>())
+            if (portal.portalID == destinationID)
             {
-                if (portal.portalID == destinationID)
-                {
-                    destination = portal.gameObject.transform.position; // set destination to exit portal position
-                }
+                destination = portal.gameObject.transform.position; // set destination to exit portal position
             }
-
-            // Bump player to just outside of the portal collision box based on the location of the portal relative to the center
-            if(destination.x < 0)
-            {
-                destination.x += 0.25f;
-            }
-            else
-            {
-                destination.x -= 0.25f;
-            }
-
-            if(destination.z < 0)
-            {
-                destination.z += 0.25f;
-            }
-            else
-            {
-                destination.z -= 0.25f;
-            }
-
-            destination.y -= 1.6f; // Fix exit height for player (player is 1.8 tall, portal is 5, center of portal is 2.5, center of player is 0.9. 2.5 - 0.9 = 1.6)
-            return destination;
         }
 
-        // In case portals ever need to be dynamically adjusted
-        set
+        // Bump player to just outside of the portal collision box based on the location of the portal relative to the center
+        if (destination.x < 0)
         {
-            destination = value;
+            destination.x += 0.25f;
         }
+        else
+        {
+            destination.x -= 0.25f;
+        }
+
+        if (destination.z < 0)
+        {
+            destination.z += 0.25f;
+        }
+        else
+        {
+            destination.z -= 0.25f;
+        }
+
+        destination.y -= 1.6f; // Fix exit height for player (player is 1.8 tall, portal is 5, center of portal is 2.5, center of player is 0.9. 2.5 - 0.9 = 1.6)
+
+        player.transform.position = destination;
     }
 }

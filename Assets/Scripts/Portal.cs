@@ -7,11 +7,16 @@ public class Portal : MonoBehaviour
 {
     public int portalID;
     public int destinationID;
+
     private Vector3 destination;
+    private ColorChanger color;
+    private GenotypePortal geno;
 
     public void Start()
     {
-
+        color = gameObject.GetComponent<ColorChanger>();
+        geno = gameObject.GetComponent<GenotypePortal>();
+        color.SetColor(geno.GetRGB());
     }
 
     public void SetDestinationID(int newDestinationID)
@@ -22,17 +27,18 @@ public class Portal : MonoBehaviour
     public void ActivatePortal(Player player)
     {
         ChangeColors();
+        //RefreshPortal();
         Teleport(player);
     }
 
     private void ChangeColors()
     {
-        ColorChanger colorChanger = gameObject.GetComponent<ColorChanger>();
-        colorChanger.EvolveColor(this);
+        color.EvolveColor(this);
     }
 
     private void Teleport(Player player)
     {
+        /* Find destination portal and get destination position */
         foreach (Portal portal in FindObjectsOfType<Portal>())
         {
             if (portal.portalID == destinationID)
@@ -64,4 +70,12 @@ public class Portal : MonoBehaviour
 
         player.transform.position = destination;
     }
+
+    public void RefreshPortal()
+    {
+        color.SetColor(geno.GetRGB());
+        color.UpdateColor();
+
+    }
+
 }

@@ -12,7 +12,7 @@ public class ColorChanger : MonoBehaviour
     /// </summary>
     private void Start()
     {
-        color = gameObject.GetComponent<Renderer>().material.color;
+        //color = gameObject.GetComponent<Renderer>().material.color;
     }
 
     /// <summary>
@@ -78,7 +78,7 @@ public class ColorChanger : MonoBehaviour
     /// <summary>
     /// Update material color of the first material attached to this gameObject
     /// </summary>
-    void UpdateColor()
+    public void UpdateColor()
     {
         Renderer rend = gameObject.GetComponent<Renderer>();
         rend.material.SetColor("_Color", color);

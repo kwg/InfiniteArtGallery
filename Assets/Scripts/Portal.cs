@@ -14,12 +14,12 @@ public class Portal : MonoBehaviour
 
     }
 
-    public void SetDestination(int newDestinationID)
+    public void SetDestinationID(int newDestinationID)
     {
         destinationID = newDestinationID;
     }
 
-    public void SelectPortal(Player player)
+    public void ActivatePortal(Player player)
     {
         ChangeColors();
         Teleport(player);

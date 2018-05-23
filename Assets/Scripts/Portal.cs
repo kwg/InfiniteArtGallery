@@ -28,7 +28,7 @@ public class Portal : MonoBehaviour
     private void ChangeColors()
     {
         ColorChanger colorChanger = gameObject.GetComponent<ColorChanger>();
-        colorChanger.EvolveColor(this, colorChanger.GetCurrentColor());
+        colorChanger.EvolveColor(this);
     }
 
     private void Teleport(Player player)

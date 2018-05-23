@@ -22,14 +22,17 @@ public class ColorChanger : MonoBehaviour
         return color;
     }
 
-    public void EvolveColor(Portal entryPortal, Color selectedColor)
+    public void EvolveColor(Portal entryPortal)
     {
         ArrayList oldColors = new ArrayList();
-
+        Color selectedColor = gameObject.GetComponent<Renderer>().material.color;
 
         foreach (Portal portal in FindObjectsOfType<Portal>())
         {
-            oldColors.Add(portal.GetComponent<ColorChanger>().color);
+            if(entryPortal != portal)
+            {
+                oldColors.Add(portal.GetComponent<ColorChanger>().color);
+            }
         }
 
         foreach (Portal portal in FindObjectsOfType<Portal>())
@@ -42,7 +45,8 @@ public class ColorChanger : MonoBehaviour
             }
             else
             {
-
+                Color newColor = (Color) oldColors[Random.Range(0, oldColors.Count - 1)];
+                portal.GetComponent<ColorChanger>().SetColor(newColor);
             }
         }
     }

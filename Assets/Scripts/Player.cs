@@ -8,13 +8,7 @@ public class Player : MonoBehaviour {
     {
         if(collider.gameObject.tag == "portal")
         {
-
-            Vector3 newDestination = collider.gameObject.GetComponent<Portal>().Destination;
-
-            {
-               gameObject.transform.position = newDestination;
-            }
-
+            collider.gameObject.GetComponent<Portal>().SelectPortal(this);
         }
     }
 }

@@ -310,8 +310,6 @@ GameObject:
   - component: {fileID: 1084694672}
   - component: {fileID: 1084694671}
   - component: {fileID: 1084694674}
-  - component: {fileID: 1084694675}
-  - component: {fileID: 1084694676}
   m_Layer: 0
   m_Name: portalRight
   m_TagString: portal
@@ -399,28 +397,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   portalID: 1
   destinationID: 3
---- !u!114 &1084694675
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1084694669}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b81c45fc1f050f4d91f979c1ac4b6f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1084694676
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1084694669}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 08a68cdcb9455004196d2e30bcbfcef4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1234552114
 GameObject:
   m_ObjectHideFlags: 0
@@ -433,8 +409,6 @@ GameObject:
   - component: {fileID: 1234552117}
   - component: {fileID: 1234552116}
   - component: {fileID: 1234552119}
-  - component: {fileID: 1234552120}
-  - component: {fileID: 1234552121}
   m_Layer: 0
   m_Name: portalFront
   m_TagString: portal
@@ -522,28 +496,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   portalID: 0
   destinationID: 2
---- !u!114 &1234552120
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1234552114}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b81c45fc1f050f4d91f979c1ac4b6f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1234552121
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1234552114}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 08a68cdcb9455004196d2e30bcbfcef4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1377625916
 GameObject:
   m_ObjectHideFlags: 0
@@ -833,8 +785,6 @@ GameObject:
   - component: {fileID: 1647536724}
   - component: {fileID: 1647536723}
   - component: {fileID: 1647536726}
-  - component: {fileID: 1647536727}
-  - component: {fileID: 1647536728}
   m_Layer: 0
   m_Name: portalLeft
   m_TagString: portal
@@ -922,28 +872,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   portalID: 3
   destinationID: 1
---- !u!114 &1647536727
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1647536721}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b81c45fc1f050f4d91f979c1ac4b6f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1647536728
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1647536721}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 08a68cdcb9455004196d2e30bcbfcef4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1715651471
 Prefab:
   m_ObjectHideFlags: 0
@@ -1087,8 +1015,6 @@ GameObject:
   - component: {fileID: 1971345611}
   - component: {fileID: 1971345610}
   - component: {fileID: 1971345613}
-  - component: {fileID: 1971345614}
-  - component: {fileID: 1971345615}
   m_Layer: 0
   m_Name: portalBack
   m_TagString: portal
@@ -1176,28 +1102,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   portalID: 2
   destinationID: 0
---- !u!114 &1971345614
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1971345608}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b81c45fc1f050f4d91f979c1ac4b6f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1971345615
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1971345608}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 08a68cdcb9455004196d2e30bcbfcef4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2032425005
 GameObject:
   m_ObjectHideFlags: 0

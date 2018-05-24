@@ -9,14 +9,21 @@ public class Portal : MonoBehaviour
     public int destinationID;
 
     private Vector3 destination;
-    private ColorChanger color;
-    private GenotypePortal geno;
+    //private Color color;
+    private GenotypePortal<Color> geno;
+    private Population population;
 
     public void Start()
     {
-        color = gameObject.GetComponent<ColorChanger>();
-        geno = gameObject.GetComponent<GenotypePortal>();
-        color.SetColor(geno.GetRGB());
+        //color = gameObject.GetComponent<ColorChanger>();
+    }
+
+    public void InitializePortal(Population population, GenotypePortal<Color> genotypePortal)
+    {
+        this.population = population;
+        this.geno = genotypePortal;
+        geno.RandomizeRGB();
+        SetColor(geno.GetColor());
     }
 
     public void SetDestinationID(int newDestinationID)
@@ -26,14 +33,30 @@ public class Portal : MonoBehaviour
 
     public void ActivatePortal(Player player)
     {
-        ChangeColors();
-        //RefreshPortal();
-        Teleport(player);
+       population.TriggerBreeding(this);
+       Teleport(player);
     }
 
-    private void ChangeColors()
+    public Color GetColor()
     {
-        color.EvolveColor(this);
+        return geno.GetColor();
+    }
+
+    public void SetColor(Color newColor)
+    {
+        geno.SetColor(newColor);
+        UpdateColor();
+    }
+
+    public GenotypePortal<Color> GetGenotypePortalColor()
+    {
+        return geno;
+    } 
+
+    public void SetGenotype(GenotypePortal<Color> newGeno)
+    {
+        geno = newGeno;
+        UpdateColor();
     }
 
     private void Teleport(Player player)
@@ -71,11 +94,10 @@ public class Portal : MonoBehaviour
         player.transform.position = destination;
     }
 
-    public void RefreshPortal()
+    private void UpdateColor()
     {
-        color.SetColor(geno.GetRGB());
-        color.UpdateColor();
-
+        Renderer rend = gameObject.GetComponent<Renderer>();
+        rend.material.SetColor("_Color", geno.GetColor());
     }
 
 }

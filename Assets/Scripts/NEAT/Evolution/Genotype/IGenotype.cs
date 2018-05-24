@@ -38,6 +38,7 @@ public interface IGenotype<T> {
     /// <returns>One offspring</returns>
     IGenotype<T> Crossover(IGenotype<T> g);
 
+    /* TODO */
     /// <summary>
     /// Decode the genotype to produce the pheotype
     /// </summary>

@@ -23,7 +23,6 @@ public class Genome : MonoBehaviour {
     public void AddConnectionGene(ConnectionGene connectionGene)
     {
         Connections.Add(connectionGene);
-        InnovationNumber++;
     }
 
     public ArrayList GetConnections()
@@ -79,11 +78,11 @@ public class Genome : MonoBehaviour {
         ConnectionGene connectionGene = new ConnectionGene();
         if (Reversed)
         {
-            connectionGene.InitializeConnectionGene(Node2.GetID(),Node1.GetID(), Weight, true, 0);
+            connectionGene.InitializeConnectionGene(Node2.GetID(),Node1.GetID(), Weight, true, InnovationNumber++);
         }
         else
         {
-            connectionGene.InitializeConnectionGene(Node1.GetID(), Node2.GetID(), Weight, true, 0);
+            connectionGene.InitializeConnectionGene(Node1.GetID(), Node2.GetID(), Weight, true, InnovationNumber++);
         }
         Connections.Add(connectionGene);
 
@@ -101,8 +100,8 @@ public class Genome : MonoBehaviour {
         connectionGene.Disable();
  
         newNode.InitializeNodeGene(NodeGene.TYPE.HIDDEN, Nodes.Count);
-        inbound.InitializeConnectionGene(inNode.GetID(), newNode.GetID(), 1f, true, 0);
-        outbound.InitializeConnectionGene(newNode.GetID(), newNode.GetID(), connectionGene.GetWeight(), true, 0);
+        inbound.InitializeConnectionGene(inNode.GetID(), newNode.GetID(), 1f, true, inNode.GetInnovationNumber());
+        outbound.InitializeConnectionGene(newNode.GetID(), newNode.GetID(), connectionGene.GetWeight(), true, outNode.GetInnovationNumber());
 
         Nodes.Add(newNode);
         Connections.Add(inbound);

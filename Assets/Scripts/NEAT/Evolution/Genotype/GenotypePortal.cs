@@ -10,8 +10,9 @@ public class GenotypePortal <T> : IGenotype<T> {
     /* Unique ID assigned by EvolutionaryHistory */
     long ID;
 
-    /* Are these traits? */
-    float r, g, b;
+    /* Traits? */
+    float hue, saturation, brightness;
+    float red, green, blue;
     Color color;
 
     /* TODO use NewInstance() */
@@ -31,7 +32,15 @@ public class GenotypePortal <T> : IGenotype<T> {
     public void RandomizeRGB()
     {
         SetRGB(Random.value, Random.value, Random.value);
-        color = new Color(r, g, b);
+        color = new Color(red, green, blue);
+    }
+
+    /// <summary>
+    /// Assign random values to R, G, B (Random color)
+    /// </summary>
+    public void RandomizeHSB()
+    {
+        SetHSB(Random.value, Random.value, Random.value);
     }
 
     /// <summary>
@@ -64,8 +73,8 @@ public class GenotypePortal <T> : IGenotype<T> {
     /// <param name="r">float Value of red</param>
     public void SetR(float r)
     {
-        this.r = r;
-        color = new Color(r, g, b);
+        this.red = r;
+        color = new Color(r, green, blue);
 
     }
 
@@ -75,8 +84,8 @@ public class GenotypePortal <T> : IGenotype<T> {
     /// <param name="g">float Value of green</param>
     public void SetG(float g)
     {
-        this.g = g;
-        color = new Color(r, g, b);
+        this.green = g;
+        color = new Color(red, g, blue);
 
     }
 
@@ -86,8 +95,8 @@ public class GenotypePortal <T> : IGenotype<T> {
     /// <param name="b">float Value of blue</param>
     public void SetB(float b)
     {
-        this.b = b;
-        color = new Color(r, g, b);
+        this.blue = b;
+        color = new Color(red, green, b);
 
     }
 
@@ -150,9 +159,9 @@ public class GenotypePortal <T> : IGenotype<T> {
         float newR, newG, newB;
         Color gpColor = gp.GetColor();
 
-        newR = Mathf.Lerp(r, gpColor.r, rLerp);
-        newG = Mathf.Lerp(g, gpColor.g, gLerp);
-        newB = Mathf.Lerp(b, gpColor.b, bLerp);
+        newR = Mathf.Lerp(red, gpColor.r, rLerp);
+        newG = Mathf.Lerp(green, gpColor.g, gLerp);
+        newB = Mathf.Lerp(blue, gpColor.b, bLerp);
 
         crossedGenotype.SetRGB(newR, newG, newB);
 

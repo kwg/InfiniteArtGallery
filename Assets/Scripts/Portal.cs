@@ -9,56 +9,91 @@ public class Portal : MonoBehaviour
     public int destinationID;
 
     private Vector3 destination;
-    //private Color color;
     private GenotypePortal<Color> geno;
     private Population population;
 
+    /// <summary>
+    /// Unity method
+    /// </summary>
     public void Start()
     {
-        //color = gameObject.GetComponent<ColorChanger>();
+
     }
 
+    /// <summary>
+    /// Initialization method since Unity constructors must be empty
+    /// </summary>
+    /// <param name="population">Population controller</param>
+    /// <param name="genotypePortal"></param>
     public void InitializePortal(Population population, GenotypePortal<Color> genotypePortal)
     {
         this.population = population;
-        this.geno = genotypePortal;
+        geno = genotypePortal;
         geno.RandomizeRGB();
         SetColor(geno.GetColor());
     }
 
+    /// <summary>
+    /// Sets the destiation portal ID for this portal
+    /// </summary>
+    /// <param name="newDestinationID">ID of portal to exit from</param>
     public void SetDestinationID(int newDestinationID)
     {
         destinationID = newDestinationID;
     }
 
+    /// <summary>
+    /// Tells this portal that the player has chosen it
+    /// </summary>
+    /// <param name="player">Player that selected the portal</param>
     public void ActivatePortal(Player player)
     {
        population.TriggerBreeding(this);
        Teleport(player);
     }
 
+    /// <summary>
+    /// Gets the current color of this portal
+    /// </summary>
+    /// <returns></returns>
     public Color GetColor()
     {
         return geno.GetColor();
     }
 
+    /// <summary>
+    /// Set the color of this portal
+    /// </summary>
+    /// <param name="newColor">New color to be used</param>
     public void SetColor(Color newColor)
     {
         geno.SetColor(newColor);
         UpdateColor();
     }
 
+    /// <summary>
+    /// Get the genotype
+    /// </summary>
+    /// <returns>Genotype of this portal</returns>
     public GenotypePortal<Color> GetGenotypePortalColor()
     {
         return geno;
     } 
 
+    /// <summary>
+    /// Set the genotype of this portal
+    /// </summary>
+    /// <param name="newGeno">Genotyp to use</param>
     public void SetGenotype(GenotypePortal<Color> newGeno)
     {
         geno = newGeno;
         UpdateColor();
     }
 
+    /// <summary>
+    /// Teleports the player from this portal to the listed destination id
+    /// </summary>
+    /// <param name="player">Player to be teleported</param>
     private void Teleport(Player player)
     {
         /* Find destination portal and get destination position */
@@ -70,7 +105,8 @@ public class Portal : MonoBehaviour
             }
         }
 
-        // Bump player to just outside of the portal collision box based on the location of the portal relative to the center
+        /* Bump player to just outside of the portal collision box based on the location of the portal 
+         * relative to the center */
         if (destination.x < 0)
         {
             destination.x += 0.25f;
@@ -94,6 +130,9 @@ public class Portal : MonoBehaviour
         player.transform.position = destination;
     }
 
+    /// <summary>
+    /// Refresh the displayed color in game to match the color specified by the genotype
+    /// </summary>
     private void UpdateColor()
     {
         Renderer rend = gameObject.GetComponent<Renderer>();

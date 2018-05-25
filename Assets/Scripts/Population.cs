@@ -19,7 +19,10 @@ public class Population : MonoBehaviour {
 
 	}
 
-    void BuildPopulation()
+    /// <summary>
+    /// Initialize a population of portals
+    /// </summary>
+    private void BuildPopulation()
     {
         /* Create a list of all portals in the room and initialize a random color for each one */
         foreach (Portal portal in FindObjectsOfType<Portal>())
@@ -30,13 +33,23 @@ public class Population : MonoBehaviour {
         }
     }
 
-   public void TriggerBreeding(Portal selectedPortal)
+    /// <summary>
+    /// Controls breeding and mutation of portals based on the selected portal
+    /// </summary>
+    /// <param name="selectedPortal">Portal with the attributes that was selected by the player</param>
+    public void TriggerBreeding(Portal selectedPortal)
     {
 
-        
+        /* Loop through every portal in the population and decide how to handle it based on its relation
+         * to the selected portal.
+         *  RULES:
+         *  selected portal should remain the same
+         *  exit portal should be an undo? (this will require rooms to have states and maintain a list of states)
+         *  remaining portals should breed with selected portal
+         */
         foreach(Portal portal in portals)
         {
-            /* Exit portal */
+            /* destination portal */
             if(portal.portalID == selectedPortal.destinationID)
             {
                 // destination portal should be a random slection of non selected portals
@@ -59,7 +72,7 @@ public class Population : MonoBehaviour {
             /* All other portals */
             else
             {
-                // all other portals should breed
+                // all other portals should breed with the selected portal
                 GenotypePortal<Color> childGeno = (GenotypePortal<Color>) portal.GetGenotypePortalColor().Crossover(selectedPortal.GetGenotypePortalColor());
                 portal.SetGenotype(childGeno);
             }

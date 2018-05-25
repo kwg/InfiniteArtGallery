@@ -14,6 +14,17 @@ public class GenotypePortal <T> : IGenotype<T> {
     float r, g, b;
     Color color;
 
+    /* TODO use NewInstance() */
+    /// <summary>
+    /// Initialization method since constructors have to be empty
+    /// </summary>
+    /// <param name="id">long Unique id assigned by EvolutionaryHistory</param>
+    public void InitializeGenotype(long id)
+    {
+        ID = id;
+        RandomizeRGB();
+    }
+
     /// <summary>
     /// Assign random values to R, G, B (Random color)
     /// </summary>
@@ -38,11 +49,14 @@ public class GenotypePortal <T> : IGenotype<T> {
 
     }
 
+    /// <summary>
+    /// Change this color trait
+    /// </summary>
+    /// <param name="newcolor">New color to use</param>
     public void SetColor(Color newcolor)
     {
         color = newcolor;
     }
-
 
     /// <summary>
     /// Utility method to set red value
@@ -115,7 +129,6 @@ public class GenotypePortal <T> : IGenotype<T> {
         return copyOfGenotype;
     }
 
-    /* TODO */
     /// <summary>
     /// Cross this genotype with a given genotype and return the child
     /// </summary>
@@ -129,6 +142,7 @@ public class GenotypePortal <T> : IGenotype<T> {
 
         float rLerp, gLerp, bLerp;
 
+        // TODO This leads to some wild changes - clamp this down to a smaller range
         rLerp = Random.value;
         gLerp = Random.value;
         bLerp = Random.value;
@@ -145,52 +159,36 @@ public class GenotypePortal <T> : IGenotype<T> {
         return crossedGenotype;
     }
 
-    /* the interface specifies that this shoud be of type IGenotype */
-    /*
-    public GenotypePortal Crossover(GenotypePortal g)
-    {
-        float rLerp, gLerp, bLerp;
-
-        rLerp = Random.value;
-        gLerp = Random.value;
-        bLerp = Random.value;
-
-        Color ChildColor = Color.Lerp(new Color(r, g, b), g.GetRGB());
-
-        return null;
-    }
-    */
-
     /// <summary>
     /// Get the id of this genotype
     /// </summary>
     /// <returns></returns>
     public long GetID()
     {
-        return ID; ;
+        return ID;
     }
 
     /// <summary>
-    /// Initialization method since constructors have to be empty
+    /// Mutate this genotype
     /// </summary>
-    /// <param name="id">long Unique id assigned by EvolutionaryHistory</param>
-    public void InitializeGenotype(long id)
-    {
-        ID = id;
-        RandomizeRGB();
-    }
-
-
     public void Mutate()
     {
         //throw new System.NotImplementedException();
     }
 
+    /// <summary>
+    /// Create a new instance of this genotype
+    /// </summary>
+    /// <returns></returns>
     public IGenotype<T> NewInstance()
     {
         throw new System.NotImplementedException();
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     public T GetPhenotype()
     {
         return default(T);

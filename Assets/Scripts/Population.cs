@@ -29,7 +29,6 @@ public class Population : MonoBehaviour {
         {
             portals.Add(portal);
             portal.InitializePortal(this, new GenotypePortal<Color>());
-            //portal.gameObject.GetComponent<GenotypePortal<Color>>().RandomizeRGB();
         }
     }
 

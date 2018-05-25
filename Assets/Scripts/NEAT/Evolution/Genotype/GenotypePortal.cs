@@ -10,8 +10,11 @@ public class GenotypePortal <T> : IGenotype<T> {
     /* Unique ID assigned by EvolutionaryHistory */
     long ID;
 
+    /* Mutation limits */
+    private float mutationLimit = 0.2f;
+
     /* Traits? */
-    float hue, saturation, brightness;
+    float colorHue, colorSaturation, colorValue;
     float red, green, blue;
     Color color;
 
@@ -36,25 +39,32 @@ public class GenotypePortal <T> : IGenotype<T> {
     }
 
     /// <summary>
-    /// Assign random values to R, G, B (Random color)
-    /// </summary>
-    public void RandomizeHSB()
-    {
-        SetHSB(Random.value, Random.value, Random.value);
-    }
-
-    /// <summary>
-    /// Utility method to set the RGB values all at once
+    /// Set the RGB values
     /// </summary>
     /// <param name="r"></param>
     /// <param name="g"></param>
     /// <param name="b"></param>
     public void SetRGB(float r, float g, float b)
     {
-        SetR(r);
-        SetG(g);
-        SetB(b);
+        SetRed(r);
+        SetGreen(g);
+        SetBlue(b);
         color = new Color(r, g, b);
+
+    }
+
+    /// <summary>
+    /// Set the HSV values
+    /// </summary>
+    /// <param name="hue"></param>
+    /// <param name="saturation"></param>
+    /// <param name="value"></param>
+    public void SetHSV(float hue, float saturation, float value)
+    {
+        SetColorHue(hue);
+        SetColorSaturation(saturation);
+        SetColorValue(value);
+        color = Color.HSVToRGB(colorHue, colorSaturation, colorValue);
 
     }
 
@@ -71,9 +81,9 @@ public class GenotypePortal <T> : IGenotype<T> {
     /// Utility method to set red value
     /// </summary>
     /// <param name="r">float Value of red</param>
-    public void SetR(float r)
+    public void SetRed(float r)
     {
-        this.red = r;
+        red = r;
         color = new Color(r, green, blue);
 
     }
@@ -82,9 +92,9 @@ public class GenotypePortal <T> : IGenotype<T> {
     /// Utility method to set green value
     /// </summary>
     /// <param name="g">float Value of green</param>
-    public void SetG(float g)
+    public void SetGreen(float g)
     {
-        this.green = g;
+        green = g;
         color = new Color(red, g, blue);
 
     }
@@ -93,10 +103,43 @@ public class GenotypePortal <T> : IGenotype<T> {
     /// Utility method to set blue value
     /// </summary>
     /// <param name="b">float Value of blue</param>
-    public void SetB(float b)
+    public void SetBlue(float b)
     {
-        this.blue = b;
+        blue = b;
         color = new Color(red, green, b);
+
+    }
+
+    /// <summary>
+    /// Utility method to set hue value (HSV)
+    /// </summary>
+    /// <param name="hue">float Value of hue (HSV)</param>
+    public void SetColorHue(float hue)
+    {
+        colorHue = hue;
+        color = Color.HSVToRGB(colorHue, colorSaturation, colorValue);
+
+    }
+
+    /// <summary>
+    /// Utility method to set saturation value (HSV)
+    /// </summary>
+    /// <param name="saturation">float Value of saturation (HSV)</param>
+    public void SetColorSaturation(float saturation)
+    {
+        colorSaturation = saturation;
+        color = Color.HSVToRGB(colorHue, colorSaturation, colorValue);
+
+    }
+
+    /// <summary>
+    /// Utility method to set value (HSV)
+    /// </summary>
+    /// <param name="value">float Value of value (HSV)</param>
+    public void SetColorValue(float value)
+    {
+        colorValue = value;
+        color = Color.HSVToRGB(colorHue, colorSaturation, colorValue);
 
     }
 
@@ -112,7 +155,7 @@ public class GenotypePortal <T> : IGenotype<T> {
     /// <summary>
     /// Adds a parent ID to the ArrayList of parents
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="id">ID of parent</param>
     public void AddParentID(long id)
     {
         Parents.Add(id);
@@ -121,7 +164,7 @@ public class GenotypePortal <T> : IGenotype<T> {
     /// <summary>
     /// Get a list of all parent IDs of this genotype
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Parent ID</returns>
     public List<long> GetParentIDs()
     {
         return Parents;
@@ -152,9 +195,9 @@ public class GenotypePortal <T> : IGenotype<T> {
         float rLerp, gLerp, bLerp;
 
         // TODO This leads to some wild changes - clamp this down to a smaller range
-        rLerp = Random.value;
-        gLerp = Random.value;
-        bLerp = Random.value;
+        rLerp = Random.value * mutationLimit;
+        gLerp = Random.value * mutationLimit;
+        bLerp = Random.value * mutationLimit;
 
         float newR, newG, newB;
         Color gpColor = gp.GetColor();

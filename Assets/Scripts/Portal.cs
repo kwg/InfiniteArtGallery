@@ -12,12 +12,14 @@ public class Portal : MonoBehaviour
     private GenotypePortal<Color> geno;
     private Population population;
 
+    private Dictionary<long, GenotypePortal<Color>> GeneticHistory;
+    private long currentGeneration;
+
     /// <summary>
     /// Unity method
     /// </summary>
     public void Start()
     {
-
     }
 
     /// <summary>
@@ -27,8 +29,13 @@ public class Portal : MonoBehaviour
     /// <param name="genotypePortal"></param>
     public void InitializePortal(Population population, GenotypePortal<Color> genotypePortal)
     {
+        GeneticHistory = new Dictionary<long, GenotypePortal<Color>>();
         this.population = population;
+
         geno = genotypePortal;
+        currentGeneration = 0;
+
+        GeneticHistory.Add(currentGeneration, geno);
         geno.RandomizeRGB();
         SetColor(geno.GetColor());
     }
@@ -81,13 +88,31 @@ public class Portal : MonoBehaviour
     } 
 
     /// <summary>
-    /// Set the genotype of this portal
+    /// Adds a new genotype
     /// </summary>
-    /// <param name="newGeno">Genotyp to use</param>
-    public void SetGenotype(GenotypePortal<Color> newGeno)
+    /// <param name="newGeno">Genotyp to add</param>
+    public void AddGenotype(GenotypePortal<Color> newGeno)
     {
+        currentGeneration++;
         geno = newGeno;
+        GeneticHistory.Add(currentGeneration, geno);
         UpdateColor();
+    }
+
+    /// <summary>
+    /// Return to an older genotype
+    /// </summary>
+    /// <param name="generationID">Historic genotype use</param>
+    public void SetGenotype(long generationID)
+    {
+        currentGeneration = generationID;
+        geno = GeneticHistory[currentGeneration];
+        UpdateColor();
+    }
+
+    public long GetCurrentGenerationID()
+    {
+        return currentGeneration;
     }
 
     /// <summary>

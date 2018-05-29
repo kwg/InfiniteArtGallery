@@ -56,6 +56,8 @@ public class RoomConfiguration  {
         return rewindPortalID;
     }
 
+
+    /* Debug methods */
     private void ConsoleDebug(string msg)
     {
         string r = "RoomConfiguration: ";

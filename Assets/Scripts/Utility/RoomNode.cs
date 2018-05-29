@@ -1,71 +1,24 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class RoomNode {
 
-    RoomNode parentRoom, northRoom, eastRoom, southRoom, westRoom;
-    // rewind portal is parent room
+    List<RoomNode> doors;
+    IDoorPainter<Color> doorPainter;
 
-    public RoomNode(RoomNode parentRoom, RoomNode northRoom, RoomNode eastRoom, RoomNode southRoom, RoomNode westRoom)
+    public RoomNode(List<Portal> portals, IDoorPainter<Color> doorPainter)
     {
-        this.parentRoom = parentRoom;
-
-        this.northRoom = northRoom;
-        this.eastRoom = eastRoom;
-        this.southRoom = southRoom;
-        this.westRoom = westRoom;
-
+        this.doorPainter = doorPainter;
+        BuildDoors(portals);
     }
 
-    public RoomNode GetNorthRoom()
+    private void BuildDoors(List<Portal> portals)
     {
-        return northRoom;
+        foreach(Portal p in portals)
+        {
+            // TODO logic here for building children nodes based on portals
+        }
     }
-
-    public RoomNode GetEastRoom()
-    {
-        return eastRoom;
-    }
-
-    public RoomNode GetSouthRoom()
-    {
-        return southRoom;
-    }
-
-    public RoomNode GetWestRoom()
-    {
-        return westRoom;
-    }
-
-    public RoomNode GetparentRoom()
-    {
-        return parentRoom;
-    }
-
-    public void SetNorthRoom(RoomNode northRoom)
-    {
-        this.northRoom = northRoom;
-    }
-
-    public void SetEastRoom(RoomNode eastRoom)
-    {
-        this.eastRoom = eastRoom;
-    }
-
-    public void SetSouthRoom(RoomNode southRoom)
-    {
-        this.southRoom = southRoom;
-    }
-
-    public void SetWesthRoom(RoomNode westRoom)
-    {
-        this.westRoom = westRoom;
-    }
-
-    public RoomNode GetParentRoom()
-    {
-        return parentRoom;
-    }
-
 }

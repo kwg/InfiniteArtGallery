@@ -9,8 +9,10 @@ public class Portal : MonoBehaviour
     public int destinationID;
 
     private Vector3 destination;
+
     // FIXME Disable this to start moving geno to population controller 
     private GenotypePortal<Color> geno;
+
     private Population population;
 
     private Color displayColor;
@@ -24,6 +26,7 @@ public class Portal : MonoBehaviour
     /// </summary>
     public void Start()
     {
+
     }
 
     /// <summary>
@@ -163,8 +166,9 @@ public class Portal : MonoBehaviour
     /// </summary>
     private void UpdateColor()
     {
+        displayColor = geno.GetColor();
         Renderer rend = gameObject.GetComponent<Renderer>();
-        rend.material.SetColor("_Color", geno.GetColor());
+        rend.material.SetColor("_Color", displayColor);
     }
 
     /// <summary>

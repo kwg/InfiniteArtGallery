@@ -55,10 +55,7 @@ public class Population : MonoBehaviour {
     private void LoadRoomConfig(int roomID)
     {
         roomConfigs[roomID].ReloadRoomLayout();
-        if (roomID > 0)
-        {
-            SetRewindPortalColor();
-        }
+
 
     }
 
@@ -147,6 +144,7 @@ public class Population : MonoBehaviour {
 
     private void SetRewindPortalColor()
     {
+        ConsoleDebug("Setting portal " + rewindPortalID + " color to BLACK.");
         if (rewindPortalID != -1)
         {
             portals[rewindPortalID].SetColor(new Color(0, 0, 0));

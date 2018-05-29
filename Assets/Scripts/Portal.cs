@@ -11,40 +11,20 @@ public class Portal : MonoBehaviour
 
     private Vector3 destination;
 
-    // FIXME Disable this to start moving geno to population controller 
-    private GenotypePortal<Color> geno;
-
-    private Population population;
-
     private Color displayColor;
     private Sprite displaySprite;  // TODO Next step will be to get images on portals
 
-
-    private List<GenotypePortal<Color>> GeneticHistory;
 
     /// <summary>
     /// Unity method
     /// </summary>
     public void Start()
     {
-
     }
 
-    /// <summary>
-    /// Initialization method since Unity constructors must be empty
-    /// </summary>
-    /// <param name="population">Population controller</param>
-    /// <param name="genotypePortal"></param>
-    public void InitializePortal(Population population, GenotypePortal<Color> genotypePortal)
+    public void SetPortalID(int portalID)
     {
-        this.population = population;
-        geno = genotypePortal;
-        GeneticHistory = new List<GenotypePortal<Color>>();
-
-
-        geno.RandomizeRGB();
-        SetColor(geno.GetColor());
-        GeneticHistory.Add(geno);
+        this.portalID = portalID;
     }
 
     /// <summary>
@@ -62,13 +42,12 @@ public class Portal : MonoBehaviour
     /// <param name="player">Player that selected the portal</param>
     public void ActivatePortal(Player player)
     {
-       population.TriggerBreeding(this);
-       Teleport(player);
-    }
+        PopulationController pc = FindObjectOfType<PopulationController>();
 
-    public void PaintDoor<T>(T newPaint)
-    {
-        PaintDoor(newPaint);
+        pc.DoTeleport(player, portalID);
+        pc.DoColorChange();
+
+        //Teleport(player);
     }
 
     public void PaintDoor(Color newColor)
@@ -85,10 +64,10 @@ public class Portal : MonoBehaviour
     /// <summary>
     /// Gets the current color of this portal
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Current display color</returns>
     public Color GetColor()
     {
-        return geno.GetColor();
+        return displayColor;
     }
 
     /// <summary>
@@ -97,9 +76,8 @@ public class Portal : MonoBehaviour
     /// <param name="newColor">New display color to be used</param>
     public void SetColor(Color newColor)
     {
-        //geno.SetColor(newColor);
         displayColor = newColor;
-        UpdateColor(newColor);
+        RefreshColor();
     }
 
     /// <summary>
@@ -109,44 +87,7 @@ public class Portal : MonoBehaviour
     private void SetSprite(Sprite newSprite)
     {
         displaySprite = newSprite;
-        //UpdateSprite(newSprite
-    }
-
-    /// <summary>
-    /// Get the genotype
-    /// </summary>
-    /// <returns>Genotype of this portal</returns>
-    public GenotypePortal<Color> GetGenotypePortal()
-    {
-        return geno;
-    } 
-
-    /// <summary>
-    /// Adds a new genotype
-    /// </summary>
-    /// <param name="newGeno">Genotyp to add</param>
-    public void AddGenotype(GenotypePortal<Color> newGeno)
-    {
-        //currentGenerationID++;
-        geno = newGeno;
-        GeneticHistory.Add(geno);
-        UpdateColor();
-    }
-
-    /// <summary>
-    /// Return to an older genotype
-    /// </summary>
-    /// <param name="generationID">Historic genotype use</param>
-    public void SetGenotype(int generationID)
-    {
-        GeneticHistory.RemoveRange(generationID + 1, GeneticHistory.Count - generationID - 1);
-        geno = GeneticHistory[generationID];
-        UpdateColor();
-    }
-
-    public int GetCurrentGenerationID()
-    {
-        return GeneticHistory.Count - 1;
+        RefreshSprite();
     }
 
     /// <summary>
@@ -192,9 +133,8 @@ public class Portal : MonoBehaviour
     /// <summary>
     /// Refresh the displayed color in game to match the color specified by the genotype
     /// </summary>
-    private void UpdateColor()
+    private void RefreshColor()
     {
-        displayColor = geno.GetColor();
         Renderer rend = gameObject.GetComponent<Renderer>();
         rend.material.SetColor("_Color", displayColor);
     }
@@ -202,10 +142,8 @@ public class Portal : MonoBehaviour
     /// <summary>
     /// Refresh the displayed color in game to match the color specified by the genotype
     /// </summary>
-    private void UpdateColor(Color color)
+    private void RefreshSprite()
     {
-        Renderer rend = gameObject.GetComponent<Renderer>();
-        rend.material.SetColor("_Color", color);
+        //TODO Add refresh method for sprites
     }
-
 }

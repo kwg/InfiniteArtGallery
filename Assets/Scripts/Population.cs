@@ -24,7 +24,7 @@ public class Population : MonoBehaviour {
 	void Start ()
     {
         doorPainter = new SimpleDoorPainter<Color>();
-        testRoom = new RoomNode(doorPainter);
+        testRoom = new RoomNode();
 
         roomConfigs = new List<RoomConfiguration>();
         InnovationID = 0;
@@ -46,7 +46,7 @@ public class Population : MonoBehaviour {
         foreach (Portal portal in FindObjectsOfType<Portal>())
         {
             portals[portal.portalID] = portal;
-            portal.InitializePortal(this, new GenotypePortal<Color>());
+            //portal.InitializePortal(this, new GenotypePortal<Color>());
         }
 
         SaveRoomConfig();
@@ -131,11 +131,11 @@ public class Population : MonoBehaviour {
                 else
                 {
                     // all other portals should breed with the selected portal
-                    GenotypePortal<Color> mostFit = selectedPortal.GetGenotypePortal();
-                    GenotypePortal<Color> lessFit = portal.GetGenotypePortal();
+                    //GenotypePortal<Color> mostFit = selectedPortal.GetGenotypePortal();
+                    //GenotypePortal<Color> lessFit = portal.GetGenotypePortal();
 
-                    GenotypePortal<Color> childGeno = (GenotypePortal<Color>) lessFit.Crossover(mostFit);
-                    portal.AddGenotype(childGeno);
+                    //GenotypePortal<Color> childGeno = (GenotypePortal<Color>) lessFit.Crossover(mostFit);
+                    //portal.AddGenotype(childGeno);
                     ConsoleDebug("Crossing portal " + portal.portalID + " with champion (" + pid + ")");
                 }
 

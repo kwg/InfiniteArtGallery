@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -65,6 +66,22 @@ public class Portal : MonoBehaviour
        Teleport(player);
     }
 
+    public void PaintDoor<T>(T newPaint)
+    {
+        PaintDoor(newPaint);
+    }
+
+    public void PaintDoor(Color newColor)
+    {
+        SetColor(newColor);
+    }
+
+    public void PaintDoor(Sprite newSprite)
+    {
+        SetSprite(newSprite);
+    }
+
+
     /// <summary>
     /// Gets the current color of this portal
     /// </summary>
@@ -75,13 +92,24 @@ public class Portal : MonoBehaviour
     }
 
     /// <summary>
-    /// Set the color of this portal
+    /// Set the display color of this portal
     /// </summary>
-    /// <param name="newColor">New color to be used</param>
+    /// <param name="newColor">New display color to be used</param>
     public void SetColor(Color newColor)
     {
         //geno.SetColor(newColor);
+        displayColor = newColor;
         UpdateColor(newColor);
+    }
+
+    /// <summary>
+    /// Set the display sprite for this portal
+    /// </summary>
+    /// <param name="sprite">New display sprite to be used</param>
+    private void SetSprite(Sprite newSprite)
+    {
+        displaySprite = newSprite;
+        //UpdateSprite(newSprite
     }
 
     /// <summary>

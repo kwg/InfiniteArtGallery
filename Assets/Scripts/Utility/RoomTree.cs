@@ -5,12 +5,12 @@ using UnityEngine;
 public class RoomTree {
 
     private RoomNode startingRoom;
-    private IDoorPainter<Color> doorPainter;
+    private IDoorPainter doorPainter;
 
     public RoomTree(List<Portal> portals)
     {
-        doorPainter = new ColorDoorPainter();
-        startingRoom = new RoomNode(portals, doorPainter);
+        doorPainter = new ColorDoorPainter<Color>();
+        startingRoom = new RoomNode(doorPainter);
 
     }
 

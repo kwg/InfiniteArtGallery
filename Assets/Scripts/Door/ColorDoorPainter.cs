@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ColorDoorPainter : IDoorPainter<Color>
+public class ColorDoorPainter<Color> : IDoorPainter
 {
-
-
-    public void PaintDoor(Color doorPaint, Portal targetDoor)
+    public void PaintDoor<Color>(Color doorPaint, Portal targetDoor)
     {
-        // TODO paint the door with the specified color
-        targetDoor.SetColor(doorPaint);
+        targetDoor.PaintDoor(doorPaint);
     }
 }

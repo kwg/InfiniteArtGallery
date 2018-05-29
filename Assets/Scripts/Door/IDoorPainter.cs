@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IDoorPainter<T> {
+public interface IDoorPainter {
 
-    void PaintDoor(T doorPaint, Portal targetDoor);
+    void PaintDoor<T>(T doorPaint, Portal targetDoor);
 
     
 }

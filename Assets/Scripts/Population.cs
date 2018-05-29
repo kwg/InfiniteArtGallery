@@ -11,6 +11,9 @@ public class Population : MonoBehaviour {
     Portal[] portals;
     List<RoomConfiguration> roomConfigs;
 
+    IDoorPainter doorPainter;
+    RoomNode testRoom;
+
     int InnovationID;
 
     int rewindPortalID;
@@ -20,6 +23,9 @@ public class Population : MonoBehaviour {
 	// Use this for initialization
 	void Start ()
     {
+        doorPainter = new SimpleDoorPainter<Color>();
+        testRoom = new RoomNode(doorPainter);
+
         roomConfigs = new List<RoomConfiguration>();
         InnovationID = 0;
         rewindPortalID = -1;

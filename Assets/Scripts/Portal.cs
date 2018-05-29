@@ -9,11 +9,15 @@ public class Portal : MonoBehaviour
     public int destinationID;
 
     private Vector3 destination;
+    // FIXME Disable this to start moving geno to population controller 
     private GenotypePortal<Color> geno;
     private Population population;
 
-    private Dictionary<long, GenotypePortal<Color>> GeneticHistory;
-    private long currentGeneration;
+    private Color displayColor;
+    private Sprite displaySprite;  // TODO Next step will be to get images on portals
+
+
+    private List<GenotypePortal<Color>> GeneticHistory;
 
     /// <summary>
     /// Unity method
@@ -29,15 +33,14 @@ public class Portal : MonoBehaviour
     /// <param name="genotypePortal"></param>
     public void InitializePortal(Population population, GenotypePortal<Color> genotypePortal)
     {
-        GeneticHistory = new Dictionary<long, GenotypePortal<Color>>();
         this.population = population;
-
         geno = genotypePortal;
-        currentGeneration = 0;
+        GeneticHistory = new List<GenotypePortal<Color>>();
 
-        GeneticHistory.Add(currentGeneration, geno);
+
         geno.RandomizeRGB();
         SetColor(geno.GetColor());
+        GeneticHistory.Add(geno);
     }
 
     /// <summary>
@@ -74,15 +77,15 @@ public class Portal : MonoBehaviour
     /// <param name="newColor">New color to be used</param>
     public void SetColor(Color newColor)
     {
-        geno.SetColor(newColor);
-        UpdateColor();
+        //geno.SetColor(newColor);
+        UpdateColor(newColor);
     }
 
     /// <summary>
     /// Get the genotype
     /// </summary>
     /// <returns>Genotype of this portal</returns>
-    public GenotypePortal<Color> GetGenotypePortalColor()
+    public GenotypePortal<Color> GetGenotypePortal()
     {
         return geno;
     } 
@@ -93,9 +96,9 @@ public class Portal : MonoBehaviour
     /// <param name="newGeno">Genotyp to add</param>
     public void AddGenotype(GenotypePortal<Color> newGeno)
     {
-        currentGeneration++;
+        //currentGenerationID++;
         geno = newGeno;
-        GeneticHistory.Add(currentGeneration, geno);
+        GeneticHistory.Add(geno);
         UpdateColor();
     }
 
@@ -103,16 +106,16 @@ public class Portal : MonoBehaviour
     /// Return to an older genotype
     /// </summary>
     /// <param name="generationID">Historic genotype use</param>
-    public void SetGenotype(long generationID)
+    public void SetGenotype(int generationID)
     {
-        currentGeneration = generationID;
-        geno = GeneticHistory[currentGeneration];
+        GeneticHistory.RemoveRange(generationID + 1, GeneticHistory.Count - generationID - 1);
+        geno = GeneticHistory[generationID];
         UpdateColor();
     }
 
-    public long GetCurrentGenerationID()
+    public int GetCurrentGenerationID()
     {
-        return currentGeneration;
+        return GeneticHistory.Count - 1;
     }
 
     /// <summary>
@@ -162,6 +165,15 @@ public class Portal : MonoBehaviour
     {
         Renderer rend = gameObject.GetComponent<Renderer>();
         rend.material.SetColor("_Color", geno.GetColor());
+    }
+
+    /// <summary>
+    /// Refresh the displayed color in game to match the color specified by the genotype
+    /// </summary>
+    private void UpdateColor(Color color)
+    {
+        Renderer rend = gameObject.GetComponent<Renderer>();
+        rend.material.SetColor("_Color", color);
     }
 
 }

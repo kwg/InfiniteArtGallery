@@ -2,29 +2,31 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/// <summary>
+/// Controller for portal population. Maintains a list of all portals in the room and 
+/// </summary>
 public class Population : MonoBehaviour {
 
-    ArrayList portals;
-    Dictionary<int, RoomConfiguration> roomConfigs;
-    int roomID;
+    Portal[] portals;
+    List<RoomConfiguration> roomConfigs;
 
     int InnovationID;
 
     int rewindPortalID;
 
+    static bool DEBUG = true;
+
 	// Use this for initialization
 	void Start ()
     {
+        roomConfigs = new List<RoomConfiguration>();
         InnovationID = 0;
-        roomID = 0;
+        rewindPortalID = -1;
 
-        portals = new ArrayList();
         BuildPopulation();
 
-        roomConfigs = new Dictionary<int, RoomConfiguration>();
-        SaveRoomConfig();
 
-        rewindPortalID = -1;
 	}
 	
     /// <summary>
@@ -32,25 +34,31 @@ public class Population : MonoBehaviour {
     /// </summary>
     private void BuildPopulation()
     {
+        portals = new Portal[FindObjectsOfType<Portal>().Length];
         /* Create a list of all portals in the room and initialize a random color for each one */
+        ConsoleDebug("Start init:");
         foreach (Portal portal in FindObjectsOfType<Portal>())
         {
-            portals.Add(portal);
+            portals[portal.portalID] = portal;
             portal.InitializePortal(this, new GenotypePortal<Color>());
         }
+
+        SaveRoomConfig();
+        ConsoleRoomDebug("Finished init");
     }
 
     private void SaveRoomConfig()
     {
-        roomConfigs.Add(roomID++, new RoomConfiguration(portals));
-
+        roomConfigs.Add(new RoomConfiguration(portals, rewindPortalID));
     }
 
     private void LoadRoomConfig(int roomID)
     {
-        
         roomConfigs[roomID].ReloadRoomLayout();
-
+        if (roomID > 0)
+        {
+            SetRewindPortalColor();
+        }
 
     }
 
@@ -60,69 +68,122 @@ public class Population : MonoBehaviour {
     /// <param name="selectedPortal">Portal with the attributes that was selected by the player</param>
     public void TriggerBreeding(Portal selectedPortal)
     {
+        int pid = selectedPortal.portalID;
+        int did = selectedPortal.destinationID;
+        ConsoleDebug("Start TriggerBreeding: selectedPortalID = " + pid + ", destinationID = " + did);
+
         /* rewind evolution */
+        /* If the selected portal is the designated "rewind" portal, revert room to previous state */
         if(selectedPortal.portalID == rewindPortalID)
         {
-            roomConfigs.Remove(roomID--);
-            LoadRoomConfig(roomID);
-            rewindPortalID--;
+            ConsoleDebug("REWIND - Portal slected with ID " + selectedPortal.portalID);
+            roomConfigs.RemoveAt(roomConfigs.Count - 1);
+            ConsoleDebug("Returning to room configuration " + (roomConfigs.Count - 1));
+            LoadRoomConfig(roomConfigs.Count - 1);
+            if(roomConfigs.Count >= 0)
+            {
+                rewindPortalID = roomConfigs[roomConfigs.Count - 1].getRewindPortalID();
+            }
+            else
+            {
+                rewindPortalID = -1;
+            }
+
+            SetRewindPortalColor();
         }
 
-        /*  */ 
+        /* advance evolution */
         else
         {
-            /* Store current room configuration */
+            ConsoleDebug("FORWARD - Evolving room " + (roomConfigs.Count - 1) + " with selected portal " + pid);
 
+            /* Store current room configuration */
+            //SaveRoomConfig();
 
             /* Loop through every portal in the population and decide how to handle it based on its relation
              * to the selected portal.
              *  RULES:
              *  selected portal should remain the same
-             *  exit portal should be an undo
+             *  exit portal should be a path to the previous room configuration
              *  remaining portals should breed with selected portal
              */
             foreach(Portal portal in portals)
             {
-                /* destination portal */
+                /* handle exit portal */
                 if(portal.portalID == selectedPortal.destinationID)
                 {
-                    /*
-                    // destination portal should be a random slection of non selected portals
-                    int randomID = Random.Range(0, portals.Count);
-                    while (randomID == selectedPortal.portalID)
-                    {
-                        randomID = Random.Range(0, portals.Count);
-                    }
-
-                    Portal rndPortal = (Portal)portals[randomID];
-                    portal.SetColor(rndPortal.GetColor());
-                    */
-
-                    portal.SetColor(new Color(0, 0, 0));
+                    /* set rewind portal color to black and set rewind id to this portal */
                     rewindPortalID = portal.portalID;
+                    ConsoleDebug("Setting portal " + portal.portalID + " to rewind portal");
                 }
+
                 /* selectedPortal */
                 else if(portal.portalID == selectedPortal.portalID)
                 {
-                    // selected portal should randomize
-                    // portal.SetColor(new Color(Random.value, Random.value, Random.value));
-
                     // Do nothing - leave the selectedPortal unchanged
-
+                    ConsoleDebug("Setting portal " + portal.portalID + " to itself (champion)");
                 }
+
                 /* All other portals */
                 else
                 {
                     // all other portals should breed with the selected portal
-                    GenotypePortal<Color> childGeno = (GenotypePortal<Color>) portal.GetGenotypePortalColor().Crossover(selectedPortal.GetGenotypePortalColor());
+                    GenotypePortal<Color> mostFit = selectedPortal.GetGenotypePortal();
+                    GenotypePortal<Color> lessFit = portal.GetGenotypePortal();
+
+                    GenotypePortal<Color> childGeno = (GenotypePortal<Color>) lessFit.Crossover(mostFit);
                     portal.AddGenotype(childGeno);
+                    ConsoleDebug("Crossing portal " + portal.portalID + " with champion (" + pid + ")");
                 }
+
             }
+
+            SaveRoomConfig();
+            SetRewindPortalColor();
+        }
+
+        ConsoleRoomDebug("Finished TriggerBreeding: rewindID = " + rewindPortalID);
+    }
+
+    private void SetRewindPortalColor()
+    {
+        if (rewindPortalID != -1)
+        {
+            portals[rewindPortalID].SetColor(new Color(0, 0, 0));
         }
     }
 
     public int GetInnovationID()
     {
         return InnovationID++;
+    }
+
+    private void ConsoleDebug(string msg)
+    {
+        if (DEBUG)
+        {
+            Debug.Log("Population: " + msg);
+        }
+    }
+
+    private void ConsoleRoomDebug(string msg)
+    {
+        string r = "Population: " + msg + " | Room: room " + (roomConfigs.Count - 1) + ", portals  [";
+        if (DEBUG)
+        {
+            for (int p = 0; p < portals.Length; p++)
+            {
+                
+                if(p < portals.Length - 1)
+                    r += roomConfigs[roomConfigs.Count - 1].GetPortalGenerationByID(p) + ", ";
+                else
+                {
+                    r += roomConfigs[roomConfigs.Count - 1].GetPortalGenerationByID(p);
+                }
+            }
+        }
+        r += "]";
+
+        Debug.Log(r);
     }
 }

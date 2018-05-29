@@ -194,7 +194,6 @@ public class GenotypePortal <T> : IGenotype<T> {
 
         float rLerp, gLerp, bLerp;
 
-        // TODO This leads to some wild changes - clamp this down to a smaller range
         rLerp = Random.value * mutationLimit;
         gLerp = Random.value * mutationLimit;
         bLerp = Random.value * mutationLimit;

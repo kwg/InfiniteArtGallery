@@ -13,11 +13,9 @@ public class TWEANNNode {
     long innovationID;
     bool frozen;
     double bias;
-
     List<TWEANNLink> outputs;
     double sum;
     double activation;
-
     // TODO any other vars needed to create a graphical output goes here
 
     
@@ -30,13 +28,20 @@ public class TWEANNNode {
 
     public bool IsLinkRecurrent(long targetInnovationID)
     {
+        bool result = false;
         foreach(TWEANNLink link in outputs)
         {
-           
+           if(link.GetTarget().GetInnovationID() == targetInnovationID)
+            {
+                result = link.IsRecurrent();
+            }
+            else
+            {
+                throw new System.ArgumentException("The target innovationID " + targetInnovationID + " was not found in " + outputs);
+            }
         }
 
-
-        return false;
+        return result;
     }
 
     public void SetSum(double newSum)
@@ -49,6 +54,77 @@ public class TWEANNNode {
     {
         return sum;
     }
+
+    public long GetInnovationID()
+    {
+        return innovationID;
+    }
+
+
+    public void Load(double input)
+    {
+        // TODO Sanity checks
+        sum += input;
+    }
+
+    public double Output()
+    {
+        return activation;
+    }
+
+    public void ArtificiallySetActivation(double activation)
+    {
+        this.activation = activation;
+    }
+
+    public void Flush()
+    {
+        sum = bias;
+        activation = 0.0;
+    }
+
+    public void Activate()
+    {
+        // TODO How do we want to handle the FTYPE -> finding the activation function? 
+        //TODO add whatever method to find the activation function and use it
+
+    }
+
+    public void ActivateAndTransmit()
+    {
+        Activate();
+
+        // Reset sum to original bias after activation
+        sum = bias;
+
+        foreach(TWEANNLink link in outputs)
+        {
+            link.Transmit(activation);
+        }
+
+    }
+
+    public void Connect(TWEANNNode target, double weight, long innovationID, bool recurrent, bool frozen)
+    {
+        TWEANNLink link = new TWEANNLink(target, weight, innovationID, recurrent, frozen);
+        outputs.Add(link);
+    }
+
+    public bool IsConnectedTo(long innovationID)
+    {
+        bool result = false;
+        foreach(TWEANNLink link in outputs)
+        {
+            if(link.GetTarget().GetInnovationID() == innovationID)
+            {
+                result = true;
+            }
+        }
+
+        return result;
+    }
+
+
 
 
 }

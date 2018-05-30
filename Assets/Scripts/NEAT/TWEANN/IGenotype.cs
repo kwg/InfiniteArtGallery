@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/// <summary>
+/// Interface for all genotypes
+/// </summary>
+/// <typeparam name="T">Phenotype produced by the genotype</typeparam>
 public interface IGenotype<T> {
 
     /// <summary>

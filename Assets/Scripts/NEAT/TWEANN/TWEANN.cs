@@ -11,7 +11,10 @@ public class TWEANN : INetwork
 
     List<NodeGene> nodes;
 
+    public TWEANN(int numInputs, int numOutputs, bool featureSelective, FTYPE fType, int numModes, int archetypeIndex)
+    {
 
+    }
 
 
     public int NumInputs()

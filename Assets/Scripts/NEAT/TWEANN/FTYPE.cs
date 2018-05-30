@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Types of activation functions
+/// </summary>
 public enum FTYPE {
 
         SIGMOID,

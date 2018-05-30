@@ -54,7 +54,12 @@ public class TWEANNNode {
         Flush();
     }
 
-
+    /// <summary>
+    /// Check given innovationID against all links for recurrence
+    /// </summary>
+    /// <param name="targetInnovationID">InnovationID of node to check for recurrence</param>
+    /// <returns>True is link is recurrent, false otherwise</returns>
+    /// <exception cref="System.ArgumentException">Thrown if target innovationID is not found in outputs</exception>
     public bool IsLinkRecurrent(long targetInnovationID)
     {
         bool result = false;

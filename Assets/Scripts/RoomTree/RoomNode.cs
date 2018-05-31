@@ -5,7 +5,11 @@ using UnityEngine;
 
 public class RoomNode {
 
-    List<RoomNode> doors;
+    // Links
+    SortedList<int, RoomNode> links;
+    SortedList<int, >
+    
+
     bool isPopulated = false;
 
     /// <summary>
@@ -13,30 +17,39 @@ public class RoomNode {
     /// </summary>
     public RoomNode()
     {
-
-    }
-
-    public RoomNode(RoomNode parentRoom)
-    {
-
+        /* Create doors */
+        doors = new SortedList<int, RoomNode>();
     }
 
     public void BuildDoors(List<Portal> portals)
     {
-        /* Create doors */
-        List<RoomNode> doors = new List<RoomNode>();
-
         foreach(Portal p in portals)
         {
-            doors.Add(new RoomNode());
+            doors.Add(p.portalID, new RoomNode());
         }
 
         isPopulated = true;
 
     }
 
+    public void SetParentRoom(RoomNode parentRoom, int returnPortalID)
+    {
+        doors[returnPortalID] = parentRoom;
+    }
+
     public RoomNode GetRoomByPortalID(int portalID)
     {
         return doors[portalID];
     }
+
+    public bool IsPopulated()
+    {
+        return isPopulated;
+    }
+
+    public List<Portal> LoadRoom()
+    {
+        return portals;
+    }
+
 }

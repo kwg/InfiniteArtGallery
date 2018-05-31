@@ -4,17 +4,21 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+/// <summary>
+/// Physical portals in the room. Controls the decoration of a portal as well as storing the
+/// portal's ID and destination portal ID.
+/// </summary>
 public class Portal : MonoBehaviour
 {
+    // TODO change these to private and use getters and setters since we are no longer using the editor to do this by hand
     public int portalID;
     public int destinationID;
-
-    private Vector3 destination;
 
     private Color displayColor;
     private Sprite displaySprite;  // TODO Next step will be to get images on portals
 
 
+    /* Public methods */
     /// <summary>
     /// Unity method
     /// </summary>
@@ -22,6 +26,10 @@ public class Portal : MonoBehaviour
     {
     }
 
+    /// <summary>
+    /// Sets the ID of this portal
+    /// </summary>
+    /// <param name="portalID">ID to set for this portal</param>
     public void SetPortalID(int portalID)
     {
         this.portalID = portalID;
@@ -50,11 +58,19 @@ public class Portal : MonoBehaviour
         //Teleport(player);
     }
 
+    /// <summary>
+    /// Decorate portal with a color
+    /// </summary>
+    /// <param name="newColor">Color to decorate portal with</param>
     public void PaintDoor(Color newColor)
     {
         SetColor(newColor);
     }
 
+    /// <summary>
+    /// Decorate portal with a sprite
+    /// </summary>
+    /// <param name="newSprite">Sprite to decorate portal with</param>
     public void PaintDoor(Sprite newSprite)
     {
         SetSprite(newSprite);
@@ -70,11 +86,13 @@ public class Portal : MonoBehaviour
         return displayColor;
     }
 
+
+    /* Private methods */
     /// <summary>
     /// Set the display color of this portal
     /// </summary>
     /// <param name="newColor">New display color to be used</param>
-    public void SetColor(Color newColor)
+    private void SetColor(Color newColor)
     {
         displayColor = newColor;
         RefreshColor();
@@ -88,46 +106,6 @@ public class Portal : MonoBehaviour
     {
         displaySprite = newSprite;
         RefreshSprite();
-    }
-
-    /// <summary>
-    /// Teleports the player from this portal to the listed destination id
-    /// </summary>
-    /// <param name="player">Player to be teleported</param>
-    private void Teleport(Player player)
-    {
-        /* Find destination portal and get destination position */
-        foreach (Portal portal in FindObjectsOfType<Portal>())
-        {
-            if (portal.portalID == destinationID)
-            {
-                destination = portal.gameObject.transform.position; // set destination to exit portal position
-            }
-        }
-
-        /* Bump player to just outside of the portal collision box based on the location of the portal 
-         * relative to the center */
-        if (destination.x < 0)
-        {
-            destination.x += 0.25f;
-        }
-        else
-        {
-            destination.x -= 0.25f;
-        }
-
-        if (destination.z < 0)
-        {
-            destination.z += 0.25f;
-        }
-        else
-        {
-            destination.z -= 0.25f;
-        }
-
-        destination.y -= 1.6f; // Fix exit height for player (player is 1.8 tall, portal is 5, center of portal is 2.5, center of player is 0.9. 2.5 - 0.9 = 1.6)
-
-        player.transform.position = destination;
     }
 
     /// <summary>

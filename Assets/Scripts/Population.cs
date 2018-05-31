@@ -153,7 +153,7 @@ public class Population : MonoBehaviour {
         ConsoleDebug("Setting portal " + rewindPortalID + " color to BLACK.");
         if (rewindPortalID != -1)
         {
-            portals[rewindPortalID].SetColor(new Color(0, 0, 0));
+            portals[rewindPortalID].PaintDoor(new Color(0, 0, 0));
         }
     }
 

@@ -6,10 +6,9 @@ public class RoomTree {
 
     private RoomNode startingRoom;
 
-    public RoomTree(List<Portal> portals)
+    public RoomTree()
     {
         startingRoom = new RoomNode();
-        startingRoom.BuildDoors(portals);
 
     }
 

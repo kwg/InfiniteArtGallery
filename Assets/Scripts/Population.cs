@@ -24,7 +24,7 @@ public class Population : MonoBehaviour {
 	void Start ()
     {
         doorPainter = new SimpleDoorPainter<Color>();
-        testRoom = new RoomNode(doorPainter);
+        //testRoom = new RoomNode(0);
 
         roomConfigs = new List<RoomConfiguration>();
         InnovationID = 0;

@@ -20,8 +20,8 @@ public class Door<T> {
 
     private void CreatePortal()
     {
-        p = pc.SpawnPortal();
-
+        p = pc.SpawnPortal(doorID);
+        Debug.Log("received portal with ID " + p.GetPortalID());
         p.PaintDoor(new Color(Random.value, Random.value, Random.value));
 
         // TODO make a method to do this correctly
@@ -41,12 +41,7 @@ public class Door<T> {
         p.transform.Rotate(new Vector3(0, (-90 * doorID), 0)); // HACK Hardcoded - fix once rooms can change the number of portals
 
 
-        // give each portal an ID
-        p.SetPortalID(doorID);
-
-        // give each portal a destination ID
-        p.SetDestinationID((2 + p.GetPortalID()) % 4);
-
+        
     }
 
     public void SetGenotypePortal(GenotypePortal<T> geno)

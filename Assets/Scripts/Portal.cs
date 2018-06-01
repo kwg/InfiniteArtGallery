@@ -122,6 +122,23 @@ public class Portal : MonoBehaviour {
     }
 
     /// <summary>
+    /// This assigns a random color to the portal 
+    /// </summary>
+    /// <param name="entryPortal">In reference to the portal that was selected</param>
+    private void RandomColor(Portal entryPortal)
+    {
+        foreach (Portal portal in FindObjectsOfType<Portal>())
+        {
+            if (portal.GetPortalID() != entryPortal.GetDestinationID())
+            {
+                /* Change selected portal to a random color */
+                entryPortal.GetComponent<ColorChanger>().SetColor(new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value));
+            }
+        }
+    }
+
+
+    /// <summary>
     /// Set the display sprite for this portal
     /// </summary>
     /// <param name="sprite">New display sprite to be used</param>

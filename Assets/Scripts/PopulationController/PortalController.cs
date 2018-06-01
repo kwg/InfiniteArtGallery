@@ -23,7 +23,8 @@ public class PortalController : MonoBehaviour {
     {
 
         GameObject portalProp = Instantiate(portalObject) as GameObject;
-        Portal p = portalProp.AddComponent<Portal>();
+        portalProp.AddComponent<Portal>();
+        Portal p = portalProp.GetComponent<Portal>();
         // give each portal an ID
         p.SetPortalID(portalID);
 
@@ -43,7 +44,7 @@ public class PortalController : MonoBehaviour {
         return FindObjectOfType<PortalController>();
     }
 
-    public void DoTeleport(Player player, int portalID)//TODO fix this
+    public void DoTeleport(Player player, int portalID)
     {
         Debug.Log("starting teleport form portal " + portalID + " = " + portals[portalID].GetPortalID());
         Vector3 destination = new Vector3(20, 20, 20);

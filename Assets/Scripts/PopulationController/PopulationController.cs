@@ -21,10 +21,10 @@ public class PopulationController : MonoBehaviour {
      * through the rooms will always be a line with no crossings or branches
      */
 
-    int generationID;
+    int generationID; // Is this needed?
 
     RoomNode currentRoom; // configuration of the current room
-    RoomNode previousRoom;
+    RoomNode previousRoom; // Which way is backwards in time?
 
     /* Static numbers to get 4 portals in a square room */
     int numPortals = 4;

@@ -8,8 +8,10 @@ using UnityEngine;
 /// Physical portals in the room. Controls the decoration of a portal as well as storing the
 /// portal's ID and destination portal ID.
 /// </summary>
-public class Portal : MonoBehaviour
-{
+public class Portal : MonoBehaviour {
+
+    public GameObject portalObject;
+
     // TODO change these to private and use getters and setters since we are no longer using the editor to do this by hand
     int portalID;
     int destinationID;
@@ -26,7 +28,7 @@ public class Portal : MonoBehaviour
     /// </summary>
     public void Start()
     {
-        portalProp = Instantiate(Resources.Load("portal", typeof(GameObject))) as GameObject;
+        //portalProp = Instantiate(portalObject) as GameObject;
     }
 
     /// <summary>

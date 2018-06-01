@@ -22,7 +22,7 @@ public class RoomNode {
 
         for(int d = 0; d < numberOfDoors; d++)
         {
-            doors.Add(d, new Door<Color>(d));
+            doors.Add(d, new Door<Color>(d, PortalController.GetPortalController())); 
         }
 
         isPopulated = true;

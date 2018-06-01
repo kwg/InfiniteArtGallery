@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class PortalController : MonoBehaviour {
 
+    public GameObject portalObject;
+
 	// Use this for initialization
 	void Start () {
-		
+
 	}
 	
 	// Update is called once per frame
@@ -17,9 +19,13 @@ public class PortalController : MonoBehaviour {
     public Portal SpawnPortal()
     {
 
-        Portal p = gameObject.AddComponent<Portal>();
-        GameObject portalProp = Instantiate(Resources.Load("portal", typeof(GameObject))) as GameObject;
+        GameObject portalProp = Instantiate(portalObject) as GameObject;
+        Portal p = portalProp.AddComponent<Portal>();
 
         return p;
+    }
+
+    public static PortalController GetPortalController() {
+        return FindObjectOfType<PortalController>();
     }
 }

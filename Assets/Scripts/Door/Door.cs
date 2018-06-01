@@ -2,23 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Door<T> : MonoBehaviour {
+public class Door<T> {
 
     GenotypePortal<T> geno;
     Portal p;
     int doorID;
+    PortalController pc;
 
-    public Door(int doorID) 
+    public Door(int doorID, PortalController pc) 
     {
         geno = new GenotypePortal<T>();
         this.doorID = doorID;
+        this.pc = pc;
         CreatePortal();
         
     }
 
     private void CreatePortal()
     {
-        p = FindObjectOfType<PortalController>().SpawnPortal();
+        p = pc.SpawnPortal();
 
         p.PaintDoor(new Color(Random.value, Random.value, Random.value));
 

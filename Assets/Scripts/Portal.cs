@@ -200,6 +200,24 @@ public class Portal : MonoBehaviour
     }
 
     /// <summary>
+    /// When player passes through the portal, the portal color is changed to a random color
+    /// </summary>
+    /// <param name="entryPortal">Referencing the selected portal</param>
+    private System.Random rnd = new System.Random();
+    private void RandomColor(Portal entryPortal)//TODO temporary color
+    {
+        /* Modify colors of all portals in the scene */
+        foreach (Portal portal in FindObjectsOfType<Portal>())
+        {
+            if (portal.portalID != entryPortal.destinationID)
+            {
+                /* Change selected portal to a random color */
+                entryPortal.GetComponent<ColorChanger>().SetColor(new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value));
+            }
+        }
+    }
+
+    /// <summary>
     /// Refresh the displayed color in game to match the color specified by the genotype
     /// </summary>
     private void UpdateColor(Color color)

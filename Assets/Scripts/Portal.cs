@@ -11,8 +11,10 @@ using UnityEngine;
 public class Portal : MonoBehaviour
 {
     // TODO change these to private and use getters and setters since we are no longer using the editor to do this by hand
-    public int portalID;
-    public int destinationID;
+    int portalID;
+    int destinationID;
+
+    GameObject portalProp;
 
     private Color displayColor;
     private Sprite displaySprite;  // TODO Next step will be to get images on portals
@@ -24,6 +26,7 @@ public class Portal : MonoBehaviour
     /// </summary>
     public void Start()
     {
+        portalProp = Instantiate(Resources.Load("portal", typeof(GameObject))) as GameObject;
     }
 
     /// <summary>
@@ -36,12 +39,30 @@ public class Portal : MonoBehaviour
     }
 
     /// <summary>
+    /// ID of this portal
+    /// </summary>
+    /// <returns>ID of this portal</returns>
+    public int GetPortalID()
+    {
+        return portalID;
+    }
+
+    /// <summary>
     /// Sets the destiation portal ID for this portal
     /// </summary>
     /// <param name="newDestinationID">ID of portal to exit from</param>
     public void SetDestinationID(int newDestinationID)
     {
         destinationID = newDestinationID;
+    }
+
+    /// <summary>
+    /// ID of exit portal
+    /// </summary>
+    /// <returns>ID of portal this portal exits from</returns>
+    public int GetDestinationID()
+    {
+        return destinationID;
     }
 
     /// <summary>
@@ -52,8 +73,8 @@ public class Portal : MonoBehaviour
     {
         PopulationController pc = FindObjectOfType<PopulationController>();
 
-        pc.DoTeleport(player, portalID);
-        pc.DoColorChange();
+        //pc.DoTeleport(player, portalID);
+       // pc.DoColorChange();
 
         //Teleport(player);
     }

@@ -76,10 +76,10 @@ public class RoomConfiguration  {
             for (int p = 0; p < portals.Length; p++)
             {
                 if (p < portals.Length - 1)
-                    r += portals[p].portalID + ", ";
+                    r += portals[p].GetPortalID() + ", ";
                 else
                 {
-                    r += portals[p].portalID;
+                    r += portals[p].GetPortalID();
                 }
             }
         }

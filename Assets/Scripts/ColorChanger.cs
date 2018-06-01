@@ -58,7 +58,7 @@ public class ColorChanger : MonoBehaviour
         /* Modify colors of all portals in the scene */
         foreach (Portal portal in FindObjectsOfType<Portal>())
         {
-            if(portal.portalID != entryPortal.destinationID)
+            if(portal.GetPortalID() != entryPortal.GetDestinationID())
             {
                 Color oldColor = portal.GetComponent<ColorChanger>().GetCurrentColor();
                 Color newColor = Color.Lerp(selectedColor, oldColor, lerpFactor);

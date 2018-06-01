@@ -8,7 +8,7 @@ public class RoomTree {
 
     public RoomTree()
     {
-        startingRoom = new RoomNode();
+        startingRoom = new RoomNode(4);
 
     }
 

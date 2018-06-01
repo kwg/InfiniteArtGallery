@@ -6,40 +6,38 @@ using UnityEngine;
 public class RoomNode {
 
     // Links
-    SortedList<int, RoomNode> links;
-    SortedList<int, >
+    SortedList<int, Door<Color>> doors;
+    int parentDoorID;
     
-
+    
     bool isPopulated = false;
 
     /// <summary>
     /// Create a new RoomNode 
     /// </summary>
-    public RoomNode()
+    public RoomNode(int numberOfDoors)
     {
         /* Create doors */
-        doors = new SortedList<int, RoomNode>();
-    }
+        doors = new SortedList<int, Door<Color>>();
 
-    public void BuildDoors(List<Portal> portals)
-    {
-        foreach(Portal p in portals)
+        for(int d = 0; d < numberOfDoors; d++)
         {
-            doors.Add(p.portalID, new RoomNode());
+            doors.Add(d, new Door<Color>(d));
         }
 
         isPopulated = true;
-
     }
 
-    public void SetParentRoom(RoomNode parentRoom, int returnPortalID)
+
+    /* Public methods */
+    public void SetParentDoorID(int parentDoorID)
     {
-        doors[returnPortalID] = parentRoom;
+        this.parentDoorID = parentDoorID;
     }
 
-    public RoomNode GetRoomByPortalID(int portalID)
+    public Door<Color> GetDoorByID(int doorID)
     {
-        return doors[portalID];
+        return doors[doorID];
     }
 
     public bool IsPopulated()
@@ -47,9 +45,11 @@ public class RoomNode {
         return isPopulated;
     }
 
-    public List<Portal> LoadRoom()
+    private void LoadRoom()
     {
-        return portals;
+        foreach (KeyValuePair<int, Door<Color>> d in doors)
+        {
+            
+        }
     }
-
 }

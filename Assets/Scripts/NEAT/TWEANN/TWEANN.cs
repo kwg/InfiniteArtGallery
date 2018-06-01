@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Topology and Weight Evolving Neural Network
+/// </summary>
 public class TWEANN : INetwork
 {
 

@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/// <summary>
+/// Sine function for x. Uses Mathf.Sin(float x). X is cast as float for the function.
+/// </summary>
 public class SineFunction : IActivationFunction {
-
-    public SineFunction()
-    {
-
-    }
 
     public double Function(double x)
     {

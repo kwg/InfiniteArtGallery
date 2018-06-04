@@ -9,7 +9,7 @@ public class TestXOR {
 
     public void Start()
     {
-        xorTest = new TWEANN(2, 1, false, FTYPE.ID, 0);
+        xorTest = new TWEANN(2, 1, false, FTYPE.SINE, 0);
         inputs = new double[] { 0, 1 };
 
 

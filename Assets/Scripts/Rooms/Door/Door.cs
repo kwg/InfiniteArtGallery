@@ -9,6 +9,11 @@ public class Door<T> {
     int doorID;
     PortalController pc;
 
+    /// <summary>
+    /// Create a new door in a room with a Portal geno. 
+    /// </summary>
+    /// <param name="doorID">Index of this door</param>
+    /// <param name="pc">Reference to the portal controller that can spawn and decorate portals in the scene</param>
     public Door(int doorID, PortalController pc) 
     {
         geno = new GenotypePortal<T>();
@@ -21,8 +26,7 @@ public class Door<T> {
     private void CreatePortal()
     {
         p = pc.SpawnPortal(doorID);
-        Debug.Log("received portal with ID " + p.GetPortalID());
-        p.PaintDoor(new Color(Random.value, Random.value, Random.value));
+        if (ArtGallery.DEBUG) Debug.Log("received portal with ID " + p.GetPortalID());
 
         // TODO make a method to do this correctly
         float x_spacing = 9.9f;
@@ -39,9 +43,15 @@ public class Door<T> {
         // put each portal on a wall
         p.transform.position = vecs[doorID];
         p.transform.Rotate(new Vector3(0, (-90 * doorID), 0)); // HACK Hardcoded - fix once rooms can change the number of portals
+        RedecorateDoor();
 
+    }
 
-        
+    public void RedecorateDoor()
+    {
+        // FIXME Get this color from the geno
+        pc.DecoratePortal(doorID, new Color(Random.value, Random.value, Random.value));
+
     }
 
     public void SetGenotypePortal(GenotypePortal<T> geno)

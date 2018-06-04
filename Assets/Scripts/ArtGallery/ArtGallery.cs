@@ -6,9 +6,9 @@ using UnityEngine;
 /// Primary controller. Handles rooms and portals (physical) of the scene and links them to the doors in the 
 /// population. Controls interaction between each side.
 /// </summary>
-public class PopulationController : MonoBehaviour {
+public class ArtGallery : MonoBehaviour {
 
-
+    public static bool DEBUG = true;
 
     /* 
      * Maintains generations and represents a generation as a room
@@ -35,54 +35,40 @@ public class PopulationController : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
-        currentRoom = new RoomNode(numPortals);
-
-        
-
-        for (int i = 0; i < numPortals; i++)
-        {
-            // Position portals into the room correctly
-            //portal.transform.parent = GameObject.FindGameObjectWithTag("PrimaryRoom").transform;
-            
-            
-
-        }
+        InitializePopulation();
 
         // spawn player
     }
 
 
-    private void InitializePopulation()
+    private void InitializePopulation() // of rooms
     {
-        // make a list of all portals for THIS room (in case we want to change portals per room)
-           // this means EVERY portal needs a unique ID
-
-        // Use that list to create a list of doors
-
-        // use whatever genetics on the doors to get features (color)
-
-        // use portal paint method to decorate the portal with the information from the door
-
-
-
-        // making a new room:
-
-
-
-
-
-
+        currentRoom = new RoomNode();
+        currentRoom.InitializeRoom(numPortals);
+        currentRoom.RedrawRoom();
     }
 
 
-    /// <summary>
-    /// changes colors of portals to a random color
-    /// </summary>
-    public void DoColorChange(Portal p)
+    public void ChangeRoom(int portalID)
     {
-            p.PaintDoor(new Color(Random.value, Random.value, Random.value));
-    }
 
+        // FIXME Teleport the player HERE 
+
+
+        RoomNode newRoom = currentRoom.GetRoomByPortalID(portalID);
+
+        if(newRoom != null && newRoom.IsPopulated())
+        {
+            currentRoom = newRoom;
+            
+        }
+        else
+        {
+            //currentRoom.InitializeRoom(numPortals);
+        }
+
+        currentRoom.RedrawRoom();
+    }
 
 
 

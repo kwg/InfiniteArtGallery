@@ -16,6 +16,8 @@ public class Portal : MonoBehaviour {
     int portalID;
     int destinationID;
 
+    float x, y, z;
+
     GameObject portalProp;
 
     private Color displayColor;
@@ -73,7 +75,7 @@ public class Portal : MonoBehaviour {
     /// <param name="player">Player that selected the portal</param>
     public void ActivatePortal(Player player)
     {
-        PopulationController pc = FindObjectOfType<PopulationController>();
+        ArtGallery pc = FindObjectOfType<ArtGallery>();
 
         //pc.DoTeleport(player, portalID);
        // pc.DoColorChange();

@@ -6,10 +6,16 @@ using UnityEngine;
 public class PortalController : MonoBehaviour {
     
     public GameObject portalObject;
-    SortedList<int, Portal> portals;
-    int PortalCount = 0;
-	// Use this for initialization
-	void Start () {
+    SortedList<int, Portal> portals; // Portal index is door index
+    int PortalCount = 0; // TODO not in use - decide what to do with it
+
+    
+    public static PortalController GetPortalController() {
+        return FindObjectOfType<PortalController>();
+    }
+
+    // Use this for initialization
+    void Start () {
         portals = new SortedList<int, Portal>();
 
 	}
@@ -18,6 +24,11 @@ public class PortalController : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    public void FlushPortals()
+    {
+        portals = new SortedList<int, Portal>();
+    }
 
     public Portal SpawnPortal(int portalID)
     {
@@ -30,7 +41,7 @@ public class PortalController : MonoBehaviour {
 
         // give each portal a destination ID
         p.SetDestinationID((2 + p.GetPortalID()) % 4);
-        Debug.Log("Portal created with ID " + p.GetPortalID() + " and DestinationId " + p.GetDestinationID());
+        if(ArtGallery.DEBUG) Debug.Log("Portal created with ID " + p.GetPortalID() + " and DestinationId " + p.GetDestinationID());
         portals.Add(portalID, p);
         return p;
     }
@@ -40,19 +51,15 @@ public class PortalController : MonoBehaviour {
         return portals;
     }
 
-    public static PortalController GetPortalController() {
-        return FindObjectOfType<PortalController>();
-    }
-
     public void DoTeleport(Player player, int portalID)
     {
-        Debug.Log("starting teleport form portal " + portalID + " = " + portals[portalID].GetPortalID());
-        Vector3 destination = new Vector3(20, 20, 20);
+        //if (ArtGallery.DEBUG) Debug.Log("starting teleport form portal " + portalID + " = " + portals[portalID].GetPortalID());
+        Vector3 destination = new Vector3(0, 20, 0);
         for(int i = 0; i < portals.Count; i++)
         {
             if(portals[i].GetPortalID() == portals[portalID].GetDestinationID())
             {
-            Debug.Log("Found portal with ID " + portals[i].GetPortalID());
+                if (ArtGallery.DEBUG) Debug.Log("Found portal with ID " + portals[i].GetPortalID());
                 destination = portals[i].gameObject.transform.position; // set destination to exit portal position
                 
             }
@@ -79,5 +86,32 @@ public class PortalController : MonoBehaviour {
         destination.y -= 1.6f; // Fix exit height for player (player is 1.8 tall, portal is 5, center of portal is 2.5, center of player is 0.9. 2.5 - 0.9 = 1.6)
 
         player.transform.position = destination;
+
+        /* FIXME Now tell the population controller that the player has moved 
+         * by sending the portal (equiv to door) index to the population controller
+         * 
+         */
+
+        FindObjectOfType<ArtGallery>().ChangeRoom(portalID);
+    }
+
+    public void DecoratePortal(int portalID, Color color)
+    {
+        GetPortalByID(portalID).PaintDoor(color);
+    }
+
+    private Portal GetPortalByID(int portalID)
+    {
+        Portal p = null;
+
+        foreach(KeyValuePair<int, Portal> kvpPortal in portals)
+        {
+            if(portalID == kvpPortal.Key)
+            {
+                p = kvpPortal.Value;
+            }
+        }
+
+        return p;
     }
 }

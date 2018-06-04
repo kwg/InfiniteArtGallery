@@ -8,11 +8,17 @@ using UnityEngine;
 public class ActivationFunctions  {
 
     /* Map of all activation functions by their enum FTYPE */
-    Dictionary<FTYPE, IActivationFunction> activationFunctions;
+    static Dictionary<FTYPE, IActivationFunction> activationFunctions = new Dictionary<FTYPE, IActivationFunction>
+    {
+        { FTYPE.SINE, new SineFunction() },
+        { FTYPE.TANH, new TanHFunction() },
+        { FTYPE.ID, new IDFunction() }
+    };
+
 
     public ActivationFunctions()
     {
-        activationFunctions.Add(FTYPE.SINE, new SineFunction());
+
     }
 
     /// <summary>
@@ -21,7 +27,7 @@ public class ActivationFunctions  {
     /// <param name="fType">Enum <see cref="FTYPE" /></param>
     /// <param name="sum">Input sent to node</param>
     /// <returns></returns>
-    public double Activation(FTYPE fType, double sum)
+    public static double Activation(FTYPE fType, double sum)
     {
         return activationFunctions[fType].Function(sum);
     }

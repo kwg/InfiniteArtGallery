@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 /// <summary>
-/// Sine function for x. Uses system.Math.Sin(double x).
+/// Returns itself
 /// </summary>
-public class SineFunction : IActivationFunction {
+public class IDFunction : IActivationFunction
+{
 
-    private string name = "sin";
+    private string name = "ID";
 
     public double Function(double x)
     {
-        return System.Math.Sin(x);
+        return x;
     }
 
     public string Name()
@@ -20,3 +20,4 @@ public class SineFunction : IActivationFunction {
         return name;
     }
 }
+

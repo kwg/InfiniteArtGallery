@@ -11,10 +11,8 @@ public class TWEANN : INetwork
     long ID;
     int numInputs;
     int numOutputs;
-    double[] preferenceFatigue;
-    int neuronsPerModule;
 
-    List<TWEANNNode> nodes;
+    TWEANNNode[] nodes;
 
     /// <summary>
     /// Create a new random TWEANN
@@ -23,42 +21,42 @@ public class TWEANN : INetwork
     /// <param name="numOutputs">Number of policy neurons per node</param>
     /// <param name="featureSelective">If true, nerons are only sparsely connected, fully connected otherwise</param>
     /// <param name="fType">Type of activation function on neurons</param>
-    /// <param name="numModes">Number of modes for a multitask network, should be 1 if not multitask</param>
     /// <param name="archetypeIndex">Archtype to align with for crossover</param>
-    public TWEANN(int numInputs, int numOutputs, bool featureSelective, FTYPE fType, int numModes, int archetypeIndex)
+    public TWEANN(int numInputs, int numOutputs, bool featureSelective, FTYPE fType, int archetypeIndex)
     {
         this.numInputs = numInputs;
         this.numOutputs = numOutputs;
-        preferenceFatigue = new double[numOutputs];
 
-        nodes = new List<TWEANNNode>(numInputs + numOutputs);
+        nodes = new TWEANNNode[numInputs + numOutputs];
 
         long innovation = -1;
 
         for(int i = 0; i < numInputs; i++)
         {
             TWEANNNode n = new TWEANNNode(fType, NTYPE.INPUT, innovation--);
-            nodes.Add(n);
+            nodes[i] = n;
         }
 
         long linkInnovationBound = innovation - 1;
 
         for(int j = 0; j < numOutputs; j++)
         {
+            nodes[numInputs + j] = new TWEANNNode(fType, NTYPE.OUTPUT, innovation--);
+
             int[] inputSources = new int[numInputs]; // HACK making this be fully connected for now
             for(int i = 0; i < numInputs; i++)
             {
                 inputSources[i] = i;
             }
-            for(int i = 0; i < inputSources.Length; i++)
+            for(int k = 0; k < inputSources.Length; k++)
             {
-                TWEANNNode output = nodes[numInputs + j];
-                nodes[inputSources[i]].Connect(output, Random.Range(-1, 1), linkInnovationBound - (j * numInputs) - inputSources[i], false, false);
+                // FIXME !weight is set to 0.5 for testing!
+                nodes[inputSources[k]].Connect(nodes[numInputs + j], 0.5, linkInnovationBound - (j * numInputs) - inputSources[k], false, false);
             }
 
         }
 
-        int outputStart = nodes.Count - numOutputs;
+        int outputStart = nodes.Length - numOutputs;
 
 
 
@@ -78,7 +76,6 @@ public class TWEANN : INetwork
 
     public double[] Process(double[] inputs)
     {
-        double[] result = new double[0];
 
         // Load inputs
         // TODO Sanity checks
@@ -88,37 +85,22 @@ public class TWEANN : INetwork
         }
 
         // Activate nodes in forward order
-        for(int j = 0; j <nodes.Count; j++)
+        for(int j = 0; j < nodes.Length; j++)
         {
             nodes[j].ActivateAndTransmit();
         }
 
-        // TODO option for importing CPPNs from original Picbreeder
 
-        // Outputs
-        // Not using modes
-        double[] preferences = new double[] { 1.0 };  // HACK hard coded in value for single mode
-
-        // Subtract fatigue
-        for(int i = 0; i < preferenceFatigue.Length; i++)
+        double[] result = new double[numOutputs];
+        // TODO loop through outputs and copy to result;
+        for(int i = numInputs; i < nodes.Length; i++)
         {
-            preferences[i] -= preferenceFatigue[i];
+            //result[i - numInputs] = nodes[i].GetSum();
+            result[0] = nodes[nodes.Length - 1].Output();
         }
 
-        neuronsPerModule = 1;
-
-        double[] outputs = new double[neuronsPerModule];
-
-        outputs = ModuleOutput(0);
-
-
+        // TODO option for importing CPPNs from original Picbreeder
         return result;
-    }
-
-    public double[] ModuleOutput(int mode)
-    {
-
-        throw new System.NotImplementedException();
     }
 
     public void Flush()
@@ -126,4 +108,28 @@ public class TWEANN : INetwork
         throw new System.NotImplementedException();
     }
 
+    public double GetWeightBetween(long sourceInnovation, long targetInnovation)
+    {
+        return GetNodeByInnovationID(sourceInnovation).GetLinkToTargetNode(GetNodeByInnovationID(targetInnovation)).GetWeight();
+    }
+
+
+    private TWEANNNode GetNodeByInnovationID(long innovationID)
+    {
+        TWEANNNode result = null;
+
+        foreach(TWEANNNode node in nodes)
+        {
+            if(node.GetInnovationID() == innovationID)
+            {
+                result = node;
+            }
+            else
+            {
+                throw new System.ArgumentException("No node found with innovationID " + innovationID);
+            }
+        }
+
+        return result;
+    }
 }

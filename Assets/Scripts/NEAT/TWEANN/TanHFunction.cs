@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 /// <summary>
-/// Sine function for x. Uses system.Math.Sin(double x).
+/// TanH function for x. Uses system.Math.TanH(double x).
 /// </summary>
-public class SineFunction : IActivationFunction {
+public class TanHFunction : IActivationFunction
+{
 
-    private string name = "sin";
+    private string name = "tanh";
 
     public double Function(double x)
     {
-        return System.Math.Sin(x);
+        return System.Math.Tanh(x);
     }
 
     public string Name()

@@ -31,7 +31,7 @@ public class TWEANNNode {
     /// </summary>
     /// <param name="fType">Activation function</param>
     /// <param name="nType">Node type</param>
-    /// <param name="innovationID">Uniqu innovation number for node</param>
+    /// <param name="innovationID">Unique innovation number for node</param>
     /// <param name="bias">Bias offset added to neuron sum before activation. Primarily needed by substrate networks from CPPNs</param>
     public TWEANNNode(FTYPE fType, NTYPE nType, long innovationID, double bias) : this(fType, nType, innovationID, false, bias) { }
 
@@ -148,9 +148,7 @@ public class TWEANNNode {
     /// </summary>
     private void Activate()
     {
-        // TODO How do we want to handle the FTYPE -> finding the activation function? 
-        //TODO add whatever method to find the activation function and use it
-
+        activation = ActivationFunctions.Activation(fType, sum);
     }
 
     public void ActivateAndTransmit()
@@ -178,6 +176,7 @@ public class TWEANNNode {
     public void Connect(TWEANNNode target, double weight, long innovationID, bool recurrent, bool frozen)
     {
         TWEANNLink link = new TWEANNLink(target, weight, innovationID, recurrent, frozen);
+        //Debug.Log("Adding link from " + GetInnovationID() + " to " + target.GetInnovationID());
         outputs.Add(link);
     }
 
@@ -197,6 +196,23 @@ public class TWEANNNode {
             }
         }
 
+        return result;
+    }
+
+    public TWEANNLink GetLinkToTargetNode(TWEANNNode targetNode)
+    {
+        TWEANNLink result = null;
+        foreach(TWEANNLink link in outputs)
+        {
+            if(link.GetTarget() == targetNode)
+            {
+                result = link;
+            }
+            else
+            {
+                throw new System.ArgumentException("No link to node found!");
+            }
+        }
         return result;
     }
 }

@@ -23,7 +23,9 @@ public class TWEANNLink  {
     /// <param name="frozen">Whenter the link is frozen</param>
     public TWEANNLink(TWEANNNode target, double weight, long innovationID, bool recurrent, bool frozen)
     {
-        this.target = target;
+        if (target != null) this.target = target;
+        else throw new System.ArgumentException("Target can not be null");
+
         this.weight = weight;
         this.innovationID = innovationID;
         this.recurrent = recurrent;
@@ -37,7 +39,8 @@ public class TWEANNLink  {
     public void Transmit(double signal)
     {
         //TODO Sanity checks
-        target.SetSum(target.GetSum() + (signal * weight)); 
+        target.SetSum(target.GetSum() + (signal * weight));
+        Debug.Log("After Transmit: signal=" + signal + ", weight=" + weight + " , target().sum=" + target.GetSum());
 
     }
 
@@ -57,6 +60,11 @@ public class TWEANNLink  {
     public bool IsRecurrent()
     {
         return recurrent;
+    }
+
+    public double GetWeight()
+    {
+        return weight;
     }
 
 }

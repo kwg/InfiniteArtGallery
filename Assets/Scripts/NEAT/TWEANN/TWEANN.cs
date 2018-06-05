@@ -74,6 +74,11 @@ public class TWEANN : INetwork
         return numOutputs;
     }
 
+    public TWEANNNode[] GetNodes()
+    {
+        return nodes;
+    }
+
     public double[] Process(double[] inputs)
     {
 

@@ -78,6 +78,22 @@ public class TWEANNNode {
         return result;
     }
 
+    public NTYPE GetNType()
+    {
+        return nType;
+    }
+
+    public FTYPE GetFType()
+    {
+        return fType;
+    }
+
+    public List<TWEANNLink> GetOutputs()
+    {
+        return outputs;
+    }
+
+
     /// <summary>
     /// Set the value of sum
     /// </summary>

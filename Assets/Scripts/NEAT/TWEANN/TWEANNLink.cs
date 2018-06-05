@@ -67,4 +67,9 @@ public class TWEANNLink  {
         return weight;
     }
 
+    public long GetInnovationID()
+    {
+        return innovationID;
+    }
+
 }

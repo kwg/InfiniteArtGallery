@@ -2,15 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Gene : MonoBehaviour {
+public abstract class Gene {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public long innovation;
+
+    public Gene(long innovation)
+    {
+        this.innovation = innovation;
+    }
+
+    public Gene CopyGene()
+    {
+        return (Gene) MemberwiseClone();
+    }
+
+
+
+
 }

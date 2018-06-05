@@ -7,6 +7,6 @@ public class SimpleDoorPainter<T> : IDoorPainter
 
     public void PaintDoor<T>(T doorPaint, Portal targetDoor)
     {
-        targetDoor.PaintDoor<T>(doorPaint);
+//        targetDoor.PaintDoor<T>(doorPaint);
     }
 }

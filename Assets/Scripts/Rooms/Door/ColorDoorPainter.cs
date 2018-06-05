@@ -6,6 +6,6 @@ public class ColorDoorPainter<Color> : IDoorPainter
 {
     public void PaintDoor<Color>(Color doorPaint, Portal targetDoor)
     {
-        targetDoor.PaintDoor(doorPaint);
+        //targetDoor.PaintDoor(doorPaint);
     }
 }

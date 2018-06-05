@@ -31,7 +31,7 @@ public class RoomConfiguration  {
 
         foreach (Portal portal in portals)
         {
-            portalConfigs[portal.portalID] =  portal.GetCurrentGenerationID();
+            //portalConfigs[portal.portalID] =  portal.GetCurrentGenerationID();
         }
 
         ConsolPortalConfigsOutput("Init complete: portals: ");
@@ -42,7 +42,7 @@ public class RoomConfiguration  {
         ConsoleDebug("ReloadRoomLayout()");
         foreach (Portal portal in portals)
         {
-            portal.SetGenotype(portalConfigs[portal.portalID]);
+            //portal.SetGenotype(portalConfigs[portal.portalID]);
         }
     }
 
@@ -76,10 +76,10 @@ public class RoomConfiguration  {
             for (int p = 0; p < portals.Length; p++)
             {
                 if (p < portals.Length - 1)
-                    r += portals[p].portalID + ", ";
+                    r += portals[p].GetPortalID() + ", ";
                 else
                 {
-                    r += portals[p].portalID;
+                    r += portals[p].GetPortalID();
                 }
             }
         }

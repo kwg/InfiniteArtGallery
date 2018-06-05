@@ -13,8 +13,9 @@ public class Player : MonoBehaviour {
         /* TAG: portal */
         if(collider.gameObject.tag == "portal")
         {
-            /* Tell selected portal to handle collision with this player */
-            collider.gameObject.GetComponent<Portal>().ActivatePortal(this);
+            Debug.Log("player activating portal " + collider.gameObject.GetComponent<Portal>().GetPortalID());
+            /* Tell population controller to handle collision between specified portal and this player */
+            FindObjectOfType<PortalController>().DoTeleport(this, collider.gameObject.GetComponent<Portal>().GetPortalID());
         }
     }
 }

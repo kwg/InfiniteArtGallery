@@ -11,8 +11,9 @@ public class TWEANN : INetwork
     long ID;
     int numInputs;
     int numOutputs;
+    int archetypeIndex;
 
-    TWEANNNode[] nodes;
+    List<TWEANNNode> nodes;
 
     /// <summary>
     /// Create a new random TWEANN
@@ -26,22 +27,23 @@ public class TWEANN : INetwork
     {
         this.numInputs = numInputs;
         this.numOutputs = numOutputs;
+        this.archetypeIndex = archetypeIndex;
 
-        nodes = new TWEANNNode[numInputs + numOutputs];
+        nodes = new List<TWEANNNode>(numInputs + numOutputs);
 
         long innovation = -1;
 
         for(int i = 0; i < numInputs; i++)
         {
             TWEANNNode n = new TWEANNNode(fType, NTYPE.INPUT, innovation--);
-            nodes[i] = n;
+            nodes.Add(n);
         }
 
         long linkInnovationBound = innovation - 1;
 
         for(int j = 0; j < numOutputs; j++)
         {
-            nodes[numInputs + j] = new TWEANNNode(fType, NTYPE.OUTPUT, innovation--);
+            nodes.Add(new TWEANNNode(fType, NTYPE.OUTPUT, innovation--));
 
             int[] inputSources = new int[numInputs]; // HACK making this be fully connected for now
             for(int i = 0; i < numInputs; i++)
@@ -55,10 +57,13 @@ public class TWEANN : INetwork
             }
 
         }
+        int outputStart = nodes.Count - numOutputs;
+    }
 
-        int outputStart = nodes.Length - numOutputs;
-
-
+    public TWEANN(TWEANNGenotype g)
+    {
+        archetypeIndex = g.GetArchetypeIndex();
+        nodes = new List<TWEANNNode>(g.GetNodes().Count);
 
 
     }
@@ -74,7 +79,7 @@ public class TWEANN : INetwork
         return numOutputs;
     }
 
-    public TWEANNNode[] GetNodes()
+    public List<TWEANNNode> GetNodes()
     {
         return nodes;
     }
@@ -90,7 +95,7 @@ public class TWEANN : INetwork
         }
 
         // Activate nodes in forward order
-        for(int j = 0; j < nodes.Length; j++)
+        for(int j = 0; j < nodes.Count; j++)
         {
             nodes[j].ActivateAndTransmit();
         }
@@ -98,10 +103,10 @@ public class TWEANN : INetwork
 
         double[] result = new double[numOutputs];
         // TODO loop through outputs and copy to result;
-        for(int i = numInputs; i < nodes.Length; i++)
+        for(int i = numInputs; i < nodes.Count; i++)
         {
             //result[i - numInputs] = nodes[i].GetSum();
-            result[0] = nodes[nodes.Length - 1].Output();
+            result[0] = nodes[nodes.Count - 1].Output();
         }
 
         // TODO option for importing CPPNs from original Picbreeder
@@ -123,11 +128,11 @@ public class TWEANN : INetwork
     {
         TWEANNNode result = null;
 
-        foreach(TWEANNNode node in nodes)
+        for(int i = 0; i < nodes.Count; i++)
         {
-            if(node.GetInnovationID() == innovationID)
+            if(nodes[i].GetInnovationID() == innovationID)
             {
-                result = node;
+                result = nodes[i];
             }
             else
             {

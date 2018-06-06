@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class TWEANNGenotype : INetworkGenotype<TWEANN>
 {
-
     protected List<NodeGene> nodes;
     protected List<LinkGene> links;
 
@@ -39,7 +38,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         numInputs = tweann.NumInputs();
         numOutputs = tweann.NumOutputs();
 
-        nodes = new List<NodeGene>(tweann.GetNodes().Length);
+        nodes = new List<NodeGene>(tweann.GetNodes().Count);
 
         for(int i = 0; i < nodes.Count; i++)
         {
@@ -109,8 +108,15 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         return result;
     }
 
+    public int GetArchetypeIndex()
+    {
+        return archetypeIndex;
+    }
 
-
+    public List<NodeGene> GetNodes()
+    {
+        return nodes;
+    }
 
     // Mutate
     // TODO - mutate
@@ -172,13 +178,30 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         int index = EvolutionaryHistory.IndexOfArchetypeInnovation(archetypeIndex, sourceInnovation);
         int pos = System.Math.Min(EvolutionaryHistory.FirstArchetypeOutputIndex(archetypeIndex), System.Math.Max(numInputs, index + 1));
         EvolutionaryHistory.AddArchetype(archetypeIndex, pos, ng.Clone(), "origin");
-
-
-
+        LinkGene toNew = new LinkGene(sourceInnovation, newNodeInnovation, weight1, toLinkInnovation);
+        LinkGene fromNew = new LinkGene(newNodeInnovation, targetInnovation, weight2, fromLinkInnovation);
+        links.Add(toNew);
+        links.Add(fromNew);
     }
 
     // ?  getNodeWithInnovationID()
-    //    
+    public NodeGene GetNodeWithInnovationID(long innovation)
+    {
+        NodeGene result = null;
+        foreach(NodeGene ng in nodes)
+        {
+            if(ng.GetInnovation() == innovation)
+            {
+                result = ng;
+            }
+            else
+            {
+                throw new System.ArgumentException("Node innovation not found: " + innovation);
+            }
+        }
+
+        return result;
+    }   
 
 
     // Crossovers
@@ -187,6 +210,12 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
 
     // Additional:
     //    getPhenotype()
+
+    public TWEANN GetPhenotype()
+    {
+        TWEANN result = new TWEANN(this);
+        return result;
+    }
     //    copy()
     //    newInstance()
 

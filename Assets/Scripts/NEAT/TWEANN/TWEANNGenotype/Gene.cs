@@ -16,7 +16,10 @@ public abstract class Gene {
         return (Gene) MemberwiseClone();
     }
 
-
+    public long GetInnovation()
+    {
+        return innovation;
+    }
 
 
 }

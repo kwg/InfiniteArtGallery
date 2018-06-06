@@ -29,6 +29,26 @@ public class LinkGene : Gene {
         return false;
     }
 
+    public double GetWeight()
+    {
+        return weight;
+    }
+
+    public void SetWeight(double weight)
+    {
+        this.weight = weight;
+    }
+
+    public long GetSourceInnovation()
+    {
+        return sourceInnovation;
+    }
+
+    public long GetTargetInnovation()
+    {
+        return targetInnovation;
+    }
+
     public LinkGene Clone()
     {
         return new LinkGene(sourceInnovation, targetInnovation, weight, innovation);

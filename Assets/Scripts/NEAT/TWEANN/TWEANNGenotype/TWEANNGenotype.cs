@@ -33,22 +33,29 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
 
     }
 
+    public TWEANNGenotype(int numInputs, int numOutputs, int archetypeIndex): 
+        this(new TWEANN (numInputs, numOutputs, false, FTYPE.ID,archetypeIndex))
+    {
+    }
+
     public TWEANNGenotype(TWEANN tweann)
     {
         numInputs = tweann.NumInputs();
         numOutputs = tweann.NumOutputs();
-
+        links = new List<LinkGene>();
         nodes = new List<NodeGene>(tweann.GetNodes().Count);
 
-        for(int i = 0; i < nodes.Count; i++)
+        List<TWEANNNode> tweannNodeList = tweann.GetNodes();
+
+        for (int i = 0; i < tweann.GetNodes().Count; i++)
         {
-            TWEANNNode n = tweann.GetNodes()[i];
-            NodeGene ng = new NodeGene(n.GetNType(), n.GetFType(), n.GetInnovationID());
+
+            NodeGene ng = new NodeGene(tweannNodeList[i].GetNType(), tweannNodeList[i].GetFType(), tweannNodeList[i].GetInnovationID());
             nodes.Add(ng);
             List<LinkGene> tempLinks = new List<LinkGene>();
-            foreach(TWEANNLink l in n.GetOutputs())
+            foreach(TWEANNLink l in tweannNodeList[i].GetOutputs())
             {
-                LinkGene lg = new LinkGene(n.GetInnovationID(), l.GetTarget().GetInnovationID(), l.GetWeight(), l.GetInnovationID());
+                LinkGene lg = new LinkGene(tweannNodeList[i].GetInnovationID(), l.GetTarget().GetInnovationID(), l.GetWeight(), l.GetInnovationID());
                 tempLinks.Add(lg);
             }
             for(int j = 0; j < tempLinks.Count; j++)
@@ -56,6 +63,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
                 links.Add(tempLinks[j]);
             }
         }
+        
     }
 
 
@@ -92,7 +100,6 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
     public int IndexOfGeneInnovation<T>(long innovation, List<T> genes) where T : Gene
     {
         int result = -1;
-
         for (int i = 0; i < genes.Count; i++)
         {
             if(genes[i].GetInnovation() == innovation)
@@ -101,10 +108,19 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
             }
             else
             {
-                throw new System.ArgumentException("Innovation " + innovation + " not found in net (TODO: identity of net)"); // TODO add ident to error msg
+               // throw new System.ArgumentException("Innovation " + innovation + " not found in net (TODO: identity of net)"); // TODO add ident to error msg
             }
         }
 
+        return result;
+    }
+
+    public string toString<T>(List<T> genes) where T : Gene
+    {
+        string result = "";
+        foreach(T gene in genes) {
+            result += "node innovation: " + gene.GetInnovation() + " ";
+        }
         return result;
     }
 
@@ -118,6 +134,10 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         return nodes;
     }
 
+    public List<LinkGene> GetLinks()
+    {
+        return links;
+    }
     // Mutate
     // TODO - mutate
 
@@ -142,6 +162,10 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
     public LinkGene GetLinkBetween(long sourceInnovation, long targetInnovation)
     {
         LinkGene result = null;
+        if (links == null)
+        {
+            throw new System.Exception("links is null");
+        }
         foreach(LinkGene lg in links)
         {
             if(lg.GetSourceInnovation() == sourceInnovation && lg.GetTargetInnovation() == targetInnovation)
@@ -172,12 +196,12 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
     {
         NodeGene ng = new NodeGene(NTYPE.HIDDEN, fType, newNodeInnovation);
         LinkGene lg = GetLinkBetween(sourceInnovation, targetInnovation);
-        lg.SetActive(false); // TODO active bool is not in use
+        //lg.SetActive(false); // TODO active bool is not in use
         // HACK if this fails then it will be because the index is either < 0 or > count - add fixes or write a container w/ helper methods
         nodes.Insert(System.Math.Min(OutputStartIndex(), System.Math.Max(numInputs, IndexOfNodeInnovation(sourceInnovation) + 1)), ng);
-        int index = EvolutionaryHistory.IndexOfArchetypeInnovation(archetypeIndex, sourceInnovation);
-        int pos = System.Math.Min(EvolutionaryHistory.FirstArchetypeOutputIndex(archetypeIndex), System.Math.Max(numInputs, index + 1));
-        EvolutionaryHistory.AddArchetype(archetypeIndex, pos, ng.Clone(), "origin");
+        //int index = EvolutionaryHistory.IndexOfArchetypeInnovation(archetypeIndex, sourceInnovation);
+        //int pos = System.Math.Min(EvolutionaryHistory.FirstArchetypeOutputIndex(archetypeIndex), System.Math.Max(numInputs, index + 1));
+        //EvolutionaryHistory.AddArchetype(archetypeIndex, pos, ng.Clone(), "origin");
         LinkGene toNew = new LinkGene(sourceInnovation, newNodeInnovation, weight1, toLinkInnovation);
         LinkGene fromNew = new LinkGene(newNodeInnovation, targetInnovation, weight2, fromLinkInnovation);
         links.Add(toNew);
@@ -185,7 +209,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
     }
 
     // ?  getNodeWithInnovationID()
-    public NodeGene GetNodeWithInnovationID(long innovation)
+    public NodeGene GetNodeByInnovationID(long innovation)
     {
         NodeGene result = null;
         foreach(NodeGene ng in nodes)

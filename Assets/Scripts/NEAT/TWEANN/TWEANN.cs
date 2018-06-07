@@ -38,7 +38,6 @@ public class TWEANN : INetwork
             TWEANNNode n = new TWEANNNode(fType, NTYPE.INPUT, innovation--);
             nodes.Add(n);
         }
-
         long linkInnovationBound = innovation - 1;
 
         for(int j = 0; j < numOutputs; j++)
@@ -64,8 +63,29 @@ public class TWEANN : INetwork
     {
         archetypeIndex = g.GetArchetypeIndex();
         nodes = new List<TWEANNNode>(g.GetNodes().Count);
+        int countIn = 0, countOut = 0;
+        foreach(NodeGene node in g.GetNodes()) {
+            TWEANNNode tempNode = new TWEANNNode(node.fType, node.nType, node.GetInnovation());
+            nodes.Add(tempNode);
+            if (node.nType == NTYPE.INPUT)
+            {
+                countIn++;
+            }
+            else if (node.nType == NTYPE.OUTPUT)
+            {
+                countOut++;
+            }
 
-
+        }
+        this.numInputs = countIn;
+        this.numOutputs = countOut;
+        foreach(LinkGene link in g.GetLinks())
+        {
+            TWEANNNode source = GetNodeByInnovationID(link.GetSourceInnovation());
+            TWEANNNode target = GetNodeByInnovationID(link.GetTargetInnovation());
+            //TODO add asserts
+            source.Connect(target, link.GetWeight(), link.GetInnovation(), false, false);
+        }
     }
 
 
@@ -103,7 +123,7 @@ public class TWEANN : INetwork
 
         double[] result = new double[numOutputs];
         // TODO loop through outputs and copy to result;
-        for(int i = numInputs; i < nodes.Count; i++)
+        for (int i = numInputs; i < nodes.Count; i++)
         {
             //result[i - numInputs] = nodes[i].GetSum();
             result[0] = nodes[nodes.Count - 1].Output();
@@ -127,7 +147,6 @@ public class TWEANN : INetwork
     private TWEANNNode GetNodeByInnovationID(long innovationID)
     {
         TWEANNNode result = null;
-
         for(int i = 0; i < nodes.Count; i++)
         {
             if(nodes[i].GetInnovationID() == innovationID)
@@ -136,7 +155,7 @@ public class TWEANN : INetwork
             }
             else
             {
-                throw new System.ArgumentException("No node found with innovationID " + innovationID);
+                //throw new System.ArgumentException("No node found with innovationID " + innovationID);
             }
         }
 

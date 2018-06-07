@@ -6,22 +6,24 @@ public class LinkGene : Gene {
 
     protected long sourceInnovation, targetInnovation;
     protected double weight;
+    protected bool active;
 
     public LinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation) : base(innovation)
     {
         this.sourceInnovation = sourceInnovation;
         this.targetInnovation = targetInnovation;
         this.weight = weight;
+        active = true;
     }
 
     public bool IsActive() // Always active
     {
-        return true;
+        return active;
     }
 
     public void SetActive(bool active)
     {
-        // Do not change always active
+        this.active = active;
     }
     
     public bool IsReccurent()
@@ -55,4 +57,9 @@ public class LinkGene : Gene {
     }
 
     // TODO ToString()
+
+    public string ToString()
+    {
+        return "Link with ID: " + innovation + " connects node " + sourceInnovation + " to node " + targetInnovation + " and has weight of " + weight;
+    }
 }

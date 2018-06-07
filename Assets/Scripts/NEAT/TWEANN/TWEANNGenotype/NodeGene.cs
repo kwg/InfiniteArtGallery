@@ -6,6 +6,7 @@ public class NodeGene : Gene {
 
     public FTYPE fType;
     public NTYPE nType;
+    public double bias;
 
     public NodeGene(NTYPE nType, FTYPE fType, long innovation) : base(innovation)
     {
@@ -15,7 +16,12 @@ public class NodeGene : Gene {
 
     public double GetBias()
     {
-        return 0.0;
+        return bias;
+    }
+
+    public void SetBias(double bias)
+    {
+        this.bias = bias;
     }
 
     public bool IsEqualTo(System.Object o)
@@ -30,4 +36,9 @@ public class NodeGene : Gene {
     }
 
     // TODO ToString()
+
+    public string ToString()
+    {
+        return "Node: " + innovation + ", NTYPE: " + nType + ", FTYPE: " + fType + ", bias: " + bias;
+    }
 }

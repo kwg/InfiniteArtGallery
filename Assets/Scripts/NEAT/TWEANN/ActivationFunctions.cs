@@ -12,7 +12,8 @@ public class ActivationFunctions  {
     {
         { FTYPE.SINE, new SineFunction() },
         { FTYPE.TANH, new TanHFunction() },
-        { FTYPE.ID, new IDFunction() }
+        { FTYPE.ID, new IDFunction() },
+        { FTYPE.SIGMOID, new SigmoidFunction() }
     };
 
 

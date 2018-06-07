@@ -197,6 +197,9 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         NodeGene ng = new NodeGene(NTYPE.HIDDEN, fType, newNodeInnovation);
         LinkGene lg = GetLinkBetween(sourceInnovation, targetInnovation);
         //lg.SetActive(false); // TODO active bool is not in use
+
+        //links.Remove(lg);
+
         // HACK if this fails then it will be because the index is either < 0 or > count - add fixes or write a container w/ helper methods
         nodes.Insert(System.Math.Min(OutputStartIndex(), System.Math.Max(numInputs, IndexOfNodeInnovation(sourceInnovation) + 1)), ng);
         //int index = EvolutionaryHistory.IndexOfArchetypeInnovation(archetypeIndex, sourceInnovation);
@@ -220,7 +223,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
             }
             else
             {
-                throw new System.ArgumentException("Node innovation not found: " + innovation);
+                //throw new System.ArgumentException("Node innovation not found: " + innovation);
             }
         }
 

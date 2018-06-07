@@ -176,6 +176,7 @@ public class TWEANNNode {
 
         foreach(TWEANNLink link in outputs)
         {
+            
             link.Transmit(activation);
         }
 

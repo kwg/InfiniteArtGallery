@@ -198,7 +198,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         LinkGene lg = GetLinkBetween(sourceInnovation, targetInnovation);
         //lg.SetActive(false); // TODO active bool is not in use
 
-        //links.Remove(lg);
+        links.Remove(lg);
 
         // HACK if this fails then it will be because the index is either < 0 or > count - add fixes or write a container w/ helper methods
         nodes.Insert(System.Math.Min(OutputStartIndex(), System.Math.Max(numInputs, IndexOfNodeInnovation(sourceInnovation) + 1)), ng);
@@ -209,6 +209,14 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         LinkGene fromNew = new LinkGene(newNodeInnovation, targetInnovation, weight2, fromLinkInnovation);
         links.Add(toNew);
         links.Add(fromNew);
+    }
+
+    /// <summary>
+    /// For debugging only
+    /// </summary>
+    public void RemoveLinkBetween(int sourceInnovation, int targetInnovation)
+    {
+        links.Remove(GetLinkBetween(sourceInnovation, targetInnovation));
     }
 
     // ?  getNodeWithInnovationID()

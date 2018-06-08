@@ -39,8 +39,10 @@ public class TWEANNLink  {
     public void Transmit(double signal)
     {
         //TODO Sanity checks
+        Debug.Log("transmit to " + target.GetInnovationID() + " : " + target.GetSum() + " += receiving " + signal + "*"+ weight);
         target.SetSum(target.GetSum() + (signal * weight));
-        Debug.Log("After Transmit along link with ID: " + innovationID + " ->  signal=" + signal + ", weight=" + weight + " , target(" + target.GetInnovationID() + ").sum=" + target.GetSum());
+        Debug.Log("new " + target.GetInnovationID() + " sum: " + target.GetSum());
+        //Debug.Log("After Transmit along link with ID: " + innovationID + " ->  signal=" + signal + ", weight=" + weight + " , target(" + target.GetInnovationID() + ").sum=" + target.GetSum());
 
     }
 

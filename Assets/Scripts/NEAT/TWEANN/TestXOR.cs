@@ -22,12 +22,11 @@ public class TestXOR : MonoBehaviour{
             Debug.Log("Ending test: dotproduct = " + sum);
         }
 
-        xorTest.SpliceNode(FTYPE.TANH, 202, -1, -3, 0, 1.6108399303873728, 100, 101);
-        xorTest.SpliceNode(FTYPE.TANH, 991, -2, -3, 0.896084404385038, 0, 102, 103);
-        xorTest.AddLink(-1, 991, -0.7074283523090363, 104);
-        xorTest.AddLink(-2, 202, 0.8321696661686222, 105);
-        xorTest.AddLink(-3, 991, -0.9123817190422137, 106);
-        //xorTest.AddLink(991, 202, 1.6257777356280263, 107);
+        xorTest.SpliceNode(FTYPE.TANH, 2158, -1, -3, -0.3964445706032944, -0.4269614531487551, 100, 101);
+        xorTest.AddLink(-1, -3, -0.5081867337293002, 106);
+        xorTest.SpliceNode(FTYPE.TANH, 150, -2, -3, -3.275181751309399, -0.9183280870360113, 102, 103);
+        xorTest.AddLink(-1, 150, -2.202539496376981, 104);
+        xorTest.AddLink(-2, 2158, 0.9295958853236486, 105);
 
         // Set activation function of output node
         xorTest.GetNodeByInnovationID(-1).fType = FTYPE.TANH;
@@ -36,8 +35,7 @@ public class TestXOR : MonoBehaviour{
         // Set bias manually
 
         // Set weights manually
-        xorTest.GetLinkBetween(-2, -3).SetWeight(0.0);
-        xorTest.GetLinkBetween(-1, -3).SetWeight(1.1881892501298341);
+
 
 
         /* List all nodes to output to verify network */
@@ -60,12 +58,13 @@ public class TestXOR : MonoBehaviour{
 
         for(int test = 0; test < inputs.Count; test++)
         {
+            Debug.Log("");
             string debugString = "Starting test using inputs ";
             foreach (double d in inputs[test])
             {
                 debugString += d + ", ";
             }
-            Debug.Log("." + debugString);
+            Debug.Log(debugString);
 
             double[] results = XORNetwork.Process(inputs[test]);
             foreach (double sum in results)

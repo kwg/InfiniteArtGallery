@@ -165,12 +165,13 @@ public class TWEANNNode {
     private void Activate()
     {
         activation = ActivationFunctions.Activation(fType, sum);
+        Debug.Log("Activation of " + GetInnovationID() + " is " + activation);
     }
 
     public void ActivateAndTransmit()
     {
         Activate();
-
+        Debug.Log("Sum before reset of " + GetInnovationID() + " is " + sum);
         // Reset sum to original bias after activation
         sum = bias;
 

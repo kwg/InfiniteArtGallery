@@ -9,94 +9,120 @@ public class ImageFromCPPNTest : MonoBehaviour {
 
 
     TWEANNGenotype cppnTest;
+    TWEANN cppn;
     double[] inputs, outputs;//double x, y, distFromCenter, bias;
     int width, height;
-    float quadWidth, quadHeight;
     Texture2D img;
+    Renderer renderer;
     int newNodeID = 1000;
+    bool running = true;
 
 	void Start ()
     {
+        width = height = 64;
         SpriteRenderer sp = gameObject.GetComponent<SpriteRenderer>() as SpriteRenderer;
-        quadWidth = gameObject.transform.localScale.x;
-        quadHeight = gameObject.transform.localScale.z;
+        renderer = GetComponent<Renderer>();
+        img = new Texture2D(width, height, TextureFormat.ARGB32, true);
 
-
-        cppnTest = new TWEANNGenotype(NUM_INPUTS, NUM_OUTPUTS, 0);
-
-        foreach (NodeGene node in cppnTest.GetNodes())
-        {
-            node.fType = RandomFTYPE();
-        }
-
-        //for (int i = 0; i < 5; i++)
-        //{
-        //    cppnTest.SpliceNode(RandomFTYPE(), newNodeID++, cppnTest.GetNodes()[RandomInput()].GetInnovation(),
-        //        cppnTest.GetNodes()[RandomOut()].GetInnovation(), Random.value * Random.Range(-1, 1), Random.value * Random.Range(-1, 1), newNodeID++, newNodeID++);
-        //}
-
-        TWEANN cppn = new TWEANN(cppnTest);
-        width = height = 50;
-        img = new Texture2D(width, height);
-
-        for(int y = 0; y < height; y++)
-        {
-            for(int x = 0; x < width; x++)
-            {
-                double[] rgb = cppn.Process(new double[] { x, y, GetDistFromCenter(x, y), 1 });
-                //Debug.Log("SPAM! x:" + x + ", y:" + y + ", distFromCenter:" + GetDistFromCenter(x, y) + "");
-                //Debug.Log("ColorRGB - r:" +  rgb[0] + " g:" + rgb[1] + " b:" + rgb[2]);
-                Color color = new Color((float)rgb[0], (float)rgb[1], (float)rgb[2], .5f);
-                img.SetPixel(x, y, color);
-                img.Apply();
-            }
-        }
-
-        
-
-        Renderer renderer = GetComponent<Renderer>();
+        GenerateCPPN();
+        DoImage();
         renderer.material.mainTexture = img;
-        //renderer.material.mainTexture = CreateRandomTexture(width, height);
+
     }
 	
 	// Update is called once per frame
 	void Update () {
-		
-	}
+        if (Input.GetButtonDown("Fire1"))
+        {
+            DoImage();
+            renderer.material.mainTexture = img;
+        }
+    }
 
-    double GetDistFromCenter(int x, int y)
+    void DoImage()
+    {
+        img = CreateRandomCPPNImage(width, height);
+        //img = CreateRandomTexture(width, height);
+
+    }
+
+    void GenerateCPPN()
+    {
+        cppnTest = new TWEANNGenotype(NUM_INPUTS, NUM_OUTPUTS, 0);
+        foreach (NodeGene node in cppnTest.GetNodes())
+        {
+            node.fType = RandomFTYPE();
+        }
+        for (int i = 0; i < 5; i++)
+        {
+            int newNodeInnovation = newNodeID++;
+            int toLinkInnovation = newNodeID++;
+            int fromLinkInnovation = newNodeID++;
+
+            cppnTest.SpliceNode(RandomFTYPE(), newNodeInnovation++, cppnTest.GetNodes()[RandomInput()].GetInnovation(),
+                cppnTest.GetNodes()[RandomOut()].GetInnovation(), Random.value * Random.Range(-1, 1), Random.value * Random.Range(-1, 1), toLinkInnovation, fromLinkInnovation);
+        }
+
+        cppn = new TWEANN(cppnTest);
+
+    }
+
+    double GetDistFromCenter(double x, double y)
     {
         double result = double.NaN;
-        double centerX = width / 2;
-        double centerY = height / 2;
-
-        result = Mathf.Sqrt((float)((centerX - x)*(centerX - x) + (centerY - y)*(centerY - y)));
+       
+        result = System.Math.Sqrt((x*x + y*y)) * System.Math.Sqrt(2);
 
         return result;
     }
 
     Texture2D CreateRandomTexture(int width, int height)
     {
-        Texture2D result = new Texture2D(width, height);
 
         for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < width; x++)
             {
-                result.SetPixel(x, y, new Color(Random.value, Random.value, Random.value, 1));
+                img.SetPixel(x, y, new Color(Random.value, Random.value, Random.value, 1));
             }
         }
 
-        result.Apply();
-        return result;
+        img.Apply();
+        return img;
     }
 
-    float Clamp(double x)
+    Texture2D CreateRandomCPPNImage(int width, int height)
     {
-        float result = 0.0f;
+        GenerateCPPN();
 
-        // TODO may need this later
+        //Texture2D img = new Texture2D(width, height);
 
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                double scaledX = Scale(x, width);
+                double scaledY = Scale(y, height);
+                double[] hsv = cppn.Process(new double[] { scaledX, scaledY, GetDistFromCenter(scaledX, scaledY), 1 });
+                //Debug.Log("SPAM! x:" + x + ", y:" + y + ", distFromCenter:" + GetDistFromCenter(x, y) + "");
+                //Debug.Log("SPAM! scaledX:" + scaledX + ", scaledY:" + scaledY + ", distFromCenter:" + GetDistFromCenter(scaledX, scaledY) + "");
+                //Debug.Log("ColorHSV - h:" +  hsv[0] + " s:" + hsv[1] + " v:" + hsv[2]);
+                Color color = Color.HSVToRGB((float)hsv[0], (float)hsv[1], (float)hsv[2]);
+                
+                img.SetPixel(x, y, color);
+                img.Apply();
+            }
+        }
+
+        img.Apply();
+        return img;
+    }
+
+    double Scale(int toScale, int maxDimension)
+    {
+        double result;
+
+        result = ((toScale * 1.0 / (maxDimension - 1)) * 2) - 1;
 
         return result;
     }

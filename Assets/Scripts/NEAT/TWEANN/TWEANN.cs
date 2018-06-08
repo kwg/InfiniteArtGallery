@@ -122,11 +122,12 @@ public class TWEANN : INetwork
 
 
         double[] result = new double[numOutputs];
+        //Debug.Log("Number of outputs in result: " + result.Length);
         // TODO loop through outputs and copy to result;
-        for (int i = numInputs; i < nodes.Count; i++)
+        for (int i = nodes.Count - numOutputs, c = 0; i < nodes.Count; i++, c++)
         {
-            //result[i - numInputs] = nodes[i].GetSum();
-            result[0] = nodes[nodes.Count - 1].Output();
+            result[c] = nodes[i].Output();
+            //result[i] = nodes[nodes.Count - 1].Output();
         }
 
         // TODO option for importing CPPNs from original Picbreeder

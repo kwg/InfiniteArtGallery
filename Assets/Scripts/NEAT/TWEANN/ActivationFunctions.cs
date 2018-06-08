@@ -11,6 +11,8 @@ public class ActivationFunctions  {
     static Dictionary<FTYPE, IActivationFunction> activationFunctions = new Dictionary<FTYPE, IActivationFunction>
     {
         { FTYPE.SINE, new SineFunction() },
+        { FTYPE.COS, new CosFunction() },
+        { FTYPE.GAUSS, new GaussianFunction() },
         { FTYPE.TANH, new TanHFunction() },
         { FTYPE.ID, new IDFunction() },
         { FTYPE.SIGMOID, new SigmoidFunction() }

@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 /// <summary>
-/// Sine function for x. Uses System.Math.Sin(double x).
+/// Cos function for x. Uses System.Math.Cos(double x).
 /// </summary>
-public class SineFunction : IActivationFunction {
+public class CosFunction : IActivationFunction
+{
 
-    private string name = "sin";
+    private string name = "cos";
 
     public double Function(double x)
     {
-        return System.Math.Sin(x);
+        return System.Math.Cos(x);
     }
 
     public string Name()

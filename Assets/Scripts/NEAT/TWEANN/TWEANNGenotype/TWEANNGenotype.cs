@@ -197,7 +197,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         NodeGene ng = new NodeGene(NTYPE.HIDDEN, fType, newNodeInnovation);
         LinkGene lg = GetLinkBetween(sourceInnovation, targetInnovation);
         //lg.SetActive(false); // TODO active bool is not in use
-
+        // HACK Links should not be removed when splicing in a new node, but active is not in use yet
         links.Remove(lg);
 
         // HACK if this fails then it will be because the index is either < 0 or > count - add fixes or write a container w/ helper methods

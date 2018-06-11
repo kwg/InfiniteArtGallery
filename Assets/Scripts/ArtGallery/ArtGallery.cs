@@ -9,6 +9,9 @@ using UnityEngine;
 public class ArtGallery : MonoBehaviour {
 
     public static bool DEBUG = true;
+    public int STARTING_NUM_ARTWORKS;
+
+    public GameObject roomObject;
     public PortalController pc;
 
     /* 
@@ -27,16 +30,14 @@ public class ArtGallery : MonoBehaviour {
     RoomNode currentRoom; // configuration of the current room
     RoomNode previousRoom; // Which way is backwards in time?
 
-    /* Static numbers to get 4 portals in a square room */
-    int numPortals = 4;
-    int numWalls = 4; // use later if we want to change room shape
-    int numPortalsPerWall = 1; // how many portals can we fit on a wall?
-
-
     // Use this for initialization
     void Start()
     {
+        GameObject roomProp = Instantiate(roomObject) as GameObject;
+        roomProp.AddComponent<RoomNode>();
+        currentRoom = roomProp.GetComponent<RoomNode>();
         InitializePopulation();
+
 
         // spawn player
     }
@@ -44,8 +45,7 @@ public class ArtGallery : MonoBehaviour {
 
     private void InitializePopulation() // of rooms
     {
-        currentRoom = new RoomNode(pc);
-        currentRoom.InitializeRoom(numPortals);
+        currentRoom.InitializeRoom(STARTING_NUM_ARTWORKS);
         currentRoom.RedrawRoom();
     }
 

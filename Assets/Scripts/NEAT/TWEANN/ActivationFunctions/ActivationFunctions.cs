@@ -35,4 +35,41 @@ public class ActivationFunctions  {
         return activationFunctions[fType].Function(sum);
     }
 
+    /// <summary>
+    /// Get a random activation function
+    /// </summary>
+    /// <returns>FTYPE</returns>
+    public static FTYPE RandomFTYPE()
+    {
+        FTYPE type = FTYPE.ID;
+
+        int rnd = Random.Range(1, 6);
+        switch (rnd)
+        {
+            case 1:
+                type = FTYPE.TANH;
+                break;
+            case 2:
+                type = FTYPE.SIGMOID;
+                break;
+            case 3:
+                type = FTYPE.SINE;
+                break;
+            case 4:
+                type = FTYPE.COS;
+                break;
+            case 5:
+                type = FTYPE.GAUSS;
+                break;
+            case 6:
+                type = FTYPE.ID;
+                break;
+            default:
+                break;
+
+        }
+
+        return type;
+    }
+
 }

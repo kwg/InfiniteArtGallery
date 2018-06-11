@@ -20,7 +20,6 @@ public class ImageFromCPPNTest : MonoBehaviour {
 	void Start ()
     {
         width = height = 64;
-        SpriteRenderer sp = gameObject.GetComponent<SpriteRenderer>() as SpriteRenderer;
         renderer = GetComponent<Renderer>();
         img = new Texture2D(width, height, TextureFormat.ARGB32, true);
 
@@ -127,6 +126,8 @@ public class ImageFromCPPNTest : MonoBehaviour {
         return result;
     }
 
+
+    // FIXME DELETE THIS
     FTYPE RandomFTYPE()
     {
         FTYPE result = FTYPE.ID;

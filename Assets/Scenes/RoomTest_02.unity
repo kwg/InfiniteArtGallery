@@ -726,6 +726,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 307c80fe78eca904cb5c316fff99dde3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  STARTING_NUM_ARTWORKS: 4
+  roomObject: {fileID: 1015197187040342, guid: eb8a9ba7fdd2b7245b478a0b81e1742f, type: 2}
   pc: {fileID: 700408595}
 --- !u!4 &1027180089
 Transform:

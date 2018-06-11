@@ -6,9 +6,9 @@ public class RoomTree {
 
     private RoomNode startingRoom;
 
-    public RoomTree()
+    public RoomTree(PortalController pc)
     {
-        startingRoom = new RoomNode();
+        startingRoom = new RoomNode(pc);
 
     }
 

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class RoomNode {
 
-    private PortalController pc = PortalController.GetPortalController();
+    private PortalController pc;
 
 
     //TODO Room genetics
@@ -22,12 +22,17 @@ public class RoomNode {
     /// <summary>
     /// Create a new RoomNode 
     /// </summary>
-    public RoomNode()
+    public RoomNode(PortalController pc)
     {
+        this.pc = pc;
         doors = new SortedList<int, Door<Color>>();
         rooms = new SortedList<int, RoomNode>();
     }
 
+    /// <summary>
+    /// Initialize a room with random colors
+    /// </summary>
+    /// <param name="numberOfDoors"></param>
     public void InitializeRoom(int numberOfDoors)
     {
 
@@ -35,14 +40,35 @@ public class RoomNode {
         for (int i = 0; i < numberOfDoors; i++)
         {
             doors.Add(i, new Door<Color>(i, pc));
-            rooms.Add(i, new RoomNode());  // in a populated room there should never be a null ref
+            rooms.Add(i, new RoomNode(pc));  // in a populated room there should never be a null ref
         }
 
         isPopulated = true;
 
     }
 
-    
+    /// <summary>
+    /// Initialize a room with new instances of a given genotype
+    /// </summary>
+    /// <param name="numberOfDoors"></param>
+    /// <param name="geno"></param>
+    public void InitializeRoom(int numberOfDoors, TWEANNGenotype geno)
+    {
+
+    }
+
+    /// <summary>
+    /// Initialize a room by loading a list of genos to a set of doors
+    /// </summary>
+    /// <param name="numberOfDoors"></param>
+    /// <param name="genos"></param>
+    public void InitializeRoom(int numberOfDoors, List<TWEANNGenotype> genos)
+    {
+
+    }
+
+
+
     /* Public methods */
     public void SetParentDoorID(int parentDoorID)
     {
@@ -74,11 +100,12 @@ public class RoomNode {
 
     public void RedrawRoom()
     {
-        PortalController.GetPortalController().FlushPortals();
+        pc.FlushPortals();
 
         foreach (KeyValuePair<int, Door<Color>> kvpDoors in doors)
         {
-            kvpDoors.Value.RedecorateDoor();
+            //kvpDoors.Value.RedecorateDoor();
+            Debug.Log("RedrawDoor: " + kvpDoors.Value.ToString());
         }
     }
 }

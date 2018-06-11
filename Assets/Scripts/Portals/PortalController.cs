@@ -10,8 +10,8 @@ public class PortalController : MonoBehaviour {
     int PortalCount = 0; // TODO not in use - decide what to do with it
 
     
-    public static PortalController GetPortalController() {
-        return FindObjectOfType<PortalController>();
+    public PortalController GetPortalController() {
+        return this;
     }
 
     // Use this for initialization

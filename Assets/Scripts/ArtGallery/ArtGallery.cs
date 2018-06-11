@@ -9,6 +9,7 @@ using UnityEngine;
 public class ArtGallery : MonoBehaviour {
 
     public static bool DEBUG = true;
+    public PortalController pc;
 
     /* 
      * Maintains generations and represents a generation as a room
@@ -43,7 +44,7 @@ public class ArtGallery : MonoBehaviour {
 
     private void InitializePopulation() // of rooms
     {
-        currentRoom = new RoomNode();
+        currentRoom = new RoomNode(pc);
         currentRoom.InitializeRoom(numPortals);
         currentRoom.RedrawRoom();
     }
@@ -77,4 +78,9 @@ public class ArtGallery : MonoBehaviour {
     {
 		
 	}
+
+    public PortalController GetPortalController()
+    {
+        return pc;
+    }
 }

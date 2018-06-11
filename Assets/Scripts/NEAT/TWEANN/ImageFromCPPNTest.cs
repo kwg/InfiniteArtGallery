@@ -32,7 +32,7 @@ public class ImageFromCPPNTest : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetButtonDown("Fire1"))
+        if (!PauseMenu.isPaused && Input.GetButtonDown("Fire1"))
         {
             DoImage();
             renderer.material.mainTexture = img;

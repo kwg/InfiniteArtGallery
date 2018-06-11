@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour {
 
+
+
     public void PlayTWEANNTest()
     {
         SceneManager.LoadScene("TWEANNTests");
@@ -12,7 +14,7 @@ public class MainMenu : MonoBehaviour {
 
     public void PlayEvolutionTest()
     {
-        SceneManager.LoadScene("RoomTest_01");
+        SceneManager.LoadScene("RoomTest_02");
     }
 
     public void QuitGame()

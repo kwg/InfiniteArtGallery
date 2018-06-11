@@ -214,6 +214,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5357087f2b565a746923e59d60cf1b61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  FPC: {fileID: 217476204}
 --- !u!1001 &491128230
 Prefab:
   m_ObjectHideFlags: 0

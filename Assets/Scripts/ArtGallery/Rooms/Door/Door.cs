@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Door<T> {
 
-    GenotypePortal<T> geno;
+    TWEANNGenotype geno;
     Portal p;
     int doorID;
     PortalController pc;
@@ -16,7 +16,7 @@ public class Door<T> {
     /// <param name="pc">Reference to the portal controller that can spawn and decorate portals in the scene</param>
     public Door(int doorID, PortalController pc) 
     {
-        geno = new GenotypePortal<T>();
+        geno = new TWEANNGenotype(1, 3, 0);
         this.doorID = doorID;
         this.pc = pc;
         CreatePortal();
@@ -54,12 +54,12 @@ public class Door<T> {
 
     }
 
-    public void SetGenotypePortal(GenotypePortal<T> geno)
+    public void SetGenotypePortal(TWEANNGenotype geno)
     {
         this.geno = geno;
     }
 
-    public GenotypePortal<T> GetGenotype()
+    public TWEANNGenotype GetGenotype()
     {
         return geno;
     }

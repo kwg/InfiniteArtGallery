@@ -21,7 +21,7 @@ public class Portal : MonoBehaviour {
     GameObject portalProp;
 
     private Color displayColor;
-    private Sprite displaySprite;  // TODO Next step will be to get images on portals
+    private Texture2D displayImg;  
 
 
     /* Public methods */
@@ -96,9 +96,9 @@ public class Portal : MonoBehaviour {
     /// Decorate portal with a sprite
     /// </summary>
     /// <param name="newSprite">Sprite to decorate portal with</param>
-    public void PaintDoor(Sprite newSprite)
+    public void PaintDoor(Texture2D newImg)
     {
-        SetSprite(newSprite);
+        SetImg(newImg);
     }
 
 
@@ -120,50 +120,27 @@ public class Portal : MonoBehaviour {
     private void SetColor(Color newColor)
     {
         displayColor = newColor;
-        RefreshColor();
+        RefreshDecoration();
     }
-
-    /// <summary>
-    /// This assigns a random color to the portal 
-    /// </summary>
-    /// <param name="entryPortal">In reference to the portal that was selected</param>
-    private void RandomColor(Portal entryPortal)
-    {
-        foreach (Portal portal in FindObjectsOfType<Portal>())
-        {
-            if (portal.GetPortalID() != entryPortal.GetDestinationID())
-            {
-                /* Change selected portal to a random color */
-                entryPortal.GetComponent<ColorChanger>().SetColor(new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value));
-            }
-        }
-    }
-
 
     /// <summary>
     /// Set the display sprite for this portal
     /// </summary>
     /// <param name="sprite">New display sprite to be used</param>
-    private void SetSprite(Sprite newSprite)
+    private void SetImg(Texture2D newImg)
     {
-        displaySprite = newSprite;
-        RefreshSprite();
+        displayImg = newImg;
+        RefreshDecoration();
     }
 
     /// <summary>
-    /// Refresh the displayed color in game to match the color specified by the genotype
+    /// Refresh the displayed color and texture in game to match the color and texture specified by the genotype
     /// </summary>
-    private void RefreshColor()
+    private void RefreshDecoration()
     {
         Renderer rend = gameObject.GetComponent<Renderer>();
-        rend.material.SetColor("_Color", displayColor);
+        //rend.material.SetColor("_Color", displayColor);
+        rend.material.mainTexture = displayImg;
     }
 
-    /// <summary>
-    /// Refresh the displayed color in game to match the color specified by the genotype
-    /// </summary>
-    private void RefreshSprite()
-    {
-        //TODO Add refresh method for sprites
-    }
 }

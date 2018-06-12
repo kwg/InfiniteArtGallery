@@ -13,7 +13,7 @@ public interface IActivationFunction {
     /// </summary>
     /// <param name="x">Function input</param>
     /// <returns>Function output</returns>
-    double Function(double x);
+    float Function(float x);
 
     /// <summary>
     /// Name of this function

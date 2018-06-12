@@ -4,15 +4,15 @@ using UnityEngine;
 
 
 /// <summary>
-/// Sine function for x. Uses System.Math.Sin(double x).
+/// Sine function for x. Uses System.Math.Sin(float x).
 /// </summary>
 public class SineFunction : IActivationFunction {
 
     private string name = "sin";
 
-    public double Function(double x)
+    public float Function(float x)
     {
-        return System.Math.Sin(x);
+        return Mathf.Sin(x);
     }
 
     public string Name()

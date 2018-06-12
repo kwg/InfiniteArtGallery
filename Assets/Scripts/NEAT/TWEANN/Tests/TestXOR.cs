@@ -6,27 +6,27 @@ public class TestXOR : MonoBehaviour{
 
 
     TWEANNGenotype xorTest;
-    double[] inputs;
+    float[] inputs;
 
     public void Start()
     {
         xorTest = new TWEANNGenotype(2, 1, 0);
         List<NodeGene> nodes = xorTest.GetNodes();
 
-        /* Quick test for dotProduct */ 
-        double[] dotProdTestInputs = new double[] { 3, 5 };
+        /* Quick test for dotProduct */
+        float[] dotProdTestInputs = new float[] { 3, 5 };
         Debug.Log("Staring test: dotproduct using inputs 3, 5");
-        double[] dotProdTestResults = new TWEANN(xorTest).Process(dotProdTestInputs);
-        foreach (double sum in dotProdTestResults)
+        float[] dotProdTestResults = new TWEANN(xorTest).Process(dotProdTestInputs);
+        foreach (float sum in dotProdTestResults)
         {
             Debug.Log("Ending test: dotproduct = " + sum);
         }
 
-        xorTest.SpliceNode(FTYPE.TANH, 2158, -1, -3, -0.3964445706032944, -0.4269614531487551, 100, 101);
-        xorTest.AddLink(-1, -3, -0.5081867337293002, 106);
-        xorTest.SpliceNode(FTYPE.TANH, 150, -2, -3, -3.275181751309399, -0.9183280870360113, 102, 103);
-        xorTest.AddLink(-1, 150, -2.202539496376981, 104);
-        xorTest.AddLink(-2, 2158, 0.9295958853236486, 105);
+        xorTest.SpliceNode(FTYPE.TANH, 2158, -1, -3, -0.3964445706032944f, -0.4269614531487551f, 100, 101);
+        xorTest.AddLink(-1, -3, -0.5081867337293002f, 106);
+        xorTest.SpliceNode(FTYPE.TANH, 150, -2, -3, -3.275181751309399f, -0.9183280870360113f, 102, 103);
+        xorTest.AddLink(-1, 150, -2.202539496376981f, 104);
+        xorTest.AddLink(-2, 2158, 0.9295958853236486f, 105);
 
         // Set activation function of output node
         xorTest.GetNodeByInnovationID(-1).fType = FTYPE.TANH;
@@ -49,25 +49,25 @@ public class TestXOR : MonoBehaviour{
 
         /* XOR test */
 
-        List<double[]> inputs = new List<double[]>();
-        inputs.Add(new double[] { 0, 0 });
-        inputs.Add(new double[] { 0, 1 });
-        inputs.Add(new double[] { 1, 0 });
-        inputs.Add(new double[] { 1, 1 });
+        List<float[]> inputs = new List<float[]>();
+        inputs.Add(new float[] { 0, 0 });
+        inputs.Add(new float[] { 0, 1 });
+        inputs.Add(new float[] { 1, 0 });
+        inputs.Add(new float[] { 1, 1 });
         TWEANN XORNetwork = new TWEANN(xorTest);
 
         for(int test = 0; test < inputs.Count; test++)
         {
             Debug.Log("");
             string debugString = "Starting test using inputs ";
-            foreach (double d in inputs[test])
+            foreach (float f in inputs[test])
             {
-                debugString += d + ", ";
+                debugString += f + ", ";
             }
             Debug.Log(debugString);
 
-            double[] results = XORNetwork.Process(inputs[test]);
-            foreach (double sum in results)
+            float[] results = XORNetwork.Process(inputs[test]);
+            foreach (float sum in results)
             {
                Debug.Log("Ending test: result = " + sum);
             }

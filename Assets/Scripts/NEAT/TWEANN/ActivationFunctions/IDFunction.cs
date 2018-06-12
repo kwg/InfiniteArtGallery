@@ -10,7 +10,7 @@ public class IDFunction : IActivationFunction
 
     private string name = "ID";
 
-    public double Function(double x)
+    public float Function(float x)
     {
         return x;
     }

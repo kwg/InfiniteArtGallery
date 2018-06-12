@@ -8,10 +8,12 @@ using UnityEngine;
 public class TWEANNLink  {
 
     TWEANNNode target;
-    double weight;
+    float weight;
     long innovationID;
     bool frozen;
     bool recurrent;
+    long sourceInnovation;
+    long targetInnovation;
 
     /// <summary>
     /// Make a new link to target node
@@ -21,7 +23,7 @@ public class TWEANNLink  {
     /// <param name="innovationID">Innovation number of the link</param>
     /// <param name="recurrent">Whether the link is recurrent</param>
     /// <param name="frozen">Whenter the link is frozen</param>
-    public TWEANNLink(TWEANNNode target, double weight, long innovationID, bool recurrent, bool frozen)
+    public TWEANNLink(TWEANNNode target, float weight, long innovationID, bool recurrent, bool frozen)
     {
         if (target != null) this.target = target;
         else throw new System.ArgumentException("Target can not be null");
@@ -36,7 +38,7 @@ public class TWEANNLink  {
     /// Propgate signal along the link, adjusting it with the weight
     /// </summary>
     /// <param name="signal">Signal to propagate</param>
-    public void Transmit(double signal)
+    public void Transmit(float signal)
     {
         //TODO Sanity checks
         //Debug.Log("transmit to " + target.GetInnovationID() + " : " + target.GetSum() + " += receiving " + signal + "*"+ weight);
@@ -64,7 +66,7 @@ public class TWEANNLink  {
         return recurrent;
     }
 
-    public double GetWeight()
+    public float GetWeight()
     {
         return weight;
     }
@@ -72,6 +74,13 @@ public class TWEANNLink  {
     public long GetInnovationID()
     {
         return innovationID;
+    }
+
+    public override string ToString()
+    {
+        return "(inno=" + this.innovationID + ",source=" + this.sourceInnovation + ",target=" + this.targetInnovation
+        + ",weight=" + this.weight + ",active=" + this.isActive() + ",recurrent=" + this.isRecurrent() + ",frozen="
+        + this.isFrozen() + ")";
     }
 
 }

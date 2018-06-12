@@ -8,7 +8,10 @@ using UnityEngine;
 /// </summary>
 public class ArtGallery : MonoBehaviour {
 
-    public static bool DEBUG = true;
+    public enum DEBUG { NONE = 0, POLITE = 1, VERBOSE = 2 };
+    public static DEBUG DEBUG_LEVEL = DEBUG.POLITE;
+
+
     public int STARTING_NUM_ARTWORKS;
 
     public GameObject roomObject;

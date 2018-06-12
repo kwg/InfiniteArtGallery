@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// TanH function for x. Uses system.Math.TanH(double x).
+/// TanH function for x. Uses system.Math.TanH(float x).
 /// </summary>
 public class TanHFunction : IActivationFunction
 {
 
     private string name = "tanh";
 
-    public double Function(double x)
+    public float Function(float x)
     {
-        return System.Math.Tanh(x);
+        return (float) System.Math.Tanh(x);
     }
 
     public string Name()

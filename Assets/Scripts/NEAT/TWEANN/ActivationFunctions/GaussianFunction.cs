@@ -10,7 +10,7 @@ public class GaussianFunction : IActivationFunction
 
     private string name = "gauss";
 
-    public double Function(double x)
+    public float Function(float x)
     {
         return Gaussian(x, 1, 0);
     }
@@ -20,12 +20,12 @@ public class GaussianFunction : IActivationFunction
         return name;
     }
 
-    double Gaussian(double x, double sig, double mu)
+    float Gaussian(float x, float sig, float mu)
     {
-        double result = double.NaN;
+        float result = float.NaN;
 
-        double second = System.Math.Exp(-0.5 * ((x - mu) / sig) * ((x - mu) / sig));
-        double first = (1 / (sig * System.Math.Sqrt(2 * System.Math.PI)));
+        float second = Mathf.Exp(-0.5f * ((x - mu) / sig) * ((x - mu) / sig));
+        float first = (1f / (sig * Mathf.Sqrt(2 * Mathf.PI)));
         result =  first * second;
 
         return result;

@@ -52,7 +52,7 @@ public class TWEANN : INetwork
             for(int k = 0; k < inputSources.Length; k++)
             {
                 // FIXME !weight is set to 0.5 for testing!
-                nodes[inputSources[k]].Connect(nodes[numInputs + j], 0.5, linkInnovationBound - (j * numInputs) - inputSources[k], false, false);
+                nodes[inputSources[k]].Connect(nodes[numInputs + j], 0.5f, linkInnovationBound - (j * numInputs) - inputSources[k], false, false);
             }
 
         }
@@ -77,13 +77,18 @@ public class TWEANN : INetwork
             }
 
         }
-        this.numInputs = countIn;
-        this.numOutputs = countOut;
+        numInputs = countIn;
+        numOutputs = countOut;
         foreach(LinkGene link in g.GetLinks())
         {
+            Debug.Log("Connection for link " + link.GetInnovation() + ":");
             TWEANNNode source = GetNodeByInnovationID(link.GetSourceInnovation());
             TWEANNNode target = GetNodeByInnovationID(link.GetTargetInnovation());
             //TODO add asserts
+            if (source == null) throw new System.Exception("Source not found with innovation " + link.GetSourceInnovation() + " :: " + g.ToString());
+            if (target == null) throw new System.Exception("Target not found with innovation " + link.GetTargetInnovation() + " :: " + g.ToString());
+            if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("Connecting node " + source.GetInnovationID() + " to node " + target.GetInnovationID() + " with link " + link.GetInnovation());
+
             source.Connect(target, link.GetWeight(), link.GetInnovation(), false, false);
         }
     }
@@ -104,7 +109,7 @@ public class TWEANN : INetwork
         return nodes;
     }
 
-    public double[] Process(double[] inputs)
+    public float[] Process(float[] inputs)
     {
 
         // Load inputs
@@ -121,7 +126,7 @@ public class TWEANN : INetwork
         }
 
 
-        double[] result = new double[numOutputs];
+        float[] result = new float[numOutputs];
         //Debug.Log("Number of outputs in result: " + result.Length);
         // TODO loop through outputs and copy to result;
         for (int i = nodes.Count - numOutputs, c = 0; i < nodes.Count; i++, c++)
@@ -139,7 +144,7 @@ public class TWEANN : INetwork
         throw new System.NotImplementedException();
     }
 
-    public double GetWeightBetween(long sourceInnovation, long targetInnovation)
+    public float GetWeightBetween(long sourceInnovation, long targetInnovation)
     {
         return GetNodeByInnovationID(sourceInnovation).GetLinkToTargetNode(GetNodeByInnovationID(targetInnovation)).GetWeight();
     }

@@ -35,28 +35,14 @@ public class Player : MonoBehaviour {
         /* TAG: portal */
         if(collider.gameObject.tag == "portal")
         {
-            Debug.Log("player activating portal " + collider.gameObject.GetComponent<Portal>().GetPortalID());
-            /* Tell population controller to handle collision between specified portal and this player */
+            if(ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("player activating portal " + collider.gameObject.GetComponent<Portal>().GetPortalID());
+            /* Tell portal controller to handle collision between specified portal and this player */
             FindObjectOfType<PortalController>().DoTeleport(this, collider.gameObject.GetComponent<Portal>().GetPortalID());
         }
     }
 
     public void Update()
     {
-        if (OptionsMenu.isInverted && !isInverted)
-        {
-            FPC.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.YSensitivity =
-            FPC.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.YSensitivity * -1;
-            isInverted = true;
-        }
-        if (!OptionsMenu.isInverted && isInverted)
-        {
-            FPC.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.YSensitivity =
-            FPC.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.YSensitivity * -1;
-            isInverted = false;
-        }
-
-
 
     }
 }

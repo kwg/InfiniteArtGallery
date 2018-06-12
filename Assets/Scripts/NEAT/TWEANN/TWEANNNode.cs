@@ -12,10 +12,10 @@ public class TWEANNNode {
     FTYPE fType;
     long innovationID;
     bool frozen;
-    double bias;
+    float bias;
     List<TWEANNLink> outputs;
-    double sum;
-    double activation;
+    float sum;
+    float activation;
     // TODO any other vars needed to create a graphical output goes here
 
     /// <summary>
@@ -24,7 +24,7 @@ public class TWEANNNode {
     /// <param name="fType">Activation function</param>
     /// <param name="nType">Node type</param>
     /// <param name="innovationID">Uniqu innovation number for node</param>
-    public TWEANNNode(FTYPE fType, NTYPE nType, long innovationID) : this(fType, nType, innovationID, 0.0d) { }
+    public TWEANNNode(FTYPE fType, NTYPE nType, long innovationID) : this(fType, nType, innovationID, 0.0f) { }
 
     /// <summary>
     /// New node with no target. Frozen by default
@@ -33,7 +33,7 @@ public class TWEANNNode {
     /// <param name="nType">Node type</param>
     /// <param name="innovationID">Unique innovation number for node</param>
     /// <param name="bias">Bias offset added to neuron sum before activation. Primarily needed by substrate networks from CPPNs</param>
-    public TWEANNNode(FTYPE fType, NTYPE nType, long innovationID, double bias) : this(fType, nType, innovationID, false, bias) { }
+    public TWEANNNode(FTYPE fType, NTYPE nType, long innovationID, float bias) : this(fType, nType, innovationID, false, bias) { }
 
     /// <summary>
     /// New node with no target. Frozen by default
@@ -43,7 +43,7 @@ public class TWEANNNode {
     /// <param name="innovationID">Uniqu innovation number for node</param>
     /// <param name="frozen">True if new link mutations cannot target this node</param>
     /// <param name="bias">Bias offset added to neuron sum before activation. Primarily needed by substrate networks from CPPNs</param>
-    public TWEANNNode(FTYPE fType, NTYPE nType, long innovationID, bool frozen, double bias)
+    public TWEANNNode(FTYPE fType, NTYPE nType, long innovationID, bool frozen, float bias)
     {
         this.fType = fType;
         this.nType = nType;
@@ -98,7 +98,7 @@ public class TWEANNNode {
     /// Set the value of sum
     /// </summary>
     /// <param name="newSum">New value for sum</param>
-    public void SetSum(double newSum)
+    public void SetSum(float newSum)
     {
         //TODO Sanity checks
         this.sum = newSum;
@@ -108,7 +108,7 @@ public class TWEANNNode {
     /// Current value of the sum
     /// </summary>
     /// <returns>Current value of sum</returns>
-    public double GetSum()
+    public float GetSum()
     {
         return sum;
     }
@@ -126,7 +126,7 @@ public class TWEANNNode {
     /// An input is added to the sum in case it holds recurrent activation.
     /// </summary>
     /// <param name="input">Sensor input</param>
-    public void Load(double input)
+    public void Load(float input)
     {
         // TODO Sanity checks
         sum += input;
@@ -136,7 +136,7 @@ public class TWEANNNode {
     /// Get the activation
     /// </summary>
     /// <returns>Activation</returns>
-    public double Output()
+    public float Output()
     {
         return activation;
     }
@@ -145,7 +145,7 @@ public class TWEANNNode {
     /// Should only be used for testing purposes
     /// </summary>
     /// <param name="activation">A new activation</param>
-    public void ArtificiallySetActivation(double activation)
+    public void ArtificiallySetActivation(float activation)
     {
         this.activation = activation;
     }
@@ -156,7 +156,7 @@ public class TWEANNNode {
     public void Flush()
     {
         sum = bias;
-        activation = 0.0;
+        activation = 0.0f;
     }
 
     /// <summary>
@@ -191,7 +191,7 @@ public class TWEANNNode {
     /// <param name="innovationID">Innovation number of new link</param>
     /// <param name="recurrent">Whether or not the link is recurrent</param>
     /// <param name="frozen">Whether or not the link can be changed</param>
-    public void Connect(TWEANNNode target, double weight, long innovationID, bool recurrent, bool frozen)
+    public void Connect(TWEANNNode target, float weight, long innovationID, bool recurrent, bool frozen)
     {
         TWEANNLink link = new TWEANNLink(target, weight, innovationID, recurrent, frozen);
         //Debug.Log("Adding link from " + GetInnovationID() + " to " + target.GetInnovationID());

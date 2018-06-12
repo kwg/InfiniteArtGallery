@@ -6,7 +6,7 @@ public class NodeGene : Gene {
 
     public FTYPE fType;
     public NTYPE nType;
-    public double bias;
+    public float bias;
 
     public NodeGene(NTYPE nType, FTYPE fType, long innovation) : base(innovation)
     {
@@ -14,12 +14,12 @@ public class NodeGene : Gene {
         this.nType = nType;
     }
 
-    public double GetBias()
+    public float GetBias()
     {
         return bias;
     }
 
-    public void SetBias(double bias)
+    public void SetBias(float bias)
     {
         this.bias = bias;
     }
@@ -37,7 +37,7 @@ public class NodeGene : Gene {
 
     // TODO ToString()
 
-    public string ToString()
+    public override string ToString()
     {
         return "Node: " + innovation + ", NTYPE: " + nType + ", FTYPE: " + fType + ", bias: " + bias;
     }

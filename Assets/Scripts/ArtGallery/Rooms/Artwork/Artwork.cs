@@ -59,13 +59,13 @@ public class Artwork {
         {
             for (int x = 0; x < width; x++)
             {
-                double scaledX = Scale(x, width);
-                double scaledY = Scale(y, height);
-                double[] hsv = cppn.Process(new double[] { scaledX, scaledY, GetDistFromCenter(scaledX, scaledY), 1 });
+                float scaledX = Scale(x, width);
+                float scaledY = Scale(y, height);
+                float[] hsv = cppn.Process(new float[] { scaledX, scaledY, GetDistFromCenter(scaledX, scaledY), 1 });
                 //Debug.Log("SPAM! x:" + x + ", y:" + y + ", distFromCenter:" + GetDistFromCenter(x, y) + "");
                 //Debug.Log("SPAM! scaledX:" + scaledX + ", scaledY:" + scaledY + ", distFromCenter:" + GetDistFromCenter(scaledX, scaledY) + "");
                 //Debug.Log("ColorHSV - h:" +  hsv[0] + " s:" + hsv[1] + " v:" + hsv[2]);
-                Color color = Color.HSVToRGB((float)hsv[0], (float)hsv[1], (float)hsv[2]);
+                Color color = Color.HSVToRGB(hsv[0], hsv[1], hsv[2]);
 
                 img.SetPixel(x, y, color);
                 img.Apply();
@@ -74,25 +74,25 @@ public class Artwork {
 
         img.Apply();
 
-        if (ArtGallery.DEBUG) Debug.Log("CPPN Imgage generation complete");
+        if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("CPPN Imgage generation complete");
 
         return img;
     }
 
-    double Scale(int toScale, int maxDimension)
+    float Scale(int toScale, int maxDimension)
     {
-        double result;
+        float result;
 
-        result = ((toScale * 1.0 / (maxDimension - 1)) * 2) - 1;
+        result = ((toScale * 1.0f / (maxDimension - 1)) * 2) - 1;
 
         return result;
     }
 
-    double GetDistFromCenter(double x, double y)
+    float GetDistFromCenter(float x, float y)
     {
-        double result = double.NaN;
+        float result = float.NaN;
 
-        result = System.Math.Sqrt((x * x + y * y)) * System.Math.Sqrt(2);
+        result = Mathf.Sqrt((x * x + y * y)) * Mathf.Sqrt(2);
 
         return result;
     }

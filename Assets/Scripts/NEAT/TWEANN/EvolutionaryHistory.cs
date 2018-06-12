@@ -9,7 +9,7 @@ public class EvolutionaryHistory {
     public static List<NodeGene>[] archetypes = null;
     public static int[] archetypeOut = null;
 
-    // TODO - hook to loggin utils
+    // TODO - hook to logging utils
 
 
 

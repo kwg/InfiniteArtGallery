@@ -140,6 +140,20 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
     }
     // Mutate
     // TODO - mutate
+    public void LinkMutation()
+    {
+        LinkMutation(GetRandomLinkInnovation(), Random.Range(-1.0f, 1.0f));
+    }
+
+    public void LinkMutation(long source, float weight)
+    {
+
+    }
+
+    private long GetRandomLinkInnovation()
+    {
+        return nodes[Random.Range(0, nodes.Count - 1)].GetInnovation();
+    }
 
     // nodes/links
     //    perturbLink(int linkIndex, double delta)

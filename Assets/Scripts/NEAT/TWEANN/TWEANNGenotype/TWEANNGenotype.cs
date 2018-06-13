@@ -35,7 +35,12 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
     }
 
     public TWEANNGenotype(int numInputs, int numOutputs, int archetypeIndex): 
-        this(new TWEANN (numInputs, numOutputs, false, FTYPE.ID,archetypeIndex))
+        this(new TWEANN (numInputs, numOutputs, false, FTYPE.ID, archetypeIndex))
+    {
+    }
+
+    public TWEANNGenotype(int numInputs, int numOutputs, bool featureSelective, FTYPE fType, int archetypeIndex) :
+    this(new TWEANN(numInputs, numOutputs, featureSelective, fType, archetypeIndex))
     {
     }
 
@@ -157,12 +162,13 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         LinkMutation(sourceNodeInnovation, weight);
     }
 
-    public void LinkMutation(long sourceNodeInnovation, float weight)
+    public void LinkMutation(long sourceNodeInnovation, float weight) //HACK LinkMutation(long sourceNodeInnovation, float weight) - recurrent links are possible. We may disable this later.
     {
         string debugMsg = "LinkMutation on link with innovation " + sourceNodeInnovation + " using a weight of " + weight;
 
         long targetInnovation = GetRandomNodeInnovation(sourceNodeInnovation, true);
         long link = EvolutionaryHistory.NextInnovationID();
+
         if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log(debugMsg);
 
         AddLink(sourceNodeInnovation, targetInnovation, weight, link);
@@ -217,6 +223,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
 
     public void PerturbLink(int linkIndex, float delta)
     {
+        if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("Perturbing link " + linkIndex + " by " + delta);
         LinkGene lg = links[linkIndex];
         PerturbLink(lg, delta);
     }

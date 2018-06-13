@@ -18,11 +18,42 @@ public class ActivationFunctions  {
         { FTYPE.SIGMOID, new SigmoidFunction() }
     };
 
-
-    public ActivationFunctions()
+    static List<FTYPE> activeFunctions = new List<FTYPE>();
+    static List<FTYPE> inactiveFunctions = new List<FTYPE>
     {
+        FTYPE.SINE,
+        FTYPE.COS,
+        FTYPE.GAUSS,
+        FTYPE.TANH,
+        FTYPE.ID,
+        FTYPE.SIGMOID
+    };
 
+
+    public static bool activateFunction(FTYPE fType)
+    {
+        bool successful = false;
+        if (inactiveFunctions.Contains(fType))
+        {
+            activeFunctions.Add(fType);
+            inactiveFunctions.Remove(fType);
+            successful = true;
+        }
+        return successful;
     }
+
+    public static bool deactivateFunction(FTYPE fType)
+    {
+        bool successful = false;
+        if (activeFunctions.Contains(fType))
+        {
+            inactiveFunctions.Add(fType);
+            activeFunctions.Remove(fType);
+            successful = true;
+        }
+        return successful;
+    }
+
 
     /// <summary>
     /// Use an activation function of a node by <see cref="FTYPE" />
@@ -39,7 +70,7 @@ public class ActivationFunctions  {
     /// Get a random activation function
     /// </summary>
     /// <returns>FTYPE</returns>
-    public static FTYPE RandomFTYPE()
+    public static FTYPE RandomFTYPE2()
     {
         FTYPE type = FTYPE.ID;
         int rnd = Random.Range(0, 6) + 1;
@@ -120,6 +151,11 @@ public class ActivationFunctions  {
         }
 
         return type;
+    }
+
+    public static FTYPE RandomFTYPE()
+    {
+        return activeFunctions[Random.Range(0, activeFunctions.Count)];
     }
 
     public static string ActivationName(FTYPE fType)

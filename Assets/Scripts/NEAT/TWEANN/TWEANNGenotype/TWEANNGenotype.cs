@@ -126,7 +126,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         return result;
     }
 
-    public string toString<T>(List<T> genes) where T : Gene
+    public string ToString<T>(List<T> genes) where T : Gene  // FIXME ToString<T>(List<T> gene) this needs to be tied into the override ToString() later
     {
         string result = "";
         foreach(T gene in genes) {
@@ -166,7 +166,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
     {
         string debugMsg = "LinkMutation on link with innovation " + sourceNodeInnovation + " using a weight of " + weight;
 
-        long targetInnovation = GetRandomNodeInnovation(sourceNodeInnovation, true);
+        long targetInnovation = GetRandomNodeInnovation(sourceNodeInnovation, false);
         long link = EvolutionaryHistory.NextInnovationID();
 
         if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log(debugMsg);

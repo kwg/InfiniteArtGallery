@@ -36,6 +36,7 @@ public class ArtGallery : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
+        ActivationFunctions.ActivateAllFunctions();
         GameObject roomProp = Instantiate(roomObject) as GameObject;
         roomProp.AddComponent<RoomNode>();
         currentRoom = roomProp.GetComponent<RoomNode>();

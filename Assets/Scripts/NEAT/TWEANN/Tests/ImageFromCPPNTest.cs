@@ -23,7 +23,7 @@ public class ImageFromCPPNTest : MonoBehaviour {
         renderer = GetComponent<Renderer>();
         img = new Texture2D(width, height, TextureFormat.ARGB32, true);
 
-        ActivationFunctions.activateFunction(FTYPE.COS);
+        ActivationFunctions.ActivateAllFunctions();
 
         cppnTest = new TWEANNGenotype(NUM_INPUTS, NUM_OUTPUTS, 0);
         GenerateCPPN();

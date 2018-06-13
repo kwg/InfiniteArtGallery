@@ -15,7 +15,18 @@ public class ActivationFunctions  {
         { FTYPE.GAUSS, new GaussianFunction() },
         { FTYPE.TANH, new TanHFunction() },
         { FTYPE.ID, new IDFunction() },
-        { FTYPE.SIGMOID, new SigmoidFunction() }
+        { FTYPE.SIGMOID, new SigmoidFunction() },
+        { FTYPE.ABSVAL, new ClippedAbsValFunction() },
+        { FTYPE.PIECEWISE, new FullLinearPiecewiseFunction() },
+        { FTYPE.HLPIECEWISE, new HalfLinearPiecewiseFunction() },
+        { FTYPE.SAWTOOTH, new SawtoothFunction() },
+        { FTYPE.FULLSAWTOOTH, new FullSawtoothFunction() },
+        { FTYPE.TRIANGLEWAVE, new TriangleWaveFunction() },
+        { FTYPE.SQUAREWAVE, new SquareWaveFunction() },
+        { FTYPE.FULLSIGMOID, new FullSigmoidFunction() },
+        { FTYPE.FULLGAUSS, new FullGaussianFunction() },
+        { FTYPE.APPROX, new QuickSigmoidFunction() },
+        { FTYPE.FULLAPPROX, new FullQuickSigmoidFunction() }
     };
 
     static List<FTYPE> activeFunctions = new List<FTYPE>();
@@ -26,11 +37,36 @@ public class ActivationFunctions  {
         FTYPE.GAUSS,
         FTYPE.TANH,
         FTYPE.ID,
-        FTYPE.SIGMOID
+        FTYPE.SIGMOID,
+        FTYPE.SIGMOID, 
+        FTYPE.ABSVAL,
+        FTYPE.PIECEWISE,
+        FTYPE.HLPIECEWISE,
+        FTYPE.SAWTOOTH,
+        FTYPE.FULLSAWTOOTH,
+        FTYPE.TRIANGLEWAVE,
+        FTYPE.SQUAREWAVE,
+        FTYPE.FULLSIGMOID,
+        FTYPE.FULLGAUSS,
+        FTYPE.APPROX,
+        FTYPE.FULLAPPROX
     };
 
+    public static void ActivateAllFunctions()
+    {
+        List<FTYPE> lastInactive = new List<FTYPE>(inactiveFunctions.Count);
+        foreach(FTYPE inactive in inactiveFunctions)
+        {
+            lastInactive.Add(inactive);
+        }
+        foreach(FTYPE f in lastInactive)
+        {
+            ActivateFunction(f);
+        }
+    }
 
-    public static bool activateFunction(FTYPE fType)
+
+    public static bool ActivateFunction(FTYPE fType)
     {
         bool successful = false;
         if (inactiveFunctions.Contains(fType))
@@ -42,7 +78,7 @@ public class ActivationFunctions  {
         return successful;
     }
 
-    public static bool deactivateFunction(FTYPE fType)
+    public static bool DeactivateFunction(FTYPE fType)
     {
         bool successful = false;
         if (activeFunctions.Contains(fType))

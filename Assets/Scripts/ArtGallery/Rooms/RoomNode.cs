@@ -34,20 +34,20 @@ public class RoomNode : MonoBehaviour {
     /// <summary>
     /// Initialize a room with random colors
     /// </summary>
-    /// <param name="numberOfDoors"></param>
-    public void InitializeRoom(int numberOfDoors)
+    /// <param name="numberArtworks"></param>
+    public void InitializeRoom(int numberArtworks)
     {
         pc = FindObjectOfType<PortalController>();
 
         /* Create doors and links to new rooms */
-        for (int i = 0; i < numberOfDoors; i++)
+        for (int i = 0; i < numberArtworks; i++)
         {
             art.Add(i, new Artwork());
             //rooms.Add(i, new RoomNode());  // in a populated room there should never be a null ref
         }
         CreatePortals();
         isPopulated = true;
-        RedrawRoom();
+        //RedrawRoom();
     }
 
     /// <summary>

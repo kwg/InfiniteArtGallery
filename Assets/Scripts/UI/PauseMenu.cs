@@ -24,31 +24,38 @@ public class PauseMenu : MonoBehaviour {
                 Pause();
             }
 
-        }	
-	}
+        }
+
+        if (Input.GetKeyDown(KeyCode.F12))
+        {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+            SceneManager.LoadScene("MainMenu");
+        }
+    }
 
     public void Resume()
     {
-        FPC.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.lockCursor = true;
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
         pauseMenuUI.SetActive(false);
         Time.timeScale = 1.0f;
         isPaused = false;
- //        Cursor.visible = false;
     }
 
     void Pause()
     {
-        FPC.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.lockCursor = false;
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
         pauseMenuUI.SetActive(true);
         Time.timeScale = 0.0f;
         isPaused = true;
-       
-
-        //        Cursor.visible = true;
     }
 
     public void LoadMainMenu()
     {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
         SceneManager.LoadScene("MainMenu");
     }
 

@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Cos function for x. Uses System.Math.Cos(double x).
+/// Cos function for x. Uses System.Math.Cos(float x).
 /// </summary>
 public class CosFunction : IActivationFunction
 {
 
     private string name = "cos";
 
-    public double Function(double x)
+    public float Function(float x)
     {
-        return System.Math.Cos(x);
+        return Mathf.Cos(x);
     }
 
     public string Name()

@@ -10,12 +10,12 @@ public class TWEANNNode {
 
 	NTYPE nType;
     FTYPE fType;
-    long innovationID;
+    long innovation;
     bool frozen;
-    double bias;
+    float bias;
     List<TWEANNLink> outputs;
-    double sum;
-    double activation;
+    float sum;
+    float activation;
     // TODO any other vars needed to create a graphical output goes here
 
     /// <summary>
@@ -23,31 +23,31 @@ public class TWEANNNode {
     /// </summary>
     /// <param name="fType">Activation function</param>
     /// <param name="nType">Node type</param>
-    /// <param name="innovationID">Uniqu innovation number for node</param>
-    public TWEANNNode(FTYPE fType, NTYPE nType, long innovationID) : this(fType, nType, innovationID, 0.0d) { }
+    /// <param name="innovation">Uniqu innovation number for node</param>
+    public TWEANNNode(FTYPE fType, NTYPE nType, long innovation) : this(fType, nType, innovation, 0.0f) { }
 
     /// <summary>
     /// New node with no target. Frozen by default
     /// </summary>
     /// <param name="fType">Activation function</param>
     /// <param name="nType">Node type</param>
-    /// <param name="innovationID">Unique innovation number for node</param>
+    /// <param name="innovation">Unique innovation number for node</param>
     /// <param name="bias">Bias offset added to neuron sum before activation. Primarily needed by substrate networks from CPPNs</param>
-    public TWEANNNode(FTYPE fType, NTYPE nType, long innovationID, double bias) : this(fType, nType, innovationID, false, bias) { }
+    public TWEANNNode(FTYPE fType, NTYPE nType, long innovation, float bias) : this(fType, nType, innovation, false, bias) { }
 
     /// <summary>
     /// New node with no target. Frozen by default
     /// </summary>
     /// <param name="fType">Activation function</param>
     /// <param name="nType">Node type</param>
-    /// <param name="innovationID">Uniqu innovation number for node</param>
+    /// <param name="innovation">Uniqu innovation number for node</param>
     /// <param name="frozen">True if new link mutations cannot target this node</param>
     /// <param name="bias">Bias offset added to neuron sum before activation. Primarily needed by substrate networks from CPPNs</param>
-    public TWEANNNode(FTYPE fType, NTYPE nType, long innovationID, bool frozen, double bias)
+    public TWEANNNode(FTYPE fType, NTYPE nType, long innovation, bool frozen, float bias)
     {
         this.fType = fType;
         this.nType = nType;
-        this.innovationID = innovationID;
+        this.innovation = innovation;
         this.frozen = frozen;
         this.bias = bias;
         outputs = new List<TWEANNLink>();
@@ -57,21 +57,21 @@ public class TWEANNNode {
     /// <summary>
     /// Check given innovationID against all links for recurrence
     /// </summary>
-    /// <param name="targetInnovationID">InnovationID of node to check for recurrence</param>
+    /// <param name="targetInnovation">InnovationID of node to check for recurrence</param>
     /// <returns>True is link is recurrent, false otherwise</returns>
     /// <exception cref="System.ArgumentException">Thrown if target innovationID is not found in outputs</exception>
-    public bool IsLinkRecurrent(long targetInnovationID)
+    public bool IsLinkRecurrent(long targetInnovation)
     {
         bool result = false;
         foreach(TWEANNLink link in outputs)
         {
-           if(link.GetTarget().GetInnovationID() == targetInnovationID)
+           if(link.GetTarget().GetInnovation() == targetInnovation)
             {
                 result = link.IsRecurrent();
             }
             else
             {
-                throw new System.ArgumentException("The target innovationID " + targetInnovationID + " was not found in " + outputs);
+                throw new System.ArgumentException("The target innovationID " + targetInnovation + " was not found in " + outputs);
             }
         }
 
@@ -98,7 +98,7 @@ public class TWEANNNode {
     /// Set the value of sum
     /// </summary>
     /// <param name="newSum">New value for sum</param>
-    public void SetSum(double newSum)
+    public void SetSum(float newSum)
     {
         //TODO Sanity checks
         this.sum = newSum;
@@ -108,7 +108,7 @@ public class TWEANNNode {
     /// Current value of the sum
     /// </summary>
     /// <returns>Current value of sum</returns>
-    public double GetSum()
+    public float GetSum()
     {
         return sum;
     }
@@ -117,16 +117,16 @@ public class TWEANNNode {
     /// This node's innovationID
     /// </summary>
     /// <returns>innovationID</returns>
-    public long GetInnovationID()
+    public long GetInnovation()
     {
-        return innovationID;
+        return innovation;
     }
 
     /// <summary>
     /// An input is added to the sum in case it holds recurrent activation.
     /// </summary>
     /// <param name="input">Sensor input</param>
-    public void Load(double input)
+    public void Load(float input)
     {
         // TODO Sanity checks
         sum += input;
@@ -136,7 +136,7 @@ public class TWEANNNode {
     /// Get the activation
     /// </summary>
     /// <returns>Activation</returns>
-    public double Output()
+    public float Output()
     {
         return activation;
     }
@@ -145,7 +145,7 @@ public class TWEANNNode {
     /// Should only be used for testing purposes
     /// </summary>
     /// <param name="activation">A new activation</param>
-    public void ArtificiallySetActivation(double activation)
+    public void ArtificiallySetActivation(float activation)
     {
         this.activation = activation;
     }
@@ -156,7 +156,7 @@ public class TWEANNNode {
     public void Flush()
     {
         sum = bias;
-        activation = 0.0;
+        activation = 0.0f;
     }
 
     /// <summary>
@@ -188,12 +188,12 @@ public class TWEANNNode {
     /// </summary>
     /// <param name="target">TWEANNNode to link to</param>
     /// <param name="weight">Synaptic weight between the nodes</param>
-    /// <param name="innovationID">Innovation number of new link</param>
+    /// <param name="innovation">Innovation number of new link</param>
     /// <param name="recurrent">Whether or not the link is recurrent</param>
     /// <param name="frozen">Whether or not the link can be changed</param>
-    public void Connect(TWEANNNode target, double weight, long innovationID, bool recurrent, bool frozen)
+    public void Connect(TWEANNNode target, float weight, long innovation, bool recurrent, bool frozen)
     {
-        TWEANNLink link = new TWEANNLink(target, weight, innovationID, recurrent, frozen);
+        TWEANNLink link = new TWEANNLink(target, weight, innovation, recurrent, frozen);
         //Debug.Log("Adding link from " + GetInnovationID() + " to " + target.GetInnovationID());
         outputs.Add(link);
     }
@@ -201,14 +201,14 @@ public class TWEANNNode {
     /// <summary>
     /// Returns true if the node is connected to another node with the given innovation number
     /// </summary>
-    /// <param name="innovationID">InnovationID of the target node to search for</param>
+    /// <param name="innovation">InnovationID of the target node to search for</param>
     /// <returns>True if node is connected, false otherwise</returns>
-    public bool IsConnectedTo(long innovationID)
+    public bool IsConnectedTo(long innovation)
     {
         bool result = false;
         foreach(TWEANNLink link in outputs)
         {
-            if(link.GetTarget().GetInnovationID() == innovationID)
+            if(link.GetTarget().GetInnovation() == innovation)
             {
                 result = true;
             }
@@ -231,6 +231,18 @@ public class TWEANNNode {
                 throw new System.ArgumentException("No link to node found!");
             }
         }
+        return result;
+    }
+
+    public override string ToString()
+    {
+        string result = "";
+        result += innovation + ":";
+        result += nType + ":";
+        result += ActivationFunctions.ActivationName(fType) + ":";
+        result += "bias = " + bias + ":";
+        result += "Sum = " + sum + ":";
+        //result += outputs;
         return result;
     }
 }

@@ -41,7 +41,7 @@ public class PortalController : MonoBehaviour {
 
         // give each portal a destination ID
         p.SetDestinationID((2 + p.GetPortalID()) % 4);
-        if(ArtGallery.DEBUG) Debug.Log("Portal created with ID " + p.GetPortalID() + " and DestinationId " + p.GetDestinationID());
+        if(ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("Portal created with ID " + p.GetPortalID() + " and DestinationId " + p.GetDestinationID());
         portals.Add(portalID, p);
         return p;
     }
@@ -53,13 +53,13 @@ public class PortalController : MonoBehaviour {
 
     public void DoTeleport(Player player, int portalID)
     {
-        //if (ArtGallery.DEBUG) Debug.Log("starting teleport form portal " + portalID + " = " + portals[portalID].GetPortalID());
+        if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("starting teleport form portal " + portalID + " = " + portals[portalID].GetPortalID());
         Vector3 destination = new Vector3(0, 20, 0);
         for(int i = 0; i < portals.Count; i++)
         {
             if(portals[i].GetPortalID() == portals[portalID].GetDestinationID())
             {
-                if (ArtGallery.DEBUG) Debug.Log("Found portal with ID " + portals[i].GetPortalID());
+                if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("Found portal with ID " + portals[i].GetPortalID());
                 destination = portals[i].gameObject.transform.position; // set destination to exit portal position
                 
             }

@@ -6,9 +6,9 @@ public class SigmoidFunction : IActivationFunction
 {
     private string name = "sigmoid";
 
-    public double Function(double x)
+    public float Function(float x)
     {
-        return (1.0 / (1.0 + System.Math.Exp(-x)));
+        return (1.0f / (1.0f + Mathf.Exp(-x)));
     }
 
 

@@ -5,10 +5,10 @@ using UnityEngine;
 public class LinkGene : Gene {
 
     protected long sourceInnovation, targetInnovation;
-    protected double weight;
+    protected float weight;
     protected bool active;
 
-    public LinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation) : base(innovation)
+    public LinkGene(long sourceInnovation, long targetInnovation, float weight, long innovation) : base(innovation)
     {
         this.sourceInnovation = sourceInnovation;
         this.targetInnovation = targetInnovation;
@@ -31,12 +31,12 @@ public class LinkGene : Gene {
         return false;
     }
 
-    public double GetWeight()
+    public float GetWeight()
     {
         return weight;
     }
 
-    public void SetWeight(double weight)
+    public void SetWeight(float weight)
     {
         this.weight = weight;
     }
@@ -58,8 +58,17 @@ public class LinkGene : Gene {
 
     // TODO ToString()
 
-    public string ToString()
+    public override string ToString()
     {
-        return "Link with ID: " + innovation + " connects node " + sourceInnovation + " to node " + targetInnovation + " and has weight of " + weight;
+        string result = "(";
+        result += "inno=" + innovation;
+        result += ",source=" + sourceInnovation;
+        result += ",target=" + targetInnovation;
+        result += ",weight=" + weight;
+        result += ",active=" + IsActive();
+        //result += ",recurrent=" + IsRecurrent();
+        //result += ",frozen=" + IsFrozen();
+        result +=  ")";
+        return result;
     }
 }

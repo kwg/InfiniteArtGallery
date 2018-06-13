@@ -10,19 +10,20 @@ public class ImageFromCPPNTest : MonoBehaviour {
 
     TWEANNGenotype cppnTest;
     TWEANN cppn;
-    double[] inputs, outputs;//double x, y, distFromCenter, bias;
+    float[] inputs, outputs;//float x, y, distFromCenter, bias;
     int width, height;
     Texture2D img;
     Renderer renderer;
-    int newNodeID = 1000;
+    //int newNodeID = 1000;
     bool running = true;
 
 	void Start ()
     {
-        width = height = 64;
+        width = height = 128;
         renderer = GetComponent<Renderer>();
         img = new Texture2D(width, height, TextureFormat.ARGB32, true);
 
+        cppnTest = new TWEANNGenotype(NUM_INPUTS, NUM_OUTPUTS, 0);
         GenerateCPPN();
         DoImage();
         renderer.material.mainTexture = img;
@@ -31,46 +32,91 @@ public class ImageFromCPPNTest : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if (!PauseMenu.isPaused && Input.GetButtonDown("Fire2"))
+        {
+            cppnTest = new TWEANNGenotype(NUM_INPUTS, NUM_OUTPUTS, 0);
+            GenerateCPPN();
+            DoImage();
+            renderer.material.mainTexture = img;
+        }
+
         if (!PauseMenu.isPaused && Input.GetButtonDown("Fire1"))
         {
-            DoImage();
+            EvolveImage();
             renderer.material.mainTexture = img;
         }
     }
 
     void DoImage()
     {
-        img = CreateRandomCPPNImage(width, height);
+
+        img = CreateCPPNImage(width, height);
         //img = CreateRandomTexture(width, height);
 
     }
 
+    void EvolveImage()
+    {
+        string debugMsg = "Evolving CPPN ";
+        int howtoEvolve = Random.Range(0, 3) + 1;
+        //int howtoEvolve = 1;
+        switch (howtoEvolve)
+        {
+            case 0:
+                // there is no 0 because we always want evolution on the test
+                break;
+            case 1: // linkMutation
+                debugMsg += "using linkMutation.";
+                //if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log(debugMsg);
+
+                cppnTest.LinkMutation();
+                break;
+            case 2: // perturbLink
+                int link = Random.Range(0, cppnTest.GetLinks().Count - 1);
+                float delta = RandomGenerator.NextGaussian() * 0.001f;
+                debugMsg += "using perturbLink on link " + link + " with a delta of " + delta;
+                //if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log(debugMsg);
+
+                cppnTest.PerturbLink(link, delta);
+
+                break;
+            case 3: // spliceMutation
+                debugMsg += "using spliceMutation.";
+                //if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log(debugMsg);
+
+                cppnTest.SpliceMutation();
+                break;
+            default:
+                break;
+        }
+        img = CreateCPPNImage(width, height);
+    }
+
     void GenerateCPPN()
     {
-        cppnTest = new TWEANNGenotype(NUM_INPUTS, NUM_OUTPUTS, 0);
         foreach (NodeGene node in cppnTest.GetNodes())
         {
-            node.fType = RandomFTYPE();
+            node.fType = ActivationFunctions.RandomFTYPE();
         }
-        for (int i = 0; i < 5; i++)
-        {
-            int newNodeInnovation = newNodeID++;
-            int toLinkInnovation = newNodeID++;
-            int fromLinkInnovation = newNodeID++;
+        //for (int i = 0; i < 5; i++)
+        //{
+        //    long newNodeInnovation = EvolutionaryHistory.NextInnovationID();
+        //    long toLinkInnovation = EvolutionaryHistory.NextInnovationID();
+        //    long fromLinkInnovation = EvolutionaryHistory.NextInnovationID();
 
-            cppnTest.SpliceNode(RandomFTYPE(), newNodeInnovation++, cppnTest.GetNodes()[RandomInput()].GetInnovation(),
-                cppnTest.GetNodes()[RandomOut()].GetInnovation(), Random.value * Random.Range(-1, 1), Random.value * Random.Range(-1, 1), toLinkInnovation, fromLinkInnovation);
-        }
+        //    cppnTest.SpliceNode(ActivationFunctions.RandomFTYPE(), EvolutionaryHistory.NextInnovationID(), cppnTest.GetNodes()[RandomInput()].GetInnovation(),
+        //        cppnTest.GetNodes()[RandomOut()].GetInnovation(), Random.value * Random.Range(-1, 1), Random.value * Random.Range(-1, 1), toLinkInnovation, fromLinkInnovation);
+        //}
 
         cppn = new TWEANN(cppnTest);
 
     }
 
-    double GetDistFromCenter(double x, double y)
+    float GetDistFromCenter(float x, float y)
     {
-        double result = double.NaN;
+        float result = float.NaN;
        
-        result = System.Math.Sqrt((x*x + y*y)) * System.Math.Sqrt(2);
+        result = Mathf.Sqrt((x*x + y*y)) * Mathf.Sqrt(2);
 
         return result;
     }
@@ -90,7 +136,7 @@ public class ImageFromCPPNTest : MonoBehaviour {
         return img;
     }
 
-    Texture2D CreateRandomCPPNImage(int width, int height)
+    Texture2D CreateCPPNImage(int width, int height)
     {
         GenerateCPPN();
 
@@ -100,16 +146,19 @@ public class ImageFromCPPNTest : MonoBehaviour {
         {
             for (int x = 0; x < width; x++)
             {
-                double scaledX = Scale(x, width);
-                double scaledY = Scale(y, height);
-                double[] hsv = cppn.Process(new double[] { scaledX, scaledY, GetDistFromCenter(scaledX, scaledY), 1 });
-                //Debug.Log("SPAM! x:" + x + ", y:" + y + ", distFromCenter:" + GetDistFromCenter(x, y) + "");
-                //Debug.Log("SPAM! scaledX:" + scaledX + ", scaledY:" + scaledY + ", distFromCenter:" + GetDistFromCenter(scaledX, scaledY) + "");
-                //Debug.Log("ColorHSV - h:" +  hsv[0] + " s:" + hsv[1] + " v:" + hsv[2]);
-                Color color = Color.HSVToRGB((float)hsv[0], (float)hsv[1], (float)hsv[2]);
+                float scaledX = Scale(x, width);
+                float scaledY = Scale(y, height);
+                float[] hsv = cppn.Process(new float[] { scaledX, scaledY, GetDistFromCenter(scaledX, scaledY), 1 });
+
+                // HSV value restrictions
+
+                hsv[0] = Mathf.Clamp(hsv[2], 0.0f, 1.0f);
+                hsv[1] = Mathf.Clamp(hsv[2], 0.0f, 1.0f);
+                hsv[2] = Mathf.Abs(Mathf.Clamp(hsv[2], 1.0f, 1.0f));
+
+                Color color = Color.HSVToRGB(hsv[0], hsv[1], hsv[2]);
                 
                 img.SetPixel(x, y, color);
-                img.Apply();
             }
         }
 
@@ -117,46 +166,11 @@ public class ImageFromCPPNTest : MonoBehaviour {
         return img;
     }
 
-    double Scale(int toScale, int maxDimension)
+    float Scale(int toScale, int maxDimension)
     {
-        double result;
+        float result;
 
-        result = ((toScale * 1.0 / (maxDimension - 1)) * 2) - 1;
-
-        return result;
-    }
-
-
-    // FIXME DELETE THIS
-    FTYPE RandomFTYPE()
-    {
-        FTYPE result = FTYPE.ID;
-
-        int rnd = Random.Range(1, 6);
-        switch (rnd)
-        {
-            case 1:
-                result = FTYPE.TANH;
-                break;
-            case 2:
-                result = FTYPE.SIGMOID;
-                break;
-            case 3:
-                result = FTYPE.SINE;
-                break;
-            case 4:
-                result = FTYPE.COS;
-                break;
-            case 5:
-                result = FTYPE.GAUSS;
-                break;
-            case 6:
-                result = FTYPE.ID;
-                break;
-            default:
-                break;
-
-        }
+        result = ((toScale * 1.0f / (maxDimension - 1)) * 2) - 1;
 
         return result;
     }

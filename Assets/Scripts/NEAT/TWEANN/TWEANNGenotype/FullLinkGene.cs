@@ -6,7 +6,7 @@ public class FullLinkGene : LinkGene {
 
     protected bool active, recurrent;
 
-    public FullLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, bool active, bool recurrent) : base(sourceInnovation, targetInnovation, weight, innovation)
+    public FullLinkGene(long sourceInnovation, long targetInnovation, float weight, long innovation, bool active, bool recurrent) : base(sourceInnovation, targetInnovation, weight, innovation)
     {
         this.active = active;
         this.recurrent = recurrent;

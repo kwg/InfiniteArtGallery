@@ -30,7 +30,7 @@ public class ActivationFunctions  {
     /// <param name="fType">Enum <see cref="FTYPE" /></param>
     /// <param name="sum">Input sent to node</param>
     /// <returns></returns>
-    public static double Activation(FTYPE fType, double sum)
+    public static float Activation(FTYPE fType, float sum)
     {
         return activationFunctions[fType].Function(sum);
     }
@@ -70,6 +70,13 @@ public class ActivationFunctions  {
         }
 
         return type;
+    }
+
+    public static string ActivationName(FTYPE fType)
+    {
+        string result = "";
+        result = activationFunctions[fType].Name();
+        return result;
     }
 
 }

@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class FullNodeGene : NodeGene {
 
-    double bias;
+    float bias;
 
-    public FullNodeGene(NTYPE nType, FTYPE fType, long innovation, double bias) : base(nType, fType, innovation)
+    public FullNodeGene(NTYPE nType, FTYPE fType, long innovation, float bias) : base(nType, fType, innovation)
     {
         this.bias = bias;
     }
 
-    public double GetBias()
+    public float GetBias()
     {
         return bias;
     }

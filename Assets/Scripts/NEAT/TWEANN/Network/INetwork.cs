@@ -19,7 +19,7 @@ public interface INetwork {
     /// <returns>Number of outputs</returns>
     int NumOutputs();
 
-    double[] Process(double[] inputs);
+    float[] Process(float[] inputs);
 
     /// <summary>
     /// Clear an internal state

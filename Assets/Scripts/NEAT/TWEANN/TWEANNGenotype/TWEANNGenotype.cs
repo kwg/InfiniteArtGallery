@@ -28,7 +28,8 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
             else if(n.nType == NTYPE.OUTPUT) { numOutputs++; }
         }
 
-        //HACK this needs to come from EvolutionaryHistory
+        //HACK CROSSOVER: need archetype for matching genes
+
         archetypeIndex = 0;
 
     }
@@ -50,12 +51,12 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         for (int i = 0; i < tweann.GetNodes().Count; i++)
         {
 
-            NodeGene ng = new NodeGene(tweannNodeList[i].GetNType(), tweannNodeList[i].GetFType(), tweannNodeList[i].GetInnovationID());
+            NodeGene ng = new NodeGene(tweannNodeList[i].GetNType(), tweannNodeList[i].GetFType(), tweannNodeList[i].GetInnovation());
             nodes.Add(ng);
             List<LinkGene> tempLinks = new List<LinkGene>();
             foreach(TWEANNLink l in tweannNodeList[i].GetOutputs())
             {
-                LinkGene lg = new LinkGene(tweannNodeList[i].GetInnovationID(), l.GetTarget().GetInnovationID(), l.GetWeight(), l.GetInnovationID());
+                LinkGene lg = new LinkGene(tweannNodeList[i].GetInnovation(), l.GetTarget().GetInnovation(), l.GetWeight(), l.GetInnovation());
                 tempLinks.Add(lg);
             }
             for(int j = 0; j < tempLinks.Count; j++)
@@ -100,16 +101,21 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
     public int IndexOfGeneInnovation<T>(long innovation, List<T> genes) where T : Gene
     {
         int result = -1;
+        bool found = false;
         for (int i = 0; i < genes.Count; i++)
         {
-            if(genes[i].GetInnovation() == innovation)
+            if (genes[i].GetInnovation() == innovation)
             {
                 result = i;
+                found = true;
+                break;
             }
-            else
-            {
-               // throw new System.ArgumentException("Innovation " + innovation + " not found in net (TODO: identity of net)"); // TODO add ident to error msg
-            }
+
+        }
+
+        if (!found)
+        {
+            throw new System.ArgumentException("Innovation " + innovation + " not found in net (TODO: identity of net)"); // TODO add ident to error msg
         }
 
         return result;
@@ -142,37 +148,82 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
     // TODO - mutate
     public void LinkMutation()
     {
-        LinkMutation(GetRandomLinkInnovation(), Random.Range(-1.0f, 1.0f));
+        long sourceNodeInnovation = GetLinkByInnovationID(GetRandomLinkInnovation()).GetSourceInnovation();
+        float weight = Random.Range(-1.0f, 1.0f);
+        LinkMutation(sourceNodeInnovation, weight);
     }
 
-    public void LinkMutation(long source, float weight)
+    public void LinkMutation(long sourceNodeInnovation, float weight)
     {
+        string debugMsg = "LinkMutation on link with innovation " + sourceNodeInnovation + " using a weight of " + weight;
+
+        long targetInnovation = GetRandomNodeInnovation(sourceNodeInnovation, false);
+        long link = EvolutionaryHistory.NextInnovationID();
+        if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log(debugMsg);
+
+        AddLink(sourceNodeInnovation, targetInnovation, Random.Range(-1f, 1f), link);
+    }
+
+    public void SpliceMutation()
+    {
+        //HACK just doing random ftypes for now
+        SpliceMutation(ActivationFunctions.RandomFTYPE());
+    }
+
+    private void SpliceMutation(FTYPE fType)
+    {
+        LinkGene lg = GetLinkByInnovationID(GetRandomLinkInnovation());
+        long sourceInnovation = lg.GetSourceInnovation();
+        long targetInnovation = lg.GetTargetInnovation();
+        long newNode = EvolutionaryHistory.NextInnovationID();
+        float weight1 = Random.Range(-1f, 1f) * 0.001f;
+        float weight2 = Random.Range(-1f, 1f) * 0.001f;
+        long toLink = EvolutionaryHistory.NextInnovationID();
+        long fromLink = EvolutionaryHistory.NextInnovationID();
+
+        string debugMsg = "SpliceMutation between " + sourceInnovation + " and " + targetInnovation + ". Adding a node with an innovation of " + newNode + " and an activation function of " + fType;
+        if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log(debugMsg);
+        SpliceNode(fType, newNode, sourceInnovation, targetInnovation, weight1, weight2, toLink, fromLink);
+
 
     }
 
     private long GetRandomLinkInnovation()
     {
-        return nodes[Random.Range(0, nodes.Count - 1)].GetInnovation();
+        return links[Random.Range(0, links.Count - 1)].GetInnovation();
     }
 
-    // nodes/links
-    //    perturbLink(int linkIndex, double delta)
-    public void PerturbLink(int linkIndex, double delta)
+    private long GetRandomNodeInnovation(long sourceInnovation, bool includeInputs) // HACK this was made to be simple and is not fully featured
+    {
+        long result = -1;
+        int startingInnovation;
+        int endingInnovation = nodes.Count -1;
+
+        if(includeInputs)
+        {
+            startingInnovation = 0;
+        }
+        else
+        {
+            startingInnovation = numInputs - 1;
+        }
+
+        result = nodes[Random.Range(startingInnovation, endingInnovation)].GetInnovation();
+
+        return result;
+    }
+
+    public void PerturbLink(int linkIndex, float delta)
     {
         LinkGene lg = links[linkIndex];
         PerturbLink(lg, delta);
     }
 
-    //    perturbLink(LinkGene lg, double delta)
-    public void PerturbLink(LinkGene lg, double delta)
+    public void PerturbLink(LinkGene lg, float delta)
     {
         lg.SetWeight(lg.GetWeight() + delta);
     }
 
-    //    setWeight()
-    /* Done in LinkGene */
-
-    //    getLinkBetween()
     public LinkGene GetLinkBetween(long sourceInnovation, long targetInnovation)
     {
         LinkGene result = null;
@@ -191,8 +242,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         return result;
     }
 
-    //    addLink()
-    public void AddLink(long sourceInnovation, long targetInnovation, double weight, long innovation)
+    public void AddLink(long sourceInnovation, long targetInnovation, float weight, long innovation)
     {
         if(GetLinkBetween(sourceInnovation, targetInnovation) == null)
         {
@@ -204,9 +254,8 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         }
     }
 
-    //    spliceNode()
     public void SpliceNode(FTYPE fType, long newNodeInnovation, long sourceInnovation, long targetInnovation,
-        double weight1, double weight2, long toLinkInnovation, long fromLinkInnovation)
+        float weight1, float weight2, long toLinkInnovation, long fromLinkInnovation)
     {
         NodeGene ng = new NodeGene(NTYPE.HIDDEN, fType, newNodeInnovation);
         LinkGene lg = GetLinkBetween(sourceInnovation, targetInnovation);
@@ -233,10 +282,10 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         links.Remove(GetLinkBetween(sourceInnovation, targetInnovation));
     }
 
-    // ?  getNodeWithInnovationID()
     public NodeGene GetNodeByInnovationID(long innovation)
     {
         NodeGene result = null;
+        bool found = false;
         foreach(NodeGene ng in nodes)
         {
             if(ng.GetInnovation() == innovation)
@@ -245,27 +294,56 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
             }
             else
             {
-                //throw new System.ArgumentException("Node innovation not found: " + innovation);
             }
+        }
+        if (!found)
+        {
+            throw new System.ArgumentException("Node innovation not found: " + innovation);
         }
 
         return result;
-    }   
+    }  
+    
+    public LinkGene GetLinkByInnovationID(long innovation)
+    {
+        LinkGene result = null;
+        bool found = false;
+        foreach(LinkGene lg in links)
+        {
+            if(lg.GetInnovation() == innovation)
+            {
+                result = lg;
+                found = true;
+                break;
+            }
 
+        }
+        if (!found)
+        {
+            throw new System.ArgumentException("Link innovation not found: " + innovation);
+        }
 
-    // Crossovers
-    // TODO - crossover
-
-
-    // Additional:
-    //    getPhenotype()
+        return result;
+    }
 
     public TWEANN GetPhenotype()
     {
         TWEANN result = new TWEANN(this);
         return result;
     }
+
+
     //    copy()
     //    newInstance()
 
+    public override string ToString()
+    {
+        string result = "" + ID;
+        //result += " (modules:" + numModules + ")";
+        result += "\n" + nodes;
+        result += "\n" + links;
+
+        return result;
+       
+    }
 }

@@ -107,7 +107,7 @@ public class RoomNode : MonoBehaviour {
 
         foreach (KeyValuePair<int, Portal> p in pc.GetPortals())
         {
-            if (ArtGallery.DEBUG) Debug.Log("Painting portal " + p.Key + " with artwork ...");
+            if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("Painting portal " + p.Key + " with artwork ...");
             p.Value.PaintDoor(art[p.Key].GetArtwork());
         }
     }
@@ -117,7 +117,7 @@ public class RoomNode : MonoBehaviour {
         foreach(KeyValuePair<int, Artwork> a in art)
         {
             Portal p = pc.SpawnPortal(a.Key);
-            if (ArtGallery.DEBUG) Debug.Log("received portal with ID " + p.GetPortalID());
+            if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("received portal with ID " + p.GetPortalID());
 
             // TODO make a method to do this correctly
             float x_spacing = 9.9f;

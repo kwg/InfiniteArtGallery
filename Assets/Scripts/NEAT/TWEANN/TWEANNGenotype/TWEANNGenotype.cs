@@ -144,12 +144,16 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
     {
         return links;
     }
+    
     // Mutate
-    // TODO - mutate
+    // TODO - mutate()
+
+
     public void LinkMutation()
     {
         long sourceNodeInnovation = GetLinkByInnovationID(GetRandomLinkInnovation()).GetSourceInnovation();
-        float weight = Random.Range(-1.0f, 1.0f);
+        //float weight = Random.Range(-1.0f, 1.0f) * 0.001f;
+        float weight = RandomGenerator.NextGaussian();
         LinkMutation(sourceNodeInnovation, weight);
     }
 
@@ -157,11 +161,11 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
     {
         string debugMsg = "LinkMutation on link with innovation " + sourceNodeInnovation + " using a weight of " + weight;
 
-        long targetInnovation = GetRandomNodeInnovation(sourceNodeInnovation, false);
+        long targetInnovation = GetRandomNodeInnovation(sourceNodeInnovation, true);
         long link = EvolutionaryHistory.NextInnovationID();
         if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log(debugMsg);
 
-        AddLink(sourceNodeInnovation, targetInnovation, Random.Range(-1f, 1f), link);
+        AddLink(sourceNodeInnovation, targetInnovation, weight, link);
     }
 
     public void SpliceMutation()
@@ -176,16 +180,14 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         long sourceInnovation = lg.GetSourceInnovation();
         long targetInnovation = lg.GetTargetInnovation();
         long newNode = EvolutionaryHistory.NextInnovationID();
-        float weight1 = Random.Range(-1f, 1f) * 0.001f;
-        float weight2 = Random.Range(-1f, 1f) * 0.001f;
+        float weight1 = RandomGenerator.NextGaussian();
+        float weight2 = RandomGenerator.NextGaussian();
         long toLink = EvolutionaryHistory.NextInnovationID();
         long fromLink = EvolutionaryHistory.NextInnovationID();
 
         string debugMsg = "SpliceMutation between " + sourceInnovation + " and " + targetInnovation + ". Adding a node with an innovation of " + newNode + " and an activation function of " + fType;
         if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log(debugMsg);
         SpliceNode(fType, newNode, sourceInnovation, targetInnovation, weight1, weight2, toLink, fromLink);
-
-
     }
 
     private long GetRandomLinkInnovation()
@@ -261,7 +263,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         LinkGene lg = GetLinkBetween(sourceInnovation, targetInnovation);
         //lg.SetActive(false); // TODO active bool is not in use
         // HACK Links should not be removed when splicing in a new node, but active is not in use yet
-        links.Remove(lg);
+        //links.Remove(lg);
 
         // HACK if this fails then it will be because the index is either < 0 or > count - add fixes or write a container w/ helper methods
         nodes.Insert(System.Math.Min(OutputStartIndex(), System.Math.Max(numInputs, IndexOfNodeInnovation(sourceInnovation) + 1)), ng);

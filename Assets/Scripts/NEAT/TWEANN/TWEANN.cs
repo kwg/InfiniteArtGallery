@@ -51,8 +51,7 @@ public class TWEANN : INetwork
             }
             for(int k = 0; k < inputSources.Length; k++)
             {
-                // FIXME !weight is set to 0.5 for testing!
-                nodes[inputSources[k]].Connect(nodes[numInputs + j], 0.5f, linkInnovationBound - (j * numInputs) - inputSources[k], false, false);
+                nodes[inputSources[k]].Connect(nodes[numInputs + j], RandomGenerator.NextGaussian(), linkInnovationBound - (j * numInputs) - inputSources[k], false, false);
             }
 
         }

@@ -73,7 +73,7 @@ public class ImageFromCPPNTest : MonoBehaviour {
                 break;
             case 2: // perturbLink
                 int link = Random.Range(0, cppnTest.GetLinks().Count - 1);
-                float delta = RandomGenerator.NextGaussian() * 0.001f;
+                float delta = RandomGenerator.NextGaussian();
                 debugMsg += "using perturbLink on link " + link + " with a delta of " + delta;
                 //if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log(debugMsg);
 

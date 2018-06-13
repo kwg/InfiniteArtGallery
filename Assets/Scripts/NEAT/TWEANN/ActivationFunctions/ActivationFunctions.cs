@@ -42,8 +42,7 @@ public class ActivationFunctions  {
     public static FTYPE RandomFTYPE()
     {
         FTYPE type = FTYPE.ID;
-
-        int rnd = Random.Range(1, 6);
+        int rnd = Random.Range(0, 6) + 1;
         switch (rnd)
         {
             case 1:
@@ -63,6 +62,57 @@ public class ActivationFunctions  {
                 break;
             case 6:
                 type = FTYPE.ID;
+                break;
+            case 7:
+                type = FTYPE.FULLAPPROX;
+                break;
+            case 8:
+                type = FTYPE.APPROX;
+                break;
+            case 9:
+                type = FTYPE.ABSVAL;
+                break;
+            case 10:
+                type = FTYPE.PIECEWISE;
+                break;
+            case 11:
+                type = FTYPE.HLPIECEWISE;
+                break;
+            case 12:
+                type = FTYPE.SAWTOOTH;
+                break;
+            case 13:
+                type = FTYPE.STRETCHED_TANH;
+                break;
+            case 14:
+                type = FTYPE.RE_LU;
+                break;
+            case 15:
+                type = FTYPE.SOFTPLUS;
+                break;
+            case 16:
+                type = FTYPE.LEAKY_RE_LU;
+                break;
+            case 17:
+                type = FTYPE.FULLSAWTOOTH;
+                break;
+            case 18:
+                type = FTYPE.TRIANGLEWAVE;
+                break;
+            case 19:
+                type = FTYPE.SQUAREWAVE;
+                break;
+            case 20:
+                type = FTYPE.FULLSIGMOID;
+                break;
+            case 21:
+                type = FTYPE.FULLGAUSS;
+                break;
+            case 22:
+                type = FTYPE.SIL;
+                break;
+            case 23:
+                type = FTYPE.DSIL;
                 break;
             default:
                 break;

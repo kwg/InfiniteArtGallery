@@ -9,27 +9,26 @@ public class TWEANNLink  {
 
     TWEANNNode target;
     float weight;
-    long innovationID;
+    long innovation;
     bool frozen;
     bool recurrent;
-    long sourceInnovation;
-    long targetInnovation;
+
 
     /// <summary>
     /// Make a new link to target node
     /// </summary>
     /// <param name="target">TWEANNNode that link leads to</param>
     /// <param name="weight">Synaptic weight</param>
-    /// <param name="innovationID">Innovation number of the link</param>
+    /// <param name="innovation">Innovation number of the link</param>
     /// <param name="recurrent">Whether the link is recurrent</param>
     /// <param name="frozen">Whenter the link is frozen</param>
-    public TWEANNLink(TWEANNNode target, float weight, long innovationID, bool recurrent, bool frozen)
+    public TWEANNLink(TWEANNNode target, float weight, long innovation, bool recurrent, bool frozen)
     {
         if (target != null) this.target = target;
         else throw new System.ArgumentException("Target can not be null");
 
         this.weight = weight;
-        this.innovationID = innovationID;
+        this.innovation = innovation;
         this.recurrent = recurrent;
         this.frozen = frozen;
     }
@@ -71,16 +70,17 @@ public class TWEANNLink  {
         return weight;
     }
 
-    public long GetInnovationID()
+    public long GetInnovation()
     {
-        return innovationID;
+        return innovation;
     }
 
     public override string ToString()
     {
-        return "(inno=" + this.innovationID + ",source=" + this.sourceInnovation + ",target=" + this.targetInnovation
-        + ",weight=" + this.weight + ",active=" + this.isActive() + ",recurrent=" + this.isRecurrent() + ",frozen="
-        + this.isFrozen() + ")";
+        string result = "";
+        result += "(" + innovation + ":" + weight + ":" + target.GetInnovation() + ":"
+                + (recurrent ? "recurrent" : "forward") + ")";
+        return result;
     }
 
 }

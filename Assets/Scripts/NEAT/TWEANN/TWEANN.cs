@@ -81,13 +81,13 @@ public class TWEANN : INetwork
         numOutputs = countOut;
         foreach(LinkGene link in g.GetLinks())
         {
-            Debug.Log("Connection for link " + link.GetInnovation() + ":");
+            //Debug.Log("Connection for link " + link.GetInnovation() + ": With source node innovation " + link.GetSourceInnovation() + " and target node innovation " + link.GetTargetInnovation());
             TWEANNNode source = GetNodeByInnovationID(link.GetSourceInnovation());
             TWEANNNode target = GetNodeByInnovationID(link.GetTargetInnovation());
             //TODO add asserts
-            if (source == null) throw new System.Exception("Source not found with innovation " + link.GetSourceInnovation() + " :: " + g.ToString());
-            if (target == null) throw new System.Exception("Target not found with innovation " + link.GetTargetInnovation() + " :: " + g.ToString());
-            if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("Connecting node " + source.GetInnovationID() + " to node " + target.GetInnovationID() + " with link " + link.GetInnovation());
+            if (source == null) throw new System.Exception("Source not found with innovation " + link.GetSourceInnovation() + " \n " + ToString());
+            if (target == null) throw new System.Exception("Target not found with innovation " + link.GetTargetInnovation() + " \n " + ToString());
+            //if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("Connecting node " + source.GetInnovation() + " to node " + target.GetInnovation() + " with link " + link.GetInnovation());
 
             source.Connect(target, link.GetWeight(), link.GetInnovation(), false, false);
         }
@@ -155,7 +155,7 @@ public class TWEANN : INetwork
         TWEANNNode result = null;
         for(int i = 0; i < nodes.Count; i++)
         {
-            if(nodes[i].GetInnovationID() == innovationID)
+            if(nodes[i].GetInnovation() == innovationID)
             {
                 result = nodes[i];
             }
@@ -165,6 +165,20 @@ public class TWEANN : INetwork
             }
         }
 
+        return result;
+    }
+
+    public override string ToString()
+    {
+        string result = "";
+        result += numInputs + " Inputs\n";
+		result += numOutputs + " Outputs\n";
+		//result += numModes + " Modes\n";
+		result += "Forward\n";
+		for (int i = 0; i < nodes.Count; i++)
+        {
+			result += nodes[i] + "\n";
+		}
         return result;
     }
 }

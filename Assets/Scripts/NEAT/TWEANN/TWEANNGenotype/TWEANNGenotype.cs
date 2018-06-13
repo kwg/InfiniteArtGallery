@@ -51,12 +51,12 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         for (int i = 0; i < tweann.GetNodes().Count; i++)
         {
 
-            NodeGene ng = new NodeGene(tweannNodeList[i].GetNType(), tweannNodeList[i].GetFType(), tweannNodeList[i].GetInnovationID());
+            NodeGene ng = new NodeGene(tweannNodeList[i].GetNType(), tweannNodeList[i].GetFType(), tweannNodeList[i].GetInnovation());
             nodes.Add(ng);
             List<LinkGene> tempLinks = new List<LinkGene>();
             foreach(TWEANNLink l in tweannNodeList[i].GetOutputs())
             {
-                LinkGene lg = new LinkGene(tweannNodeList[i].GetInnovationID(), l.GetTarget().GetInnovationID(), l.GetWeight(), l.GetInnovationID());
+                LinkGene lg = new LinkGene(tweannNodeList[i].GetInnovation(), l.GetTarget().GetInnovation(), l.GetWeight(), l.GetInnovation());
                 tempLinks.Add(lg);
             }
             for(int j = 0; j < tempLinks.Count; j++)
@@ -148,20 +148,20 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
     // TODO - mutate
     public void LinkMutation()
     {
-        long randomLinkInnovation = -1;
+        long sourceNodeInnovation = GetLinkByInnovationID(GetRandomLinkInnovation()).GetSourceInnovation();
         float weight = Random.Range(-1.0f, 1.0f);
-        LinkMutation(randomLinkInnovation, weight);
+        LinkMutation(sourceNodeInnovation, weight);
     }
 
-    public void LinkMutation(long sourceInnovation, float weight)
+    public void LinkMutation(long sourceNodeInnovation, float weight)
     {
-        string debugMsg = "LinkMutation on link with innovation " + sourceInnovation + " using a weight of " + weight;
+        string debugMsg = "LinkMutation on link with innovation " + sourceNodeInnovation + " using a weight of " + weight;
 
-        long targetInnovation = GetRandomNodeInnovation(sourceInnovation, false);
+        long targetInnovation = GetRandomNodeInnovation(sourceNodeInnovation, false);
         long link = EvolutionaryHistory.NextInnovationID();
         if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log(debugMsg);
 
-        AddLink(sourceInnovation, targetInnovation, Random.Range(-1f, 1f), link);
+        AddLink(sourceNodeInnovation, targetInnovation, Random.Range(-1f, 1f), link);
     }
 
     public void SpliceMutation()
@@ -208,7 +208,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
             startingInnovation = numInputs - 1;
         }
 
-        result = Random.Range(startingInnovation, endingInnovation);
+        result = nodes[Random.Range(startingInnovation, endingInnovation)].GetInnovation();
 
         return result;
     }
@@ -338,8 +338,12 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
 
     public override string ToString()
     {
-        string nodesOutput = nodes.ToString();
+        string result = "" + ID;
+        //result += " (modules:" + numModules + ")";
+        result += "\n" + nodes;
+        result += "\n" + links;
 
-        return nodesOutput;
+        return result;
+       
     }
 }

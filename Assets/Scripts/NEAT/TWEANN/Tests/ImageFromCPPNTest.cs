@@ -58,8 +58,8 @@ public class ImageFromCPPNTest : MonoBehaviour {
     void EvolveImage()
     {
         string debugMsg = "Evolving CPPN ";
-        //int howtoEvolve = Random.Range(2, 4);
-        int howtoEvolve = 1;
+        int howtoEvolve = Random.Range(0, 3) + 1;
+        //int howtoEvolve = 1;
         switch (howtoEvolve)
         {
             case 0:
@@ -67,7 +67,7 @@ public class ImageFromCPPNTest : MonoBehaviour {
                 break;
             case 1: // linkMutation
                 debugMsg += "using linkMutation.";
-                if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log(debugMsg);
+                //if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log(debugMsg);
 
                 cppnTest.LinkMutation();
                 break;
@@ -75,21 +75,20 @@ public class ImageFromCPPNTest : MonoBehaviour {
                 int link = Random.Range(0, cppnTest.GetLinks().Count - 1);
                 float delta = RandomGenerator.NextGaussian() * 0.001f;
                 debugMsg += "using perturbLink on link " + link + " with a delta of " + delta;
-                if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log(debugMsg);
+                //if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log(debugMsg);
 
                 cppnTest.PerturbLink(link, delta);
 
                 break;
             case 3: // spliceMutation
                 debugMsg += "using spliceMutation.";
-                if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log(debugMsg);
+                //if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log(debugMsg);
 
                 cppnTest.SpliceMutation();
                 break;
             default:
                 break;
         }
-        if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log(debugMsg);
         img = CreateCPPNImage(width, height);
     }
 

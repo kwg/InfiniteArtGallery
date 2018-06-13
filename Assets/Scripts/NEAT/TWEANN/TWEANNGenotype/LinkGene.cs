@@ -58,8 +58,17 @@ public class LinkGene : Gene {
 
     // TODO ToString()
 
-    public string ToString()
+    public override string ToString()
     {
-        return "Link with ID: " + innovation + " connects node " + sourceInnovation + " to node " + targetInnovation + " and has weight of " + weight;
+        string result = "(";
+        result += "inno=" + innovation;
+        result += ",source=" + sourceInnovation;
+        result += ",target=" + targetInnovation;
+        result += ",weight=" + weight;
+        result += ",active=" + IsActive();
+        //result += ",recurrent=" + IsRecurrent();
+        //result += ",frozen=" + IsFrozen();
+        result +=  ")";
+        return result;
     }
 }

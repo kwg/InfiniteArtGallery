@@ -72,4 +72,11 @@ public class ActivationFunctions  {
         return type;
     }
 
+    public static string ActivationName(FTYPE fType)
+    {
+        string result = "";
+        result = activationFunctions[fType].Name();
+        return result;
+    }
+
 }

@@ -35,10 +35,15 @@ public class NodeGene : Gene {
         return new NodeGene(nType, fType, innovation);
     }
 
-    // TODO ToString()
-
     public override string ToString()
     {
-        return "Node: " + innovation + ", NTYPE: " + nType + ", FTYPE: " + fType + ", bias: " + bias;
+        string result = "(";
+        result += "(inno=" + innovation;
+        result += ",ftype=" + ActivationFunctions.ActivationName(fType);
+        result += ",ntype=" + nType;
+        //result += ",frozen=" + IsFrozen();
+        result += ",bias=" + GetBias();
+        result +=  ")";
+        return result;
     }
 }

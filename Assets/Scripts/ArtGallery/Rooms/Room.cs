@@ -10,46 +10,45 @@ using UnityEngine;
 /// </summary>
 public class Room : MonoBehaviour {
 
-    private PortalController pc;
-    public static int currentRoomID = 0;
+    private bool debug = ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE;
 
-    // Links to other rooms
-    private SortedList<int, SortedList<int, Artwork>> rooms;
+    public GameObject portalObject;
+    SortedList<int, Portal> portals; // Portal index is door index
 
-    // Population of doors in this room
-    //private SortedList<int, Artwork> art;
+    int PortalCount = 0; // TODO not in use - decide what to do with it
 
-    private int parentDoorID; // Parent of this room
+    private int parentID; // Parent of this room
     private bool isPopulated = false;  // is this room initialized?
+    private SortedList<int, Texture2D> images;
 
     /// <summary>
-    /// Initialize a room with random art
+    /// Initial creation of the room
     /// </summary>
     /// <param name="numberArtworks"></param>
-    public void InitializeRoom(int numberArtworks)
+    public void InitializeRoom(SortedList<int, Texture2D> images)
     {
-        pc = FindObjectOfType<PortalController>();
-        rooms = new SortedList<int, SortedList<int, Artwork>>();
-        rooms[currentRoomID] = new SortedList<int, Artwork>();
-        parentDoorID = -1;
-        /* Create art */
-        for (int i = 0; i < numberArtworks; i++)
-        {
-            rooms[currentRoomID].Add(i, new Artwork());
-        }
+        this.images = images;
+        parentID = -1;
+        portals = new SortedList<int, Portal>();
         CreatePortals();
         isPopulated = true;
     }
 
-    /* Public methods */
-    public void SetParentDoorID(int parentDoorID)
+    /// <summary>
+    /// Initialize a room with given artworks and parent ID (loading a room)
+    /// </summary>
+    /// <param name="artworks">SortedList of artwork to be hung on the walls</param>
+    public void InitializeRoom(int parentID, SortedList<int, Texture2D> images)
     {
-        this.parentDoorID = parentDoorID;
+        this.parentID = parentID;
+        /* Create art */
+        this.images = images;
     }
 
-    public Artwork GetDoorByID(int doorID)
+    /* Public methods */
+    public void SetParentID(int parentID)
     {
-        return rooms[currentRoomID][doorID];
+        this.parentID = parentID;
     }
 
     public bool IsPopulated()
@@ -57,45 +56,20 @@ public class Room : MonoBehaviour {
         return isPopulated;
     }
 
-    public void ChangeRoomByPortalID(int portalID)
-    {
-        Debug.Log("Artwork count for room " + currentRoomID + ": " + rooms[currentRoomID].Count);
-
-        if (parentDoorID != portalID) // Build a new room with the selected artwork
-        {
-            parentDoorID = pc.GetPortals()[portalID].GetDestinationID();
-            int previousRoomID = currentRoomID++;
-            rooms.Add(currentRoomID, new SortedList<int, Artwork>());
-
-            for (int i = 0; i < rooms[previousRoomID].Count; i++)
-            {
-                Debug.Log("WOOT!");
-                TWEANNGenotype champion = rooms[previousRoomID][portalID].GetGenotype();
-                champion.Mutate();
-                rooms[currentRoomID].Add(i, new Artwork(champion));
-            }
-            RedrawRoom();
-        }
-        else // Load the selected room (time travel)
-        {
-            Debug.Log("Opps - Time travel is not implemented");
-        }
-    }
-
     public void RedrawRoom()
     {
-        for(int p = 0; p < rooms[currentRoomID].Count; p++)
+        foreach(KeyValuePair<int, Portal> p in portals)
         {
-            pc.GetPortals()[p].PaintDoor(rooms[currentRoomID][p].GetArtwork());
+            p.Value.PaintDoor(images[p.Key]);
         }
     }
 
     private void CreatePortals()
     {
-        foreach(KeyValuePair<int, Artwork> a in rooms[currentRoomID])
+        foreach(KeyValuePair<int, Texture2D> img in images)
         {
-            Portal p = pc.SpawnPortal(a.Key);
-            if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("received portal with ID " + p.GetPortalID());
+            Portal p = SpawnPortal(img.Key);
+            if (debug) Debug.Log("received portal with ID " + p.GetPortalID());
 
             // TODO make a method to do this correctly
             float x_spacing = 9.9f;
@@ -110,11 +84,82 @@ public class Room : MonoBehaviour {
             };
 
             // put each portal on a wall
-            p.transform.position = vecs[a.Key];
-            p.transform.Rotate(new Vector3(0, (-90 * a.Key), 0)); // HACK Hardcoded - fix once rooms can change the number of portals
-            p.PaintDoor(a.Value.GetArtwork());
+            p.transform.position = vecs[img.Key];
+            p.transform.Rotate(new Vector3(0, (-90 * img.Key), 0)); // HACK Hardcoded - fix once rooms can change the number of portals
+            p.PaintDoor(img.Value);
+        }
+    }
 
+    private Portal SpawnPortal(int portalID)
+    {
+        GameObject portalProp = Instantiate(portalObject) as GameObject;
+        portalProp.AddComponent<Portal>();
+        Portal p = portalProp.GetComponent<Portal>();
+        // give each portal an ID
+        p.SetPortalID(portalID);
+
+        // give each portal a destination ID
+        p.SetDestinationID((2 + p.GetPortalID()) % 4);
+        if(debug) Debug.Log("Portal created with ID " + p.GetPortalID() + " and DestinationId " + p.GetDestinationID());
+        portals.Add(portalID, p);
+        return p;
+    }
+
+    public void DoTeleport(Player player, int portalID)
+    {
+        if (debug) Debug.Log("starting teleport form portal " + portalID + " = " + portals[portalID].GetPortalID());
+        Vector3 destination = new Vector3(0, 20, 0);
+        for (int i = 0; i < portals.Count; i++)
+        {
+            if (portals[i].GetPortalID() == portals[portalID].GetDestinationID())
+            {
+                if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("Found portal with ID " + portals[i].GetPortalID());
+                destination = portals[i].gameObject.transform.position; // set destination to exit portal position
+
+            }
+        }
+        // Bump player to just outside of the portal collision box based on the location of the portal relative to the center
+        if (destination.x < 0)
+        {
+            destination.x += 0.25f;
+        }
+        else
+        {
+            destination.x -= 0.25f;
         }
 
+        if (destination.z < 0)
+        {
+            destination.z += 0.25f;
+        }
+        else
+        {
+            destination.z -= 0.25f;
+        }
+
+        destination.y -= 1.6f; // Fix exit height for player (player is 1.8 tall, portal is 5, center of portal is 2.5, center of player is 0.9. 2.5 - 0.9 = 1.6)
+
+        player.transform.position = destination;
+
+        /* FIXME Now tell the population controller that the player has moved 
+         * by sending the portal (equiv to door) index to the population controller
+         * 
+         */
+
+        FindObjectOfType<ArtGallery>().ChangeRoom(portalID, portals[portalID].GetDestinationID());
+    }
+
+    public void SetReturnPortalDecoration(int portalID)
+    {
+        portals[portalID].SetEmmisive(Color.white);
+    }
+
+    public void ClearReturnPortalDecorations()
+    {
+        foreach(KeyValuePair<int, Portal> p in portals)
+        {
+            p.Value.SetEmmisive(new Color(0f, 0f, 0f, 0f));
+
+        }
     }
 }

@@ -143,4 +143,13 @@ public class Portal : MonoBehaviour {
         rend.material.mainTexture = displayImg;
     }
 
+    public void SetEmmisive(Color color)
+    {
+        Renderer rend = gameObject.GetComponent<Renderer>();
+        rend.material.EnableKeyword("_EMISSION");
+        rend.material.SetColor("_EmissionColor", color);
+    }
+
+
+
 }

@@ -9,10 +9,8 @@ public class Artwork {
     TWEANNGenotype geno;
     TWEANN cppn;
     Texture2D img;
-    int width, height;
-
-
-    int newNodeID = 1000;
+    int width = 64;
+    int height = 64;
 
     /// <summary>
     /// Create a new door in a room with a new CPPN. 
@@ -20,11 +18,18 @@ public class Artwork {
     /// <param name="pc">Reference to the portal controller that can spawn and decorate portals in the scene</param>
     public Artwork() 
     {
-        width = height = 64;  // FIXME Get these from a global var in ArtGallery later
         geno = new TWEANNGenotype(4, 3, 0); // FIXME archetype index 
         GenerateCPPN();
         img = new Texture2D(width, height, TextureFormat.ARGB32, true);
-        img = CreateRandomCPPNImage(width, height);
+        img = GenerateImageFromCPPN();
+
+    }
+
+    public Artwork(TWEANNGenotype geno)
+    {
+        this.geno = geno; 
+        img = new Texture2D(width, height, TextureFormat.ARGB32, true);
+        img = GenerateImageFromCPPN();
 
     }
 
@@ -34,7 +39,7 @@ public class Artwork {
         //geno = new TWEANNGenotype(4, 3, 0);
         foreach (NodeGene node in geno.GetNodes())
         {
-            node.fType = ActivationFunctions.RandomFTYPE();
+            node.fTYPE = ActivationFunctions.RandomFTYPE();
         }
         //for (int i = 0; i < 5; i++)
         //{
@@ -46,12 +51,11 @@ public class Artwork {
         //        geno.GetNodes()[RandomOut()].GetInnovation(), Random.Range(-1f, 1f), Random.Range(-1f, 1f), toLinkInnovation, fromLinkInnovation);
         //}
 
-        cppn = new TWEANN(geno);
     }
 
-    public Texture2D CreateRandomCPPNImage(int width, int height)
+    public Texture2D GenerateImageFromCPPN()
     {
-        GenerateCPPN();
+        cppn = new TWEANN(geno);
 
         //Texture2D img = new Texture2D(width, height);
 

@@ -31,7 +31,6 @@ public class ArtGallery : MonoBehaviour {
     int generationID; // Is this needed?
 
     RoomNode currentRoom; // configuration of the current room
-    RoomNode previousRoom; // Which way is backwards in time?
 
     // Use this for initialization
     void Start()
@@ -49,6 +48,7 @@ public class ArtGallery : MonoBehaviour {
 
     private void InitializePopulation() // of rooms
     {
+        Debug.Log("InitializePopulation is being called");
         currentRoom.InitializeRoom(STARTING_NUM_ARTWORKS);
         currentRoom.RedrawRoom();
     }
@@ -57,22 +57,12 @@ public class ArtGallery : MonoBehaviour {
     public void ChangeRoom(int portalID)
     {
 
-        // FIXME Teleport the player HERE 
+        // FIXME Teleport the player HERE?
 
 
-        RoomNode newRoom = currentRoom.GetRoomByPortalID(portalID);
+        currentRoom.ChangeRoomByPortalID(portalID);
 
-        if(newRoom != null && newRoom.IsPopulated())
-        {
-            currentRoom = newRoom;
-            
-        }
-        else
-        {
-            //currentRoom.InitializeRoom(numPortals);
-        }
-
-        currentRoom.RedrawRoom();
+        //currentRoom.RedrawRoom();
     }
 
 

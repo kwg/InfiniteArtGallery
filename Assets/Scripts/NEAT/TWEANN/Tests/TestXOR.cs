@@ -29,9 +29,9 @@ public class TestXOR : MonoBehaviour{
         xorTest.AddLink(-2, 2158, 0.9295958853236486f, 105);
 
         // Set activation function of output node
-        xorTest.GetNodeByInnovationID(-1).fType = FTYPE.TANH;
-        xorTest.GetNodeByInnovationID(-2).fType = FTYPE.TANH;
-        xorTest.GetNodeByInnovationID(-3).fType = FTYPE.TANH;
+        xorTest.GetNodeByInnovationID(-1).fTYPE = FTYPE.TANH;
+        xorTest.GetNodeByInnovationID(-2).fTYPE = FTYPE.TANH;
+        xorTest.GetNodeByInnovationID(-3).fTYPE = FTYPE.TANH;
         // Set bias manually
 
         // Set weights manually

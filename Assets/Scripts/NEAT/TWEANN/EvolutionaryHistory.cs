@@ -29,7 +29,7 @@ public class EvolutionaryHistory {
             && IndexOfArchetypeInnovation(populationIndex, node.GetInnovation()) != -1)
         {
             archetypes[populationIndex].Add(node);
-            if (node.nType == NTYPE.OUTPUT)
+            if (node.nTYPE == NTYPE.OUTPUT)
             {
                 archetypeOut[populationIndex]++;
             }

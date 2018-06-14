@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class NodeGene : Gene {
 
-    public FTYPE fType;
-    public NTYPE nType;
+    public FTYPE fTYPE;
+    public NTYPE nTYPE;
     public float bias;
 
-    public NodeGene(NTYPE nType, FTYPE fType, long innovation) : base(innovation)
+    public NodeGene(NTYPE nTYPE, FTYPE fTYPE, long innovation) : base(innovation)
     {
-        this.fType = fType;
-        this.nType = nType;
+        this.fTYPE = fTYPE;
+        this.nTYPE = nTYPE;
     }
 
     public float GetBias()
@@ -24,6 +24,16 @@ public class NodeGene : Gene {
         this.bias = bias;
     }
 
+    public void SetFTYPE(FTYPE fTYPE)
+    {
+        this.fTYPE = fTYPE;
+    }
+
+    public FTYPE GetFTYPE()
+    {
+        return fTYPE;
+    }
+
     public bool IsEqualTo(System.Object o)
     {
         NodeGene other = (NodeGene) o;
@@ -32,15 +42,15 @@ public class NodeGene : Gene {
 
     public NodeGene Clone()
     {
-        return new NodeGene(nType, fType, innovation);
+        return new NodeGene(nTYPE, fTYPE, innovation);
     }
 
     public override string ToString()
     {
         string result = "(";
         result += "(inno=" + innovation;
-        result += ",ftype=" + ActivationFunctions.ActivationName(fType);
-        result += ",ntype=" + nType;
+        result += ",ftype=" + ActivationFunctions.ActivationName(fTYPE);
+        result += ",ntype=" + nTYPE;
         //result += ",frozen=" + IsFrozen();
         result += ",bias=" + GetBias();
         result +=  ")";

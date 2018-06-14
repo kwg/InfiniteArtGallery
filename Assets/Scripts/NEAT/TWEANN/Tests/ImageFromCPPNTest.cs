@@ -99,7 +99,7 @@ public class ImageFromCPPNTest : MonoBehaviour {
     {
         foreach (NodeGene node in cppnTest.GetNodes())
         {
-            node.fType = ActivationFunctions.RandomFTYPE();
+            node.fTYPE = ActivationFunctions.RandomFTYPE();
         }
         //for (int i = 0; i < 5; i++)
         //{

@@ -64,13 +64,13 @@ public class TWEANN : INetwork
         nodes = new List<TWEANNNode>(g.GetNodes().Count);
         int countIn = 0, countOut = 0;
         foreach(NodeGene node in g.GetNodes()) {
-            TWEANNNode tempNode = new TWEANNNode(node.fType, node.nType, node.GetInnovation(), false, node.GetBias());
+            TWEANNNode tempNode = new TWEANNNode(node.fTYPE, node.nTYPE, node.GetInnovation(), false, node.GetBias());
             nodes.Add(tempNode);
-            if (node.nType == NTYPE.INPUT)
+            if (node.nTYPE == NTYPE.INPUT)
             {
                 countIn++;
             }
-            else if (node.nType == NTYPE.OUTPUT)
+            else if (node.nTYPE == NTYPE.OUTPUT)
             {
                 countOut++;
             }

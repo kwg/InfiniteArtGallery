@@ -11,6 +11,8 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
     private long ID; // FIXME need genetic history ID assignment
     private int archetypeIndex;
 
+    private float mutationChance = 0.1f; // percent chance for a mutation to occur
+
 
     public TWEANNGenotype(TWEANNGenotype copy) : this(copy.nodes, copy.links) { }
 
@@ -24,8 +26,8 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
 
         foreach(NodeGene n in nodes)
         {
-            if(n.nType == NTYPE.INPUT) { numInputs++; }
-            else if(n.nType == NTYPE.OUTPUT) { numOutputs++; }
+            if(n.nTYPE == NTYPE.INPUT) { numInputs++; }
+            else if(n.nTYPE == NTYPE.OUTPUT) { numOutputs++; }
         }
 
         //HACK CROSSOVER: need archetype for matching genes
@@ -153,6 +155,44 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
     // Mutate
     // TODO - mutate()
 
+    public void Mutate()
+    {
+        float mutationRoll = Random.Range(0.0f, 1.0f);
+        // TODO Mutate() - maybe multiple mutations can be activated with a single roll? (RPG chart style)
+        float linkMutationRoll = Random.Range(0.0f, 1.0f);
+        float spliceMutationRoll = Random.Range(0.0f, 1.0f);
+        float perturbLinkMutationRoll = Random.Range(0.0f, 1.0f);
+
+
+
+        if(mutationRoll < mutationChance)
+        {
+            int mutationType = Random.Range(0, 4);
+            Debug.Log("Mutating... ");
+            switch (mutationType)
+            {
+                case 0:
+                    LinkMutation();
+                    break;
+                case 1:
+                    SpliceMutation();
+                    break;
+                case 2:
+                    PerturbLink(Random.Range(0, GetLinks().Count), RandomGenerator.NextGaussian());
+                    break;
+                case 3:
+                    ActivationFunctionMutation();
+                    break;
+                default:
+                    break;
+            }
+
+
+        }
+
+    }
+
+
 
     public void LinkMutation()
     {
@@ -162,7 +202,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         LinkMutation(sourceNodeInnovation, weight);
     }
 
-    public void LinkMutation(long sourceNodeInnovation, float weight) //HACK LinkMutation(long sourceNodeInnovation, float weight) - recurrent links are possible. We may disable this later.
+    private void LinkMutation(long sourceNodeInnovation, float weight) //HACK LinkMutation(long sourceNodeInnovation, float weight) - recurrent links are possible. We may disable this later.
     {
         string debugMsg = "LinkMutation on link with innovation " + sourceNodeInnovation + " using a weight of " + weight;
 
@@ -180,7 +220,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         SpliceMutation(ActivationFunctions.RandomFTYPE());
     }
 
-    private void SpliceMutation(FTYPE fType)
+    private void SpliceMutation(FTYPE fType) // TODO add a factor to change the weights impact (maybe a single factor or one for each weight)
     {
         LinkGene lg = GetLinkByInnovationID(GetRandomLinkInnovation());
         long sourceInnovation = lg.GetSourceInnovation();
@@ -194,6 +234,29 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         string debugMsg = "SpliceMutation between " + sourceInnovation + " and " + targetInnovation + ". Adding a node with an innovation of " + newNode + " and an activation function of " + fType;
         if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log(debugMsg);
         SpliceNode(fType, newNode, sourceInnovation, targetInnovation, weight1, weight2, toLink, fromLink);
+    }
+
+    public void PerturbLink(int linkIndex, float delta)
+    {
+        if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("Perturbing link " + linkIndex + " by " + delta);
+        LinkGene lg = links[linkIndex];
+        PerturbLink(lg, delta);
+    }
+
+    public void PerturbLink(LinkGene lg, float delta)
+    {
+        lg.SetWeight(lg.GetWeight() + delta);
+    }
+
+    private void ActivationFunctionMutation()
+    {
+        int nodeRoll = Random.Range(0, nodes.Count);
+        NodeGene ng = nodes[nodeRoll];
+        if (ng == null) throw new System.Exception("Node not found! " + nodeRoll);
+        FTYPE fTYPERoll = ActivationFunctions.RandomFTYPE();
+        string debugMsg = "ActivationFunctionMutation - changing node " + nodeRoll + " from " + ng.GetFTYPE() + " to " + fTYPERoll;
+        if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log(debugMsg);
+        ng.SetFTYPE(fTYPERoll);
     }
 
     private long GetRandomLinkInnovation()
@@ -219,18 +282,6 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         result = nodes[Random.Range(startingInnovation, endingInnovation)].GetInnovation();
 
         return result;
-    }
-
-    public void PerturbLink(int linkIndex, float delta)
-    {
-        if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("Perturbing link " + linkIndex + " by " + delta);
-        LinkGene lg = links[linkIndex];
-        PerturbLink(lg, delta);
-    }
-
-    public void PerturbLink(LinkGene lg, float delta)
-    {
-        lg.SetWeight(lg.GetWeight() + delta);
     }
 
     public LinkGene GetLinkBetween(long sourceInnovation, long targetInnovation)

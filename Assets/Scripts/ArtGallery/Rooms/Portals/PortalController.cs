@@ -48,49 +48,7 @@ public class PortalController : MonoBehaviour {
         return portals;
     }
 
-    public void DoTeleport(Player player, int portalID)
-    {
-        if (debug) Debug.Log("starting teleport form portal " + portalID + " = " + portals[portalID].GetPortalID());
-        Vector3 destination = new Vector3(0, 20, 0);
-        for(int i = 0; i < portals.Count; i++)
-        {
-            if(portals[i].GetPortalID() == portals[portalID].GetDestinationID())
-            {
-                if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("Found portal with ID " + portals[i].GetPortalID());
-                destination = portals[i].gameObject.transform.position; // set destination to exit portal position
-                
-            }
-        }
-        // Bump player to just outside of the portal collision box based on the location of the portal relative to the center
-        if (destination.x < 0)
-        {
-            destination.x += 0.25f;
-        }
-        else
-        {
-            destination.x -= 0.25f;
-        }
 
-        if (destination.z < 0)
-        {
-            destination.z += 0.25f;
-        }
-        else
-        {
-            destination.z -= 0.25f;
-        }
-
-        destination.y -= 1.6f; // Fix exit height for player (player is 1.8 tall, portal is 5, center of portal is 2.5, center of player is 0.9. 2.5 - 0.9 = 1.6)
-
-        player.transform.position = destination;
-
-        /* FIXME Now tell the population controller that the player has moved 
-         * by sending the portal (equiv to door) index to the population controller
-         * 
-         */
-
-        FindObjectOfType<ArtGallery>().ChangeRoom(portalID);
-    }
 
     public void DecoratePortal(int portalID, Color color)
     {

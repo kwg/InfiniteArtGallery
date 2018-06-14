@@ -9,8 +9,8 @@ public class Artwork {
     TWEANNGenotype geno;
     TWEANN cppn;
     Texture2D img;
-    int width = 64;
-    int height = 64;
+    int width = 128;
+    int height = 128;
 
     /// <summary>
     /// Create a new door in a room with a new CPPN. 
@@ -66,13 +66,9 @@ public class Artwork {
                 float scaledX = Scale(x, width);
                 float scaledY = Scale(y, height);
                 float[] hsv = cppn.Process(new float[] { scaledX, scaledY, GetDistFromCenter(scaledX, scaledY), 1 });
-                //Debug.Log("SPAM! x:" + x + ", y:" + y + ", distFromCenter:" + GetDistFromCenter(x, y) + "");
-                //Debug.Log("SPAM! scaledX:" + scaledX + ", scaledY:" + scaledY + ", distFromCenter:" + GetDistFromCenter(scaledX, scaledY) + "");
-                //Debug.Log("ColorHSV - h:" +  hsv[0] + " s:" + hsv[1] + " v:" + hsv[2]);
                 Color color = Color.HSVToRGB(hsv[0], hsv[1], hsv[2]);
 
                 img.SetPixel(x, y, color);
-                img.Apply();
             }
         }
 

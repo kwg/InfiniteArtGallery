@@ -1,0 +1,59 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class NodeGene : Gene {
+
+    public FTYPE fTYPE;
+    public NTYPE nTYPE;
+    public float bias;
+
+    public NodeGene(NTYPE nTYPE, FTYPE fTYPE, long innovation) : base(innovation)
+    {
+        this.fTYPE = fTYPE;
+        this.nTYPE = nTYPE;
+    }
+
+    public float GetBias()
+    {
+        return bias;
+    }
+
+    public void SetBias(float bias)
+    {
+        this.bias = bias;
+    }
+
+    public void SetFTYPE(FTYPE fTYPE)
+    {
+        this.fTYPE = fTYPE;
+    }
+
+    public FTYPE GetFTYPE()
+    {
+        return fTYPE;
+    }
+
+    public bool IsEqualTo(System.Object o)
+    {
+        NodeGene other = (NodeGene) o;
+        return innovation == other.innovation;
+    }
+
+    public NodeGene Clone()
+    {
+        return new NodeGene(nTYPE, fTYPE, innovation);
+    }
+
+    public override string ToString()
+    {
+        string result = "(";
+        result += "(inno=" + innovation;
+        result += ",ftype=" + ActivationFunctions.ActivationName(fTYPE);
+        result += ",ntype=" + nTYPE;
+        //result += ",frozen=" + IsFrozen();
+        result += ",bias=" + GetBias();
+        result +=  ")";
+        return result;
+    }
+}

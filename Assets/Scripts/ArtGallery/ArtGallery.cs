@@ -8,33 +8,24 @@ using UnityEngine;
 /// </summary>
 public class ArtGallery : MonoBehaviour {
 
-    public static bool DEBUG = true;
+    public enum DEBUG { NONE = 0, POLITE = 1, VERBOSE = 2 };
+    public static DEBUG DEBUG_LEVEL = DEBUG.POLITE;
+    public int STARTING_NUM_ARTWORKS;
 
-    /* 
-     * Maintains generations and represents a generation as a room
-     * 
-     * A room has doors with genetics and parents and use a portal that has been 
-     * decorated using the results of the gentics and lineage as a model to display in the scene. A Player
-     * selects a door by walking into the teleport portal. If the selected portal is a parent of this room, 
-     * the previous generation is loaded. While the child room that was left still exists in here, unless the
-     * exact same path is selected again, the child room will never(*) be used again. At any time, the path 
-     * through the rooms will always be a line with no crossings or branches
-     */
+    public GameObject roomObject;
+    public PortalController pc;
 
     int generationID; // Is this needed?
 
-    RoomNode currentRoom; // configuration of the current room
-    RoomNode previousRoom; // Which way is backwards in time?
-
-    /* Static numbers to get 4 portals in a square room */
-    int numPortals = 4;
-    int numWalls = 4; // use later if we want to change room shape
-    int numPortalsPerWall = 1; // how many portals can we fit on a wall?
-
+    Room currentRoom; // configuration of the current room
 
     // Use this for initialization
     void Start()
     {
+        ActivationFunctions.ActivateAllFunctions();
+        GameObject roomProp = Instantiate(roomObject) as GameObject;
+        roomProp.AddComponent<Room>();
+        currentRoom = roomProp.GetComponent<Room>();
         InitializePopulation();
 
         // spawn player
@@ -43,34 +34,17 @@ public class ArtGallery : MonoBehaviour {
 
     private void InitializePopulation() // of rooms
     {
-        currentRoom = new RoomNode();
-        currentRoom.InitializeRoom(numPortals);
+        Debug.Log("InitializePopulation is being called");
+        currentRoom.InitializeRoom(STARTING_NUM_ARTWORKS);
         currentRoom.RedrawRoom();
     }
 
 
     public void ChangeRoom(int portalID)
     {
-
-        // FIXME Teleport the player HERE 
-
-
-        RoomNode newRoom = currentRoom.GetRoomByPortalID(portalID);
-
-        if(newRoom != null && newRoom.IsPopulated())
-        {
-            currentRoom = newRoom;
-            
-        }
-        else
-        {
-            //currentRoom.InitializeRoom(numPortals);
-        }
-
-        currentRoom.RedrawRoom();
+        // FIXME Teleport the player HERE?
+        currentRoom.ChangeRoomByPortalID(portalID);
     }
-
-
 
     // Update is called once per frame
     void Update ()

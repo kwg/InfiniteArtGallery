@@ -11,8 +11,9 @@ public class TWEANN : INetwork
     long ID;
     int numInputs;
     int numOutputs;
+    int archetypeIndex;
 
-    TWEANNNode[] nodes;
+    List<TWEANNNode> nodes;
 
     /// <summary>
     /// Create a new random TWEANN
@@ -26,22 +27,22 @@ public class TWEANN : INetwork
     {
         this.numInputs = numInputs;
         this.numOutputs = numOutputs;
+        this.archetypeIndex = archetypeIndex;
 
-        nodes = new TWEANNNode[numInputs + numOutputs];
+        nodes = new List<TWEANNNode>(numInputs + numOutputs);
 
         long innovation = -1;
 
         for(int i = 0; i < numInputs; i++)
         {
             TWEANNNode n = new TWEANNNode(fType, NTYPE.INPUT, innovation--);
-            nodes[i] = n;
+            nodes.Add(n);
         }
-
         long linkInnovationBound = innovation - 1;
 
         for(int j = 0; j < numOutputs; j++)
         {
-            nodes[numInputs + j] = new TWEANNNode(fType, NTYPE.OUTPUT, innovation--);
+            nodes.Add(new TWEANNNode(fType, NTYPE.OUTPUT, innovation--));
 
             int[] inputSources = new int[numInputs]; // HACK making this be fully connected for now
             for(int i = 0; i < numInputs; i++)
@@ -50,17 +51,45 @@ public class TWEANN : INetwork
             }
             for(int k = 0; k < inputSources.Length; k++)
             {
-                // FIXME !weight is set to 0.5 for testing!
-                nodes[inputSources[k]].Connect(nodes[numInputs + j], 0.5, linkInnovationBound - (j * numInputs) - inputSources[k], false, false);
+                nodes[inputSources[k]].Connect(nodes[numInputs + j], RandomGenerator.NextGaussian(), linkInnovationBound - (j * numInputs) - inputSources[k], false, false);
             }
 
         }
+        int outputStart = nodes.Count - numOutputs;
+    }
 
-        int outputStart = nodes.Length - numOutputs;
+    public TWEANN(TWEANNGenotype g)
+    {
+        archetypeIndex = g.GetArchetypeIndex();
+        nodes = new List<TWEANNNode>(g.GetNodes().Count);
+        int countIn = 0, countOut = 0;
+        foreach(NodeGene node in g.GetNodes()) {
+            TWEANNNode tempNode = new TWEANNNode(node.fTYPE, node.nTYPE, node.GetInnovation(), false, node.GetBias());
+            nodes.Add(tempNode);
+            if (node.nTYPE == NTYPE.INPUT)
+            {
+                countIn++;
+            }
+            else if (node.nTYPE == NTYPE.OUTPUT)
+            {
+                countOut++;
+            }
 
+        }
+        numInputs = countIn;
+        numOutputs = countOut;
+        foreach(LinkGene link in g.GetLinks())
+        {
+            //Debug.Log("Connection for link " + link.GetInnovation() + ": With source node innovation " + link.GetSourceInnovation() + " and target node innovation " + link.GetTargetInnovation());
+            TWEANNNode source = GetNodeByInnovationID(link.GetSourceInnovation());
+            TWEANNNode target = GetNodeByInnovationID(link.GetTargetInnovation());
+            //TODO add asserts
+            if (source == null) throw new System.Exception("Source not found with innovation " + link.GetSourceInnovation() + " \n " + ToString());
+            if (target == null) throw new System.Exception("Target not found with innovation " + link.GetTargetInnovation() + " \n " + ToString());
+            //if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("Connecting node " + source.GetInnovation() + " to node " + target.GetInnovation() + " with link " + link.GetInnovation());
 
-
-
+            source.Connect(target, link.GetWeight(), link.GetInnovation(), false, false);
+        }
     }
 
 
@@ -74,7 +103,12 @@ public class TWEANN : INetwork
         return numOutputs;
     }
 
-    public double[] Process(double[] inputs)
+    public List<TWEANNNode> GetNodes()
+    {
+        return nodes;
+    }
+
+    public float[] Process(float[] inputs)
     {
 
         // Load inputs
@@ -85,18 +119,19 @@ public class TWEANN : INetwork
         }
 
         // Activate nodes in forward order
-        for(int j = 0; j < nodes.Length; j++)
+        for(int j = 0; j < nodes.Count; j++)
         {
             nodes[j].ActivateAndTransmit();
         }
 
 
-        double[] result = new double[numOutputs];
+        float[] result = new float[numOutputs];
+        //Debug.Log("Number of outputs in result: " + result.Length);
         // TODO loop through outputs and copy to result;
-        for(int i = numInputs; i < nodes.Length; i++)
+        for (int i = nodes.Count - numOutputs, c = 0; i < nodes.Count; i++, c++)
         {
-            //result[i - numInputs] = nodes[i].GetSum();
-            result[0] = nodes[nodes.Length - 1].Output();
+            result[c] = nodes[i].Output();
+            //result[i] = nodes[nodes.Count - 1].Output();
         }
 
         // TODO option for importing CPPNs from original Picbreeder
@@ -108,7 +143,7 @@ public class TWEANN : INetwork
         throw new System.NotImplementedException();
     }
 
-    public double GetWeightBetween(long sourceInnovation, long targetInnovation)
+    public float GetWeightBetween(long sourceInnovation, long targetInnovation)
     {
         return GetNodeByInnovationID(sourceInnovation).GetLinkToTargetNode(GetNodeByInnovationID(targetInnovation)).GetWeight();
     }
@@ -117,19 +152,32 @@ public class TWEANN : INetwork
     private TWEANNNode GetNodeByInnovationID(long innovationID)
     {
         TWEANNNode result = null;
-
-        foreach(TWEANNNode node in nodes)
+        for(int i = 0; i < nodes.Count; i++)
         {
-            if(node.GetInnovationID() == innovationID)
+            if(nodes[i].GetInnovation() == innovationID)
             {
-                result = node;
+                result = nodes[i];
             }
             else
             {
-                throw new System.ArgumentException("No node found with innovationID " + innovationID);
+                //throw new System.ArgumentException("No node found with innovationID " + innovationID);
             }
         }
 
+        return result;
+    }
+
+    public override string ToString()
+    {
+        string result = "";
+        result += numInputs + " Inputs\n";
+		result += numOutputs + " Outputs\n";
+		//result += numModes + " Modes\n";
+		result += "Forward\n";
+		for (int i = 0; i < nodes.Count; i++)
+        {
+			result += nodes[i] + "\n";
+		}
         return result;
     }
 }

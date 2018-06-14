@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+//TODO This should be modified to dynamically build the room based on parameters set by ArtGallery. What about a lobby?
 /// <summary>
-/// A room in the Art Gallery. Represents a single generation of the Gallery's evolution 
+/// The only room in the Art Gallery.
 /// </summary>
-public class RoomNode : MonoBehaviour {
+public class Room : MonoBehaviour {
 
     private PortalController pc;
     public static int currentRoomID = 0;
@@ -22,7 +23,7 @@ public class RoomNode : MonoBehaviour {
     private bool isPopulated = false;  // is this room initialized?
 
     /// <summary>
-    /// Initialize a room with random colors
+    /// Initialize a room with random art
     /// </summary>
     /// <param name="numberArtworks"></param>
     public void InitializeRoom(int numberArtworks)
@@ -31,17 +32,13 @@ public class RoomNode : MonoBehaviour {
         rooms = new SortedList<int, SortedList<int, Artwork>>();
         rooms[currentRoomID] = new SortedList<int, Artwork>();
         parentDoorID = -1;
-        /* Create doors and links to new rooms */
+        /* Create art */
         for (int i = 0; i < numberArtworks; i++)
         {
             rooms[currentRoomID].Add(i, new Artwork());
-            //rooms.Add(i, new RoomNode());  // in a populated room there should never be a null ref
         }
-        Debug.Log("Artwork count for room " + currentRoomID + ": " + rooms[currentRoomID].Count);
-
         CreatePortals();
         isPopulated = true;
-        //RedrawRoom();
     }
 
     /* Public methods */
@@ -85,27 +82,12 @@ public class RoomNode : MonoBehaviour {
         }
     }
 
-    public RoomNode GetRoom()
-    {
-        RoomNode room = null;
-
-
-        return room;
-    }
-
     public void RedrawRoom()
     {
-
         for(int p = 0; p < rooms[currentRoomID].Count; p++)
         {
             pc.GetPortals()[p].PaintDoor(rooms[currentRoomID][p].GetArtwork());
         }
-
-        //foreach (KeyValuePair<int, Portal> p in pc.GetPortals())
-        //{
-        //    if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("Painting portal " + p.Key + " with artwork ...");
-        //    p.Value.PaintDoor(rooms[currentRoomID][p.Key].GetArtwork());
-        //}
     }
 
     private void CreatePortals()

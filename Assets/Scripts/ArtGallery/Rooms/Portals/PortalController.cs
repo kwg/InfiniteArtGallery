@@ -4,15 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PortalController : MonoBehaviour {
-    
+
+    private bool debug = ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE;
+
     public GameObject portalObject;
     SortedList<int, Portal> portals; // Portal index is door index
     int PortalCount = 0; // TODO not in use - decide what to do with it
-
-    
-    public PortalController GetPortalController() {
-        return this;
-    }
 
     // Use this for initialization
     void Start () {
@@ -41,7 +38,7 @@ public class PortalController : MonoBehaviour {
 
         // give each portal a destination ID
         p.SetDestinationID((2 + p.GetPortalID()) % 4);
-        if(ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("Portal created with ID " + p.GetPortalID() + " and DestinationId " + p.GetDestinationID());
+        if(debug) Debug.Log("Portal created with ID " + p.GetPortalID() + " and DestinationId " + p.GetDestinationID());
         portals.Add(portalID, p);
         return p;
     }
@@ -53,7 +50,7 @@ public class PortalController : MonoBehaviour {
 
     public void DoTeleport(Player player, int portalID)
     {
-        if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("starting teleport form portal " + portalID + " = " + portals[portalID].GetPortalID());
+        if (debug) Debug.Log("starting teleport form portal " + portalID + " = " + portals[portalID].GetPortalID());
         Vector3 destination = new Vector3(0, 20, 0);
         for(int i = 0; i < portals.Count; i++)
         {

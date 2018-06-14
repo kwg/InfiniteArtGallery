@@ -11,7 +11,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
     private long ID; // FIXME need genetic history ID assignment
     private int archetypeIndex;
 
-    private float mutationChance = 0.1f; // percent chance for a mutation to occur
+    private float mutationChance = 1.0f; // percent chance for a mutation to occur
 
 
     public TWEANNGenotype(TWEANNGenotype copy) : this(copy.nodes, copy.links) { }
@@ -394,6 +394,10 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
 
 
     //    copy()
+    public TWEANNGenotype Copy()
+    {
+        return new TWEANNGenotype(this);
+    }
     //    newInstance()
 
     public override string ToString()

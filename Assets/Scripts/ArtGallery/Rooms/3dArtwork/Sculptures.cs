@@ -6,11 +6,14 @@ public class Sculptures {
     TWEANNGenotype geno;
     TWEANN cppn;
     float presentThreshold = 0.2f;
+    int NUM_VOXELS = 729;
+    Voxel[] voxels;
 
     public class Voxel : MonoBehaviour
     {
         bool present;
         Color color;
+  
         Vector3 size;
         Vector3 positionInSculture; //the (x,y,z) coordinates of this voxel relative to the sculpture, int. 
 
@@ -27,7 +30,7 @@ public class Sculptures {
         }
     }
 
-    Sculptures() : this(new TWEANNGenotype(5, 4, 0))
+    Sculptures() : this(new TWEANNGenotype(3, 4, 0))
     {
 
     }
@@ -35,6 +38,7 @@ public class Sculptures {
     Sculptures(TWEANNGenotype geno)
     {
         this.geno = geno;
+        voxels = new Voxel[NUM_VOXELS];
     }
 
     /*

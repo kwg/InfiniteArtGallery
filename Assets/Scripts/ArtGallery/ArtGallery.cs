@@ -111,8 +111,15 @@ public class ArtGallery : MonoBehaviour {
     // Update is called once per frame
     void Update ()
     {
-		
-	}
+        foreach(KeyValuePair<int, Artwork> art in room.GetArtworks())
+        {
+            if (art.Value.IsProcessing())
+            {
+                art.Value.ApplyImageProcess();
+            }
+        }
+        //gameRoom.RedrawRoom();
+    }
 
     private SortedList<int, Texture2D> GetImagesFromArtworks(SortedList<int, Artwork> artworks)
     {

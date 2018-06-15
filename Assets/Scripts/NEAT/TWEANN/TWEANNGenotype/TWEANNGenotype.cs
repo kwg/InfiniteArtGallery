@@ -2,18 +2,37 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class TWEANNGenotype : INetworkGenotype<TWEANN>
 {
-    protected List<NodeGene> nodes;
-    protected List<LinkGene> links;
+    [SerializeField] protected List<NodeGene> nodes;
+    [SerializeField] protected List<LinkGene> links;
 
-    private int numInputs, numOutputs;
-    private long ID; // FIXME need genetic history ID assignment
-    private int archetypeIndex;
+    [SerializeField] private int numInputs, numOutputs;
+    [SerializeField] private long ID; // FIXME need genetic history ID assignment
+    [SerializeField] private int archetypeIndex;
 
     // FIXME This should not be declared here. This should be a parameter so that we can adjust it at run time
     private float mutationChance = 1.0f; // percent chance for a mutation to occur
 
+    public TWEANNGenotype() : this(0, 0, 0) { }
+
+    public void LoadGenotype(List<NodeGene> nodes, List<LinkGene> links)
+    {
+        this.nodes = nodes;
+        this.links = links;
+
+        numInputs = 0;
+        numOutputs = 0;
+
+        foreach (NodeGene n in nodes)
+        {
+            if (n.nTYPE == NTYPE.INPUT) { numInputs++; }
+            else if (n.nTYPE == NTYPE.OUTPUT) { numOutputs++; }
+        }
+
+        archetypeIndex = 0;
+    }
 
     public TWEANNGenotype(TWEANNGenotype copy) : this(copy.nodes, copy.links) { }
 

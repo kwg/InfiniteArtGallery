@@ -11,6 +11,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
     private long ID; // FIXME need genetic history ID assignment
     private int archetypeIndex;
 
+    // FIXME This should not be declared here. This should be a parameter so that we can adjust it at run time
     private float mutationChance = 1.0f; // percent chance for a mutation to occur
 
 

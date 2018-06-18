@@ -17,18 +17,18 @@ public class Room : MonoBehaviour {
 
     int PortalCount = 0; // TODO not in use - decide what to do with it
 
-    private int parentID; // Parent of this room
+    private int rewindPortalID; // Parent of this room
     private bool isPopulated = false;  // is this room initialized?
-    private SortedList<int, Texture2D> images;
+    private Texture2D[] images;
 
     /// <summary>
     /// Initial creation of the room
     /// </summary>
     /// <param name="numberArtworks"></param>
-    public void InitializeRoom(SortedList<int, Texture2D> images)
+    public void InitializeRoom(Texture2D[] images)
     {
         this.images = images;
-        parentID = -1;
+        rewindPortalID = -1;
         portals = new SortedList<int, Portal>();
         CreatePortals();
         isPopulated = true;
@@ -38,17 +38,22 @@ public class Room : MonoBehaviour {
     /// Initialize a room with given artworks and parent ID (loading a room)
     /// </summary>
     /// <param name="artworks">SortedList of artwork to be hung on the walls</param>
-    public void InitializeRoom(int parentID, SortedList<int, Texture2D> images)
+    public void InitializeRoom(int rewindPortalID, Texture2D[] images)
     {
-        this.parentID = parentID;
+        this.rewindPortalID = rewindPortalID;
         /* Create art */
         this.images = images;
     }
 
     /* Public methods */
-    public void SetParentID(int parentID)
+    public void SetParentID(int rewindPortalID)
     {
-        this.parentID = parentID;
+        this.rewindPortalID = rewindPortalID;
+    }
+
+    public int GetRewindPortalID()
+    {
+        return rewindPortalID;
     }
 
     public bool IsPopulated()
@@ -66,9 +71,9 @@ public class Room : MonoBehaviour {
 
     private void CreatePortals()
     {
-        foreach(KeyValuePair<int, Texture2D> img in images)
+        for(int i = 0; i < images.Length; i++)
         {
-            Portal p = SpawnPortal(img.Key);
+            Portal p = SpawnPortal(i);
             if (debug) Debug.Log("received portal with ID " + p.GetPortalID());
 
             // TODO make a method to do this correctly
@@ -84,9 +89,9 @@ public class Room : MonoBehaviour {
             };
 
             // put each portal on a wall
-            p.transform.position = vecs[img.Key];
-            p.transform.Rotate(new Vector3(0, (-90 * img.Key), 0)); // HACK Hardcoded - fix once rooms can change the number of portals
-            p.PaintDoor(img.Value);
+            p.transform.position = vecs[i];
+            p.transform.Rotate(new Vector3(0, (-90 * i), 0)); // HACK Hardcoded - fix once rooms can change the number of portals
+            p.PaintDoor(images[i]);
         }
     }
 
@@ -151,7 +156,7 @@ public class Room : MonoBehaviour {
 
     public void SetReturnPortalDecoration(int portalID)
     {
-        portals[portalID].SetEmmisive(Color.white);
+        if(portalID > -1) portals[portalID].SetEmmisive(Color.white);
     }
 
     public void ClearReturnPortalDecorations()

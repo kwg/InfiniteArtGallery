@@ -37,7 +37,7 @@ public class Artwork
 
     }
 
-    public bool IsProcessing()
+    public bool HasFinishedProcessing()
     {
         return processing && !cppnProcess.IsAlive;
     }

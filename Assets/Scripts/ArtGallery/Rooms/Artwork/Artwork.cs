@@ -1,16 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
-public class Artwork {
+public class Artwork
+{ 
 
     TWEANNGenotype geno;
     TWEANN cppn;
     Texture2D img;
+    Color[] pixels;
+    Thread cppnProcess;
+    bool processing;
 
     //TODO width, height - These are static for testing but we may want to make them change
-    int width = 128;
-    int height = 128;
+    int width = 256;
+    int height = 256;
 
     /// <summary>
     /// Create a new artwork in a room with a new genotype. 
@@ -24,9 +29,24 @@ public class Artwork {
     public Artwork(TWEANNGenotype geno)
     {
         this.geno = geno; 
+        cppnProcess = new Thread ( GenerateImageFromCPPN );
         img = new Texture2D(width, height, TextureFormat.ARGB32, true);
-        img = GenerateImageFromCPPN();
+        pixels = new Color[width * height];
+        processing = true;
+        cppnProcess.Start();
 
+    }
+
+    public bool HasFinishedProcessing()
+    {
+        return processing && !cppnProcess.IsAlive;
+    }
+
+    public void ApplyImageProcess()
+    {
+        img.SetPixels(pixels);
+        img.Apply();
+        processing = false;
     }
 
     private void GenerateCPPN()
@@ -37,7 +57,7 @@ public class Artwork {
         }
     }
 
-    public Texture2D GenerateImageFromCPPN()
+    public void GenerateImageFromCPPN()
     {
         cppn = new TWEANN(geno);
 
@@ -47,18 +67,21 @@ public class Artwork {
             {
                 float scaledX = Scale(x, width);
                 float scaledY = Scale(y, height);
-                float[] hsv = cppn.Process(new float[] { scaledX, scaledY, GetDistFromCenter(scaledX, scaledY), 1 });
-                Color color = Color.HSVToRGB(hsv[0], hsv[1], hsv[2]);
+                float distCenter = GetDistFromCenter(scaledX, scaledY);
+                float[] hsv = ProcessCPPNInput(scaledX, scaledY, GetDistFromCenter(scaledX, scaledY), 1);
+                pixels[x + y * width] = Color.HSVToRGB(hsv[0], hsv[1], hsv[2]);
 
-                img.SetPixel(x, y, color);
+                //img.SetPixel(x, y, color);
             }
         }
 
-        img.Apply();
-
+        //img.Apply();
         if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("CPPN Imgage generation complete");
+    }
 
-        return img;
+    private float[] ProcessCPPNInput(float scaledX, float scaledY, float distCenter, int bias)
+    {
+        return cppn.Process(new float[] { scaledX, scaledY, distCenter, 1 });
     }
 
     float Scale(int toScale, int maxDimension)

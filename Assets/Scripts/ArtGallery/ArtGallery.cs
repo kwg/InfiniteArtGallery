@@ -12,51 +12,14 @@ public class ArtGallery : MonoBehaviour {
     public static DEBUG DEBUG_LEVEL = DEBUG.POLITE;
     public int STARTING_NUM_ARTWORKS;
     public GameObject roomObject; // RoomObject for room to load
+    public Room gameRoom; // Reference to the in-game room that the player is currently in
 
 
-    private class RoomConfiguration
-    {
-        private int parentID;
-        private SortedList<int, Artwork> artworks;
+    //private SortedList<int, RoomConfiguration> history;
+    private RoomConfiguration lobby; // Root of the room tree
+    private RoomConfiguration room; // current room
+    public static long roomID = 0;
 
-        public RoomConfiguration(int parentID, SortedList<int, Artwork> artworks)
-        {
-            this.parentID = parentID;
-            this.artworks = artworks;
-        }
-
-        public RoomConfiguration(int numArtworks)
-        {
-            parentID = -1;
-            artworks = new SortedList<int, Artwork>();
-
-            for (int i = 0; i < numArtworks; i++)
-            {
-                artworks[i] = new Artwork();
-            }
-        }
-
-        public SortedList<int, Artwork> GetArtworks()
-        {
-            return artworks;
-        }
-
-        public void SetArtwork(int artworkID, Artwork artwork)
-        {
-            artworks[artworkID] = artwork;
-        }
-
-        public int GetParentID()
-        {
-            return parentID;
-        }
-    }
-
-    private SortedList<int, RoomConfiguration> history;
-    private RoomConfiguration room;
-
-    /* Delete this  */
-    Room gameRoom; // configuration of the current room
 
     // Use this for initialization
     void Start()
@@ -65,9 +28,8 @@ public class ArtGallery : MonoBehaviour {
         GameObject roomProp = Instantiate(roomObject) as GameObject;
         gameRoom = roomProp.GetComponent<Room>();
 
-        room = new RoomConfiguration(STARTING_NUM_ARTWORKS);
-        history = new SortedList<int, RoomConfiguration>();
-        history.Add(history.Count, room);
+        lobby = new RoomConfiguration(STARTING_NUM_ARTWORKS);
+        room = lobby;
 
         gameRoom.InitializeRoom(GetImagesFromArtworks(room.GetArtworks()));
 
@@ -77,49 +39,67 @@ public class ArtGallery : MonoBehaviour {
 
     public void ChangeRoom(int portalID, int destinationID)
     {
-        Debug.Log("Changing room from " + (history.Count - 1) + " through portal " + portalID + " with destinationID " + destinationID);
-        gameRoom.ClearReturnPortalDecorations();
+        // is the desitnation a new room or a return?
+        if (room.GetRoomByPortalID(portalID) == null) room.AddRoom(portalID, new RoomConfiguration(room, destinationID, room.GetArtworks()[portalID]));
+        room = room.GetRoomByPortalID(portalID);
 
-        if (portalID == room.GetParentID()) // rewind
-        {
-            //Debug.Log("Opps - Time travel is not implemented");
-            history.Remove(history.Count - 1);
-            room = history[history.Count - 1];
-        }
-        else // forawrd
-        {
-            int numArtworks = room.GetArtworks().Count;
-            Artwork selected = room.GetArtworks()[portalID];
-            history.Add(history.Count, new RoomConfiguration(destinationID, new SortedList<int, Artwork>()));
-            room = history[history.Count - 1];
 
-            for (int i = 0; i < numArtworks; i++)
-            {
-                room.SetArtwork(i, new Artwork(selected.GetGenotype().Copy()));
-                room.GetArtworks()[i].GetGenotype().Mutate();
-                //room.GetArtworks()[i].GenerateImageFromCPPN();
-            }
-        }
-
-        if (room.GetParentID() != -1) gameRoom.SetReturnPortalDecoration(room.GetParentID());
         gameRoom.InitializeRoom(room.GetParentID(), GetImagesFromArtworks(room.GetArtworks()));
         gameRoom.RedrawRoom();
 
+        gameRoom.ClearReturnPortalDecorations();
+        if (room.GetParentID() > -1) gameRoom.SetReturnPortalDecoration(room.GetParentID());
+
+
+
+
+
+        //Debug.Log("Changing room through portal " + portalID + " with destinationID " + destinationID);
+        //gameRoom.ClearReturnPortalDecorations();
+
+        //bool rewinding = false;
+        //RoomConfiguration newRoom = room.GetRoomByArtwork(room.GetArtworks()[portalID]);
+
+        //if (gameRoom.GetParentID() == room.GetParentID()) // rewind
+        //{
+        //    Debug.Log("Opps - Time travel is not implemented");
+        //    rewinding = true;
+        //}
+
+        //room = newRoom;
+        //if (room.GetParentID() > -1) gameRoom.SetReturnPortalDecoration(room.GetParentID());
+
+        //gameRoom.InitializeRoom(room.GetParentID(), GetImagesFromArtworks(room.GetArtworks()));
+        //gameRoom.RedrawRoom();
+
         // FIXME Teleport the player HERE?
+    }
+
+    public static long NextRoomID()
+    {
+        return roomID++;
     }
 
     // Update is called once per frame
     void Update ()
     {
-		
-	}
-
-    private SortedList<int, Texture2D> GetImagesFromArtworks(SortedList<int, Artwork> artworks)
-    {
-        SortedList<int, Texture2D> images = new SortedList<int, Texture2D>();
-        foreach (KeyValuePair<int, Artwork> art in room.GetArtworks())
+        Artwork[] art = room.GetArtworks();
+        for(int a = 0; a < art.Length; a++)
         {
-            images[art.Key] = art.Value.GetArtwork();
+
+            if (art[a].HasFinishedProcessing())
+            {
+                art[a].ApplyImageProcess();
+            }
+        }
+    }
+
+    private Texture2D[] GetImagesFromArtworks(Artwork[] artworks)
+    {
+        Texture2D[] images = new Texture2D[artworks.Length];
+        for(int a = 0; a < artworks.Length; a++)
+        {    
+            images[a] = artworks[a].GetArtwork();
         }
         return images;
     }

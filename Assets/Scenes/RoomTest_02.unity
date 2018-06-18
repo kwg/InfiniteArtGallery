@@ -728,7 +728,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   STARTING_NUM_ARTWORKS: 4
   roomObject: {fileID: 1077176115033904, guid: 692bbed89c150d641ae85bde51837e50, type: 2}
-  pc: {fileID: 700408595}
+  gameRoom: {fileID: 0}
 --- !u!4 &1027180089
 Transform:
   m_ObjectHideFlags: 0

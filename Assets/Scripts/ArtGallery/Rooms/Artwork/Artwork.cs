@@ -14,8 +14,8 @@ public class Artwork
     bool processing;
 
     //TODO width, height - These are static for testing but we may want to make them change
-    int width = 128;
-    int height = 128;
+    int width = 256;
+    int height = 256;
 
     /// <summary>
     /// Create a new artwork in a room with a new genotype. 

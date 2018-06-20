@@ -5,15 +5,15 @@ using UnityEngine;
 [System.Serializable]
 public class TWEANNGenotype : INetworkGenotype<TWEANN>
 {
-    [SerializeField] protected List<NodeGene> nodes;
-    [SerializeField] protected List<LinkGene> links;
+    protected List<NodeGene> nodes;
+    protected List<LinkGene> links;
 
-    [SerializeField] private int numInputs, numOutputs;
-    [SerializeField] private long ID; // FIXME need genetic history ID assignment
-    [SerializeField] private int archetypeIndex;
+    private int numInputs, numOutputs;
+    private long ID; // FIXME need genetic history ID assignment
+    private int archetypeIndex;
 
     // FIXME This should not be declared here. This should be a parameter so that we can adjust it at run time
-    private float mutationChance = 1.0f; // percent chance for a mutation to occur
+    private float mutationChance = 0.5f; // percent chance for a mutation to occur
 
     public TWEANNGenotype() : this(0, 0, 0) { }
 
@@ -183,12 +183,10 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         float spliceMutationRoll = Random.Range(0.0f, 1.0f);
         float perturbLinkMutationRoll = Random.Range(0.0f, 1.0f);
 
-
-
         if(mutationRoll < mutationChance)
         {
+            Debug.Log("Mutating...");
             int mutationType = Random.Range(0, 4);
-            Debug.Log("Mutating... ");
             switch (mutationType)
             {
                 case 0:
@@ -198,7 +196,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
                     SpliceMutation();
                     break;
                 case 2:
-                    PerturbLink(Random.Range(0, GetLinks().Count), RandomGenerator.NextGaussian());
+                    PerturbLinks(perturbLinkMutationRoll);
                     break;
                 case 3:
                     ActivationFunctionMutation();
@@ -206,8 +204,6 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
                 default:
                     break;
             }
-
-
         }
 
     }
@@ -225,18 +221,29 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
     private void LinkMutation(long sourceNodeInnovation, float weight) //HACK LinkMutation(long sourceNodeInnovation, float weight) - recurrent links are possible. We may disable this later.
     {
         string debugMsg = "LinkMutation on link with innovation " + sourceNodeInnovation + " using a weight of " + weight;
-
-        long targetInnovation = GetRandomNodeInnovation(sourceNodeInnovation, false);
-        long link = EvolutionaryHistory.NextInnovationID();
-
         if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log(debugMsg);
 
-        AddLink(sourceNodeInnovation, targetInnovation, weight, link);
+        long targetNodeInnovation = GetRandomNodeInnovation(sourceNodeInnovation, false);
+
+        NTYPE sourceNTYPE = GetNodeByInnovationID(sourceNodeInnovation).nTYPE;
+        NTYPE targetNTYPE = GetNodeByInnovationID(targetNodeInnovation).nTYPE;
+
+
+        if (
+            /* (sourceNTYPE == NTYPE.INPUT && targetNTYPE == NTYPE.INPUT) ||    // both inputs */
+            (sourceNTYPE == NTYPE.INPUT && targetNTYPE == NTYPE.HIDDEN) ||  // input -> hidden
+            (sourceNTYPE == NTYPE.INPUT && targetNTYPE == NTYPE.OUTPUT) ||  // input -> output
+            /* (sourceNTYPE == NTYPE.HIDDEN && targetNTYPE == NTYPE.HIDDEN) || // hidden -> hidden */
+            (sourceNTYPE == NTYPE.HIDDEN && targetNTYPE == NTYPE.OUTPUT))   // hidden -> output
+        {
+            long link = EvolutionaryHistory.NextInnovationID();
+            AddLink(sourceNodeInnovation, targetNodeInnovation, weight, link);
+        }
     }
 
     public void SpliceMutation()
     {
-        //HACK just doing random ftypes for now
+        //HACK just doing random ftypes for now (selected from active functions) we may want this to optionally use the parent function
         SpliceMutation(ActivationFunctions.RandomFTYPE());
     }
 
@@ -256,27 +263,44 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         SpliceNode(fType, newNode, sourceInnovation, targetInnovation, weight1, weight2, toLink, fromLink);
     }
 
-    public void PerturbLink(int linkIndex, float delta)
+    public void PerturbLinks(float cutoffValue)
     {
-        if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("Perturbing link " + linkIndex + " by " + delta);
-        LinkGene lg = links[linkIndex];
-        PerturbLink(lg, delta);
+        if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("Perturbing links: cutoffValue: " + cutoffValue);
+        float delta;
+        foreach(LinkGene lg in links)
+        {
+            float roll = Random.Range(0.0f, 1.0f);
+            if(roll < cutoffValue)
+            {
+                delta = RandomGenerator.NextGaussian();
+                PerturbLink(lg, delta);
+            }
+        }
     }
 
     public void PerturbLink(LinkGene lg, float delta)
     {
+        if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("Perturbing link: " + lg.innovation + " by " + delta);
         lg.SetWeight(lg.GetWeight() + delta);
     }
 
     private void ActivationFunctionMutation()
     {
+        string debugMsg = "ActivationFunctionMutation";
         int nodeRoll = Random.Range(0, nodes.Count);
         NodeGene ng = nodes[nodeRoll];
         if (ng == null) throw new System.Exception("Node not found! " + nodeRoll);
         FTYPE fTYPERoll = ActivationFunctions.RandomFTYPE();
-        string debugMsg = "ActivationFunctionMutation - changing node " + nodeRoll + " from " + ng.GetFTYPE() + " to " + fTYPERoll;
+        if(fTYPERoll != ng.fTYPE)
+        {
+            debugMsg += " - Changing node " + nodeRoll + " from " + ng.GetFTYPE() + " to " + fTYPERoll;
+            ng.SetFTYPE(fTYPERoll);
+        }
+        else
+        {
+            debugMsg += " - Not changing node. Random node selection was same as previous function type";
+        }
         if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log(debugMsg);
-        ng.SetFTYPE(fTYPERoll);
     }
 
     private long GetRandomLinkInnovation()
@@ -371,9 +395,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
             if(ng.GetInnovation() == innovation)
             {
                 result = ng;
-            }
-            else
-            {
+                found = true;
             }
         }
         if (!found)

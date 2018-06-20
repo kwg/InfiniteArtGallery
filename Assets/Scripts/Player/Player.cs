@@ -4,20 +4,6 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 
-    // game state flags
-    bool hasArtwork;
-    bool hasRecurrency;
-    bool hasAnimations;
-    bool hasSculptures;
-    bool hasRobots;
-    bool hasSounds;
-
-    int baseNumberOfArtworks;
-    int baseNumberOfAnimations;
-    int baseNumberOfSculptures;
-    int baseNumberOfRobots;
-    int baseNumberOfSounds;
-
     public void Start()
     {
 

@@ -66,7 +66,7 @@ public class ArtGallery : MonoBehaviour {
         NumberOfArtworks = STARTING_NUM_ARTWORKS;
         // starting functions
         collectedFunctions = new FTYPE[] {FTYPE.ID, FTYPE.TANH, FTYPE.SQUAREWAVE, FTYPE.GAUSS, FTYPE.SINE };
-        activeFunctions = new FTYPE[] { FTYPE.ID, FTYPE.TANH, FTYPE.SQUAREWAVE, FTYPE.GAUSS, FTYPE.SINE };
+        activeFunctions = new FTYPE[] { FTYPE.ID, FTYPE.GAUSS, FTYPE.SINE };
 
         //activate functions
         // Testing: activating all functions

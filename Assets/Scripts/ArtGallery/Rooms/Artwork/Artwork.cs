@@ -69,7 +69,11 @@ public class Artwork
                 float scaledY = Scale(y, height);
                 float distCenter = GetDistFromCenter(scaledX, scaledY);
                 float[] hsv = ProcessCPPNInput(scaledX, scaledY, GetDistFromCenter(scaledX, scaledY), 1);
-                Color colorRGB = new Color(Mathf.InverseLerp(0.0f, 1.0f, hsv[1]), Mathf.InverseLerp(0.0f, 1.0f, hsv[1]), Mathf.InverseLerp(0.0f, 1.0f, hsv[2]));
+                Color colorRGB = new Color(
+                    ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[0]), 
+                    ActivationFunctions.Activation(FTYPE.HLPIECEWISE, hsv[1]), 
+                    Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[2]))
+                    );
                 Color colorHSV = Color.HSVToRGB(colorRGB.r, colorRGB.g, colorRGB.b);
                 pixels[x + y * width] = colorHSV;
                 //pixels[x + y * width] = Color.HSVToRGB(hsv[0] % 1.0f, hsv[1] % 1.0f, hsv[2] % 1.0f);

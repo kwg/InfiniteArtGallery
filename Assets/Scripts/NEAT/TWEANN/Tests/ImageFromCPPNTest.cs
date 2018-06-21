@@ -6,6 +6,7 @@ public class ImageFromCPPNTest : MonoBehaviour {
 
     private static readonly int NUM_INPUTS = 4;
     private static readonly int NUM_OUTPUTS = 3;
+    private static readonly int TIME_STEPS = 1;
 
 
     TWEANNGenotype cppnTest;
@@ -16,9 +17,11 @@ public class ImageFromCPPNTest : MonoBehaviour {
     Renderer renderer;
     //int newNodeID = 1000;
     bool running = true;
+    System.DateTime time;
 
 	void Start ()
     {
+        time = System.DateTime.Now;
         width = height = 128;
         renderer = GetComponent<Renderer>();
         img = new Texture2D(width, height, TextureFormat.ARGB32, true);
@@ -51,10 +54,11 @@ public class ImageFromCPPNTest : MonoBehaviour {
 
     void DoImage()
     {
-
-        img = CreateCPPNImage(width, height);
-        //img = CreateRandomTexture(width, height);
-
+        //for (int t = 0; t < TIME_STEPS; t++)
+        //  {
+        img = CreateCPPNImage(width, height);//, t);
+            //img = CreateRandomTexture(width, height);
+       // }
     }
 
     void EvolveImage()
@@ -139,33 +143,62 @@ public class ImageFromCPPNTest : MonoBehaviour {
         return img;
     }
 
-    Texture2D CreateCPPNImage(int width, int height)
+    struct CoordinatesAndColor
+    {
+        public int x, y;
+        public Color color;
+        public CoordinatesAndColor(int x, int y, Color color)
+        {
+            this.x = x;
+            this.y = y;
+            this.color = color;
+        }
+    }
+    Texture2D CreateCPPNImage(int width, int height, int time)
     {
         GenerateCPPN();
-
+        List<CoordinatesAndColor> coordinatesAndColorList = new List<CoordinatesAndColor>();
+        List<List<CoordinatesAndColor>> images = new List<List<CoordinatesAndColor>>();
         //Texture2D img = new Texture2D(width, height);
-
-        for (int y = 0; y < height; y++)
-        {
-            for (int x = 0; x < width; x++)
+            for (int y = 0; y < height; y++)
             {
-                float scaledX = Scale(x, width);
-                float scaledY = Scale(y, height);
-                float[] hsv = cppn.Process(new float[] { scaledX, scaledY, GetDistFromCenter(scaledX, scaledY), 1 });
+                for (int x = 0; x < width; x++)
+                {
+                    float scaledX = Scale(x, width);
+                    float scaledY = Scale(y, height);
+                    float[] outputs = cppn.Process(new float[] { scaledX, scaledY, GetDistFromCenter(scaledX, scaledY), 1 }); //time
+                    // HSV value restrictions
 
-                // HSV value restrictions
+                    outputs[0] = Mathf.Clamp(outputs[2], 0.0f, 1.0f);
+                    outputs[1] = Mathf.Clamp(outputs[2], 0.0f, 1.0f);
+                    outputs[2] = Mathf.Abs(Mathf.Clamp(outputs[2], 1.0f, 1.0f));
 
-                hsv[0] = Mathf.Clamp(hsv[2], 0.0f, 1.0f);
-                hsv[1] = Mathf.Clamp(hsv[2], 0.0f, 1.0f);
-                hsv[2] = Mathf.Abs(Mathf.Clamp(hsv[2], 1.0f, 1.0f));
-
-                Color color = Color.HSVToRGB(hsv[0], hsv[1], hsv[2]);
-                
-                img.SetPixel(x, y, color);
+                    Color color = Color.HSVToRGB(outputs[0], outputs[1], outputs[2]);
+                    
+                    img.SetPixel(x, y, color);
+                   // coordinatesAndColorList.Add(new CoordinatesAndColor(x, y, color));
+                }
             }
-        }
+            img.Apply();
 
-        img.Apply();
+       /* int i = 0;
+        System.DateTime time = System.DateTime.Now;
+        while (i < coordinatesAndColorList.Count)
+        {
+            if (System.DateTime.Now.Millisecond > time.Millisecond)
+            {
+                CoordinatesAndColor thisPixel = coordinatesAndColorList[555];
+                Debug.Log("x: " + thisPixel.x);
+                Debug.Log("y: " + thisPixel.y);
+                Debug.Log("color: " + thisPixel.color);
+                img.SetPixel(thisPixel.x, thisPixel.y, thisPixel.color);
+                img.Apply();
+                time = time.Add(new System.TimeSpan(0, 0, 0, 0, 10));
+                i++;
+                Debug.Log("in here: " + time);
+                break;
+            }
+        }*/
         return img;
     }
 

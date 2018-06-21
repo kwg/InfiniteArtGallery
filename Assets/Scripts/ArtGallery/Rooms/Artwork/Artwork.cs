@@ -11,6 +11,7 @@ public class Artwork {
     Texture2D img;
     int width = 128;
     int height = 128;
+    
 
     /// <summary>
     /// Create a new door in a room with a new CPPN. 
@@ -18,11 +19,10 @@ public class Artwork {
     /// <param name="pc">Reference to the portal controller that can spawn and decorate portals in the scene</param>
     public Artwork() 
     {
-        geno = new TWEANNGenotype(4, 3, 0); // FIXME archetype index 
+        geno = new TWEANNGenotype(5, 3, 0); // FIXME archetype index 
         GenerateCPPN();
         img = new Texture2D(width, height, TextureFormat.ARGB32, true);
         img = GenerateImageFromCPPN();
-
     }
 
     public Artwork(TWEANNGenotype geno)
@@ -59,18 +59,19 @@ public class Artwork {
 
         //Texture2D img = new Texture2D(width, height);
 
-        for (int y = 0; y < height; y++)
-        {
-            for (int x = 0; x < width; x++)
+        
+            for (int y = 0; y < height; y++)
             {
-                float scaledX = Scale(x, width);
-                float scaledY = Scale(y, height);
-                float[] hsv = cppn.Process(new float[] { scaledX, scaledY, GetDistFromCenter(scaledX, scaledY), 1 });
-                Color color = Color.HSVToRGB(hsv[0], hsv[1], hsv[2]);
+                for (int x = 0; x < width; x++)
+                {
+                    float scaledX = Scale(x, width);
+                    float scaledY = Scale(y, height);
+                    float[] hsv = cppn.Process(new float[] { scaledX, scaledY, GetDistFromCenter(scaledX, scaledY), 1 });
+                    Color color = Color.HSVToRGB(hsv[0], hsv[1], hsv[2]);
 
-                img.SetPixel(x, y, color);
+                    img.SetPixel(x, y, color);
+                }
             }
-        }
 
         img.Apply();
 

@@ -35,11 +35,13 @@ public class RoomConfiguration {
                     }
                 }
                 // return art
-                if(i == returnPortalID)
+                else if(i == returnPortalID)
                 {
                     // do nothing - save some cpu
+                    artworks[i] = new Artwork(champion.GetGenotype().Copy());
+
                 }
-                if(i != championPortalID || i != returnPortalID)
+                else
                 {
                     // all other art
                     artworks[i] = new Artwork(champion.GetGenotype().Copy());

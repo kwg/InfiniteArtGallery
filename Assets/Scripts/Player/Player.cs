@@ -46,12 +46,24 @@ public class Player : MonoBehaviour {
                 if(hit.collider.tag == "portal")
                 {
                     Texture2D img = hit.collider.gameObject.GetComponent<Portal>().GetImage();
-                    inventory.AddArt(0, img);
+                    
 
                 }
 
                 // Do something with the object that was hit by the raycast.
             }
+        }
+
+        float wheel = Input.GetAxis("Mouse ScrollWheel");
+        if(wheel < 0f )
+        {
+            //scroll down
+            inventory.CycleActiveSlot(-1);
+        }
+        else if(wheel > 0f)
+        {
+            //scroll up
+            inventory.CycleActiveSlot(1);
         }
     }
 }

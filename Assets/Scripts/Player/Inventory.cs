@@ -2,33 +2,43 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class Inventory : MonoBehaviour {
 
-    Texture2D[] savedArt;
-    public GameObject hud0;
-    public GameObject hud1;
-    public GameObject hud2;
-    public GameObject hud3;
-    public GameObject hud4;
-    GameObject[] hudImages;
-	
-	void Start() {
-        hudImages = new GameObject[] { hud0, hud1, hud2, hud3, hud4 };
-        savedArt = new Texture2D[hudImages.Length];
-    }
-	
-    public void AddArt(int position, Texture2D art)
+    private const int SLOTS = 9;
+    private List<IInventoryItem> items = new List<IInventoryItem>();
+    public event EventHandler<InventoryEventArgs> ItemAdded;
+    private int ActiveSlot { get; set; } 
+    
+    public void AddItem(IInventoryItem item)
     {
-        if(position < 0 || position > savedArt.Length - 1)
+        if(items.Count < SLOTS) // add the item
         {
-            throw new System.ArgumentOutOfRangeException("Attempted to add artwork to inventory at position " + position + ", but was out of range.");
+            items.Add(item);
+            item.OnPickup();
+
+            if(ItemAdded != null)
+            {
+                ItemAdded(this, new InventoryEventArgs(item));
+            }
+        }
+    }
+
+    public void ChangeActiveSlot(int newSlot)
+    {
+        ActiveSlot = newSlot;
+    }
+
+    public void CycleActiveSlot(int delta)
+    {
+        if(delta == -1 || delta == 1) // ensure delta is a single +/- int
+        {
+            ActiveSlot = (ActiveSlot + delta) % SLOTS;
         }
         else
         {
-            savedArt[position] = art;
-            hudImages[position].GetComponent<Image>().sprite = Sprite.Create(savedArt[position], new Rect(0, 0, savedArt[position].width, savedArt[position].height), new Vector2(0.5f, 0.5f));
-            Debug.Log("Image saved at position " + position);
+            throw new ArgumentException("Delta was not +/- 1");
         }
     }
 }

@@ -281,7 +281,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
     public void PerturbLink(LinkGene lg, float delta)
     {
         if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("Perturbing link: " + lg.innovation + " by " + delta);
-        lg.SetWeight(lg.GetWeight() + delta);
+        lg.SetWeight(lg.GetWeight() + delta); // TODO PerturbLink(LinkGene lg, float delta) - Do we want the weight to be bounded in any way?
     }
 
     private void ActivationFunctionMutation()

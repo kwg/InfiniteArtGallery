@@ -4,9 +4,15 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 
+    public Inventory inventory;
+    new Camera camera;
+    float interactionDistance = 30f;
+
     public void Start()
     {
-
+        camera = FindObjectOfType<Camera>();
+        //inventory = new Inventory();
+        
     }
     
     /// <summary>
@@ -26,6 +32,26 @@ public class Player : MonoBehaviour {
 
     public void Update()
     {
+        if(Input.GetMouseButtonDown(0))
+        {
+            RaycastHit hit;
+            Ray ray = new Ray(camera.transform.position, camera.transform.forward * interactionDistance);
+            Debug.DrawRay(camera.transform.position, camera.transform.forward * interactionDistance);
 
+            if (Physics.Raycast(ray, out hit))
+            {
+                Transform objectHit = hit.transform;
+                Debug.Log("Camera - clicked on " + hit.collider.gameObject.tag);
+
+                if(hit.collider.tag == "portal")
+                {
+                    Texture2D img = hit.collider.gameObject.GetComponent<Portal>().GetImage();
+                    inventory.AddArt(0, img);
+
+                }
+
+                // Do something with the object that was hit by the raycast.
+            }
+        }
     }
 }

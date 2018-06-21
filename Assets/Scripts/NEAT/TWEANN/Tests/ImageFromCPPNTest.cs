@@ -160,6 +160,7 @@ public class ImageFromCPPNTest : MonoBehaviour {
         List<CoordinatesAndColor> coordinatesAndColorList = new List<CoordinatesAndColor>();
         List<List<CoordinatesAndColor>> images = new List<List<CoordinatesAndColor>>();
         //Texture2D img = new Texture2D(width, height);
+        for (int t = 0; )
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)

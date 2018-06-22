@@ -44,15 +44,16 @@ public class Player : MonoBehaviour {
                 if(hit.collider.tag == "portal")
                 {
                     Portal p = hit.collider.gameObject.GetComponent<Portal>();
-                    Texture2D img = p.GetImage();
+                    Texture2D img = new Texture2D(256, 256, TextureFormat.ARGB32, false); // HACK hardcoded width and height
+                    Graphics.CopyTexture(p.GetImage(), img);
                     int portalID = p.GetPortalID();
-                    Artwork art = ag.GetArtwork(portalID);
+                    TWEANNGenotype geno = ag.GetArtwork(portalID).GetGenotype().Copy();
 
 
                     SavedArtwork newArtwork = new SavedArtwork
                     {
                         Image = Sprite.Create(img, new Rect(0, 0, img.width, img.height), new Vector2(0.5f, 0.5f), 100f) as Sprite,
-                        Geno = art.GetGenotype()
+                        Geno = geno
 
                     };
                     inventory.AddItem(newArtwork);

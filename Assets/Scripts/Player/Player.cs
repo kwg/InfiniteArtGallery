@@ -46,11 +46,12 @@ public class Player : MonoBehaviour {
                 if(hit.collider.tag == "portal")
                 {
                     Texture2D img = hit.collider.gameObject.GetComponent<Portal>().GetImage();
-                    
-
+                    SavedArtwork newArtwork = new SavedArtwork
+                    {
+                        Image = Sprite.Create(img, new Rect(0, 0, img.width, img.height), new Vector2(0.5f, 0.5f), 100f) as Sprite
+                    };
+                    inventory.AddItem(newArtwork);
                 }
-
-                // Do something with the object that was hit by the raycast.
             }
         }
 
@@ -58,12 +59,14 @@ public class Player : MonoBehaviour {
         if(wheel < 0f )
         {
             //scroll down
-            inventory.CycleActiveSlot(-1);
+            inventory.CycleActiveSlot(1);
+
         }
         else if(wheel > 0f)
         {
             //scroll up
-            inventory.CycleActiveSlot(1);
+            inventory.CycleActiveSlot(-1);
+
         }
     }
 }

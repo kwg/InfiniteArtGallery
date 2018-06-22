@@ -5,15 +5,23 @@ using UnityEngine.UI;
 
 public class InventorySlot : MonoBehaviour {
 
+    public GameObject thumbnailSlot;
+    Image thumbnail;
+    Sprite defaultThumbnail;
 
-    public void ChangeSprite(Sprite sprite)
+    public void ChangeBorder(Sprite sprite)
     {
         gameObject.GetComponent<Image>().sprite = sprite;
     }
 
+    public void ChangeThumbnail(Sprite sprite)
+    {
+        thumbnailSlot.GetComponent<Image>().sprite = sprite;
+    }
+
     // Use this for initialization
     void Start () {
-		
+
 	}
 	
 	// Update is called once per frame

@@ -22,15 +22,28 @@ public class HUD : MonoBehaviour {
                 slots.Add(slot);
             }
         }
+        //slots.Sort();
         Debug.Log("Found " + slots.Count + " inventory slots in the hud");
         UpdateSelectedInventorySlot();
 
     }
 
+     public int NumberOfSlots()
+    {
+        return slots.Count;
+    }
+
     public void SelectSlot(int slot)
     {
-        selectedSlotID = slot;
-        UpdateSelectedInventorySlot();
+        if(slot < 0 || slot > slots.Count)
+        {
+            throw new System.Exception("Selected slot does not exist in the HUD: " + slot);
+        }
+        else
+        {
+            selectedSlotID = slot;
+            UpdateSelectedInventorySlot();
+        }
     }
 
 	private void UpdateSelectedInventorySlot()
@@ -38,12 +51,16 @@ public class HUD : MonoBehaviour {
         // check for active inventory slot and change the decoration for it
         foreach (InventorySlot slot in slots)
         {
-            slot.ChangeSprite(deselectedSlotSprite);
+            slot.ChangeBorder(deselectedSlotSprite);
         }
 
-        slots[selectedSlotID].ChangeSprite(selectedSlotSprite);
+        slots[selectedSlotID].ChangeBorder(selectedSlotSprite);
     }
 	
+    public void UpdateInventoryThumbnail(int inventorySlot, Sprite thumbnail)
+    {
+        slots[inventorySlot].ChangeThumbnail(thumbnail);
+    }
     
     // Update is called once per frame
 	void Update () {

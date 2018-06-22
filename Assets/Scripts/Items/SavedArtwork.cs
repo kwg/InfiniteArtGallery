@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SavedArtwork : MonoBehaviour, IInventoryItem {
+public class SavedArtwork : IInventoryItem {
 
     public string Name
     {
@@ -16,7 +16,7 @@ public class SavedArtwork : MonoBehaviour, IInventoryItem {
 
     public void OnPickup()
     {
-        throw new System.NotImplementedException();
+        //throw new System.NotImplementedException();
     }
 
 

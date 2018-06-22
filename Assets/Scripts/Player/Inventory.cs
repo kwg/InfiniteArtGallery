@@ -21,18 +21,6 @@ public class Inventory : MonoBehaviour {
 
     public void AddItem(IInventoryItem item)
     {
-        //if(items.Count < slotCount) // add the item
-        //{
-        //    items.Add(item);
-        //    item.OnPickup();
-
-        //    if(ItemAdded != null)
-        //    {
-        //        ItemAdded(this, new InventoryEventArgs(item));
-        //        hud.UpdateInventoryThumbnail(ActiveSlot, item.Image);
-        //    }
-        //}
-
         hud.UpdateInventoryThumbnail(ActiveSlot, item.Image);
         items[ActiveSlot] = item;
     }

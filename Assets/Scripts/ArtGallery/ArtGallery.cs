@@ -88,7 +88,7 @@ public class ArtGallery : MonoBehaviour {
     public void ChangeRoom(int portalID, int destinationID)
     {
         // is the desitnation a new room or a return?
-        if (room.GetRoomByPortalID(portalID) == null) room.AddRoom(portalID, new RoomConfiguration(room, destinationID, portalID, room.GetArtworks()[portalID]));
+        if (room.GetRoomByPortalID(portalID) == null) room.AddRoom(portalID, new RoomConfiguration(room, destinationID, portalID, new Artwork(room.GetArtworks()[portalID].GetGenotype().Copy())));
         room = room.GetRoomByPortalID(portalID);
 
 

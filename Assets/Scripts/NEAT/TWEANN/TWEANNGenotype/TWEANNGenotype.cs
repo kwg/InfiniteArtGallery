@@ -438,8 +438,31 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
     //    copy()
     public TWEANNGenotype Copy()
     {
-        return new TWEANNGenotype(this);
+        List<NodeGene> copyNodes = new List<NodeGene>();
+        List<LinkGene> copyLinks = new List<LinkGene>();
+
+        for (int i = 0; i < nodes.Count; i++)
+        {
+
+            NodeGene ng = new NodeGene(nodes[i].nTYPE, nodes[i].fTYPE, nodes[i].GetInnovation());
+            copyNodes.Add(ng);
+            List<LinkGene> tempLinks = new List<LinkGene>();
+            foreach (LinkGene l in links)
+            {
+                LinkGene lg = new LinkGene(l.GetSourceInnovation(), l.GetTargetInnovation(), l.GetWeight(), l.GetInnovation());
+                tempLinks.Add(lg);
+            }
+            for (int j = 0; j < tempLinks.Count; j++)
+            {
+                copyLinks.Add(tempLinks[j]);
+            }
+        }
+
+        TWEANNGenotype copy = new TWEANNGenotype(copyNodes, copyLinks);
+        return copy;
     }
+    
+    
     //    newInstance()
 
     public override string ToString()

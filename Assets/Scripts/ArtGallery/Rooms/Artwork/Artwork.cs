@@ -49,6 +49,15 @@ public class Artwork
         processing = false;
     }
 
+    public void ProcessAndApplyCPPN()
+    {
+
+        img.SetPixels(pixels);
+        img.Apply();
+        processing = false;
+    }
+
+
     private void GenerateCPPN()
     {
         foreach (NodeGene node in geno.GetNodes())
@@ -72,8 +81,8 @@ public class Artwork
                 Color colorRGB = new Color(
                     ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[0]), 
                     ActivationFunctions.Activation(FTYPE.HLPIECEWISE, hsv[1]), 
-                    Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[2]))
-                    );
+                    Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[2])),
+                    1.0f);
                 Color colorHSV = Color.HSVToRGB(colorRGB.r, colorRGB.g, colorRGB.b);
                 pixels[x + y * width] = colorHSV;
                 //pixels[x + y * width] = Color.HSVToRGB(hsv[0] % 1.0f, hsv[1] % 1.0f, hsv[2] % 1.0f);
@@ -81,8 +90,6 @@ public class Artwork
                 //img.SetPixel(x, y, color);
             }
         }
-
-        //img.Apply();
         if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("CPPN Imgage generation complete");
     }
 

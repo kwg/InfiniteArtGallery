@@ -32,12 +32,11 @@ public class Player : MonoBehaviour {
 
     public void Update()
     {
+        // FIXME Move all of this to inventory. pass the collider to inventory and have it figure out what to do next. this is getting messy and hard to debug
         if(Input.GetMouseButtonDown(0))
         {
             RaycastHit hit;
             Ray ray = new Ray(camera.transform.position, camera.transform.forward * interactionDistance);
-            Debug.DrawRay(camera.transform.position, camera.transform.forward * interactionDistance);
-
             if (Physics.Raycast(ray, out hit))
             {
                 Transform objectHit = hit.transform;
@@ -49,10 +48,9 @@ public class Player : MonoBehaviour {
                     int portalID = p.GetPortalID();
                     TWEANNGenotype geno = ag.GetArtwork(portalID).GetGenotype().Copy();
 
-
                     SavedArtwork newArtwork = new SavedArtwork
                     {
-                        Image = Sprite.Create(img, new Rect(0, 0, img.width, img.height), new Vector2(0.5f, 0.5f), 100f) as Sprite,
+                        Image = Sprite.Create(img, new Rect(0, 0, img.width, img.height), new Vector2(0.5f, 0.5f)) as Sprite,
                         Geno = geno
 
                     };
@@ -65,15 +63,13 @@ public class Player : MonoBehaviour {
         {
             RaycastHit hit;
             Ray ray = new Ray(camera.transform.position, camera.transform.forward * interactionDistance);
-            Debug.DrawRay(camera.transform.position, camera.transform.forward * interactionDistance);
-
             if (Physics.Raycast(ray, out hit))
             {
                 Transform objectHit = hit.transform;
                 if (hit.collider.tag == "portal")
                 {
                     Portal p = hit.collider.gameObject.GetComponent<Portal>();
-                    ag.GetArtwork(p.GetPortalID()).SetGenotypePortal(inventory.GetActiveSlotItem().Geno);
+                    ag.GetArtwork(p.GetPortalID()).SetGenotypePortal(inventory.GetActiveSlotItem().Geno.Copy());
                     ag.GetArtwork(p.GetPortalID()).GenerateImageFromCPPN();
                     ag.GetArtwork(p.GetPortalID()).ApplyImageProcess();
                 }

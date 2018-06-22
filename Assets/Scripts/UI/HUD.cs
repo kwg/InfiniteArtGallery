@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Responsible for updating the on screen UI elements of the HUD
+/// </summary>
 public class HUD : MonoBehaviour {
 
     public GameObject hud;
@@ -13,22 +16,20 @@ public class HUD : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        selectedSlotID = 0;
-        slots = new List<InventorySlot>();
-        foreach (InventorySlot slot in FindObjectsOfType<InventorySlot>())
+        selectedSlotID = 0;                                                                     // start the player with slot 0 selected
+        slots = new List<InventorySlot>();                                                      // list of inventory slots
+        foreach (InventorySlot slot in FindObjectsOfType<InventorySlot>())                      // Add scene UI inventory slots to slots - this may change if the game modifies the number of slots
         {
             if(slot.tag == "invSlot")
             {
                 slots.Add(slot);
             }
         }
-        //slots.Sort();
-        Debug.Log("Found " + slots.Count + " inventory slots in the hud");
+        slots.Reverse();
         UpdateSelectedInventorySlot();
-
     }
 
-     public int NumberOfSlots()
+    public int NumberOfSlots()
     {
         return slots.Count;
     }
@@ -59,7 +60,14 @@ public class HUD : MonoBehaviour {
 	
     public void UpdateInventoryThumbnail(int inventorySlot, Sprite thumbnail)
     {
-        slots[inventorySlot].ChangeThumbnail(thumbnail);
+        if(inventorySlot < 0 || inventorySlot > slots.Count)
+        {
+            throw new System.Exception("Selected slot does not exist in the HUD: " + inventorySlot);
+        }
+        else
+        {
+            slots[inventorySlot].ChangeThumbnail(thumbnail);
+        }
     }
     
     // Update is called once per frame

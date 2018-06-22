@@ -7,6 +7,7 @@ public interface IInventoryItem
 {
     string Name { get; }
     Sprite Image { get; }
+    TWEANNGenotype Geno { get; set; }
     void OnPickup();
 }
 

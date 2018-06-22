@@ -13,6 +13,7 @@ public class SavedArtwork : IInventoryItem {
     }
 
     public Sprite Image { get; set; }
+    public TWEANNGenotype Geno { get; set; }
 
     public void OnPickup()
     {

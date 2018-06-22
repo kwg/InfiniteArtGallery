@@ -6,8 +6,8 @@ using UnityEngine.UI;
 public class InventorySlot : MonoBehaviour {
 
     public GameObject thumbnailSlot;
-    Image thumbnail;
-    Sprite defaultThumbnail;
+    private Image thumbnail;
+    private Sprite defaultThumbnail;
 
     public void ChangeBorder(Sprite sprite)
     {

@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 
-    public Inventory inventory;
+    public Inventory inventory; // reference to the game inventory
     new Camera camera;
-    float interactionDistance = 30f;
+    ArtGallery ag;
+    float interactionDistance = 30f; // maximum distance to check for raycast collision
 
     public void Start()
     {
         camera = FindObjectOfType<Camera>();
-        //inventory = new Inventory();
-        
+        ag = FindObjectOfType<ArtGallery>();
     }
     
     /// <summary>
@@ -41,16 +41,40 @@ public class Player : MonoBehaviour {
             if (Physics.Raycast(ray, out hit))
             {
                 Transform objectHit = hit.transform;
-                Debug.Log("Camera - clicked on " + hit.collider.gameObject.tag);
-
                 if(hit.collider.tag == "portal")
                 {
-                    Texture2D img = hit.collider.gameObject.GetComponent<Portal>().GetImage();
+                    Portal p = hit.collider.gameObject.GetComponent<Portal>();
+                    Texture2D img = p.GetImage();
+                    int portalID = p.GetPortalID();
+                    Artwork art = ag.GetArtwork(portalID);
+
+
                     SavedArtwork newArtwork = new SavedArtwork
                     {
-                        Image = Sprite.Create(img, new Rect(0, 0, img.width, img.height), new Vector2(0.5f, 0.5f), 100f) as Sprite
+                        Image = Sprite.Create(img, new Rect(0, 0, img.width, img.height), new Vector2(0.5f, 0.5f), 100f) as Sprite,
+                        Geno = art.GetGenotype()
+
                     };
                     inventory.AddItem(newArtwork);
+                }
+            }
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            RaycastHit hit;
+            Ray ray = new Ray(camera.transform.position, camera.transform.forward * interactionDistance);
+            Debug.DrawRay(camera.transform.position, camera.transform.forward * interactionDistance);
+
+            if (Physics.Raycast(ray, out hit))
+            {
+                Transform objectHit = hit.transform;
+                if (hit.collider.tag == "portal")
+                {
+                    Portal p = hit.collider.gameObject.GetComponent<Portal>();
+                    ag.GetArtwork(p.GetPortalID()).SetGenotypePortal(inventory.GetActiveSlotItem().Geno);
+                    ag.GetArtwork(p.GetPortalID()).GenerateImageFromCPPN();
+                    ag.GetArtwork(p.GetPortalID()).ApplyImageProcess();
                 }
             }
         }
@@ -59,13 +83,13 @@ public class Player : MonoBehaviour {
         if(wheel < 0f )
         {
             //scroll down
-            inventory.CycleActiveSlot(1);
+            inventory.CycleActiveSlot(-1);
 
         }
         else if(wheel > 0f)
         {
             //scroll up
-            inventory.CycleActiveSlot(-1);
+            inventory.CycleActiveSlot(1);
 
         }
     }

@@ -1,15 +1,13 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using System;
 
 public class Inventory : MonoBehaviour {
 
     public GameObject HUD;
     private HUD hud;
     private int slotCount;
-    private List<IInventoryItem> items = new List<IInventoryItem>();
+    private IInventoryItem[] items;
     public event EventHandler<InventoryEventArgs> ItemAdded;
     private int ActiveSlot { get; set; }
 
@@ -17,7 +15,8 @@ public class Inventory : MonoBehaviour {
     {
         hud = HUD.GetComponent<HUD>();
         slotCount = hud.NumberOfSlots();
-        ActiveSlot = 1;
+        items = new IInventoryItem[slotCount];
+        ActiveSlot = 0;
     }
 
     public void AddItem(IInventoryItem item)
@@ -34,7 +33,8 @@ public class Inventory : MonoBehaviour {
         //    }
         //}
 
-        hud.UpdateInventoryThumbnail(ActiveSlot - 1, item.Image);
+        hud.UpdateInventoryThumbnail(ActiveSlot, item.Image);
+        items[ActiveSlot] = item;
     }
 
     public void ChangeActiveSlot(int newSlot)
@@ -47,13 +47,18 @@ public class Inventory : MonoBehaviour {
         if(delta == -1 || delta == 1) // ensure delta is a single +/- int
         {
             ActiveSlot = ActiveSlot + delta;
-            if (ActiveSlot < 1) ActiveSlot = slotCount;
-            if (ActiveSlot > slotCount) ActiveSlot = 1;
-            hud.SelectSlot(ActiveSlot - 1);
+            if (ActiveSlot < 0) ActiveSlot = slotCount;
+            if (ActiveSlot >= slotCount) ActiveSlot = 0;
+            hud.SelectSlot(ActiveSlot);
         }
         else
         {
             throw new ArgumentException("Delta was not +/- 1");
         }
+    }
+
+    public IInventoryItem GetActiveSlotItem()
+    {
+        return items[ActiveSlot];
     }
 }

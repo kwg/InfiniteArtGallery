@@ -55,7 +55,7 @@ public class ArtGallery : MonoBehaviour {
     void Start()
     {
         seed = 1234567;
-        //Random.InitState(seed);
+        Random.InitState(seed);
 
         // Build the game room
         GameObject roomProp = Instantiate(roomObject) as GameObject;

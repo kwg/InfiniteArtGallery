@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ImageFromCPPNTest : MonoBehaviour {
+public class ImageFromCPPNTest : MonoBehaviour
+{
 
     private static readonly int NUM_INPUTS = 4;
     private static readonly int NUM_OUTPUTS = 3;
-    private static readonly int TIME_STEPS = 1;
 
 
     TWEANNGenotype cppnTest;
@@ -17,11 +17,9 @@ public class ImageFromCPPNTest : MonoBehaviour {
     Renderer renderer;
     //int newNodeID = 1000;
     bool running = true;
-    System.DateTime time;
 
-	void Start ()
+    void Start()
     {
-        time = System.DateTime.Now;
         width = height = 128;
         renderer = GetComponent<Renderer>();
         img = new Texture2D(width, height, TextureFormat.ARGB32, true);
@@ -34,9 +32,10 @@ public class ImageFromCPPNTest : MonoBehaviour {
         renderer.material.mainTexture = img;
 
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update()
+    {
         if (!PauseMenu.isPaused && Input.GetButtonDown("Fire2"))
         {
             cppnTest = new TWEANNGenotype(NUM_INPUTS, NUM_OUTPUTS, 0);
@@ -54,11 +53,10 @@ public class ImageFromCPPNTest : MonoBehaviour {
 
     void DoImage()
     {
-        //for (int t = 0; t < TIME_STEPS; t++)
-        //  {
-        img = CreateCPPNImage(width, height);//, t);
-            //img = CreateRandomTexture(width, height);
-       // }
+
+        img = CreateCPPNImage(width, height);
+        //img = CreateRandomTexture(width, height);
+
     }
 
     void EvolveImage()
@@ -120,8 +118,8 @@ public class ImageFromCPPNTest : MonoBehaviour {
     float GetDistFromCenter(float x, float y)
     {
         float result = float.NaN;
-       
-        result = Mathf.Sqrt((x*x + y*y)) * Mathf.Sqrt(2);
+
+        result = Mathf.Sqrt((x * x + y * y)) * Mathf.Sqrt(2);
 
         return result;
     }
@@ -141,63 +139,33 @@ public class ImageFromCPPNTest : MonoBehaviour {
         return img;
     }
 
-    struct CoordinatesAndColor
-    {
-        public int x, y;
-        public Color color;
-        public CoordinatesAndColor(int x, int y, Color color)
-        {
-            this.x = x;
-            this.y = y;
-            this.color = color;
-        }
-    }
-    Texture2D CreateCPPNImage(int width, int height, int time)
+    Texture2D CreateCPPNImage(int width, int height)
     {
         GenerateCPPN();
-        List<CoordinatesAndColor> coordinatesAndColorList = new List<CoordinatesAndColor>();
-        List<List<CoordinatesAndColor>> images = new List<List<CoordinatesAndColor>>();
+
         //Texture2D img = new Texture2D(width, height);
-        for (int t = 0; )
-            for (int y = 0; y < height; y++)
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    float scaledX = Scale(x, width);
-                    float scaledY = Scale(y, height);
-                    float[] outputs = cppn.Process(new float[] { scaledX, scaledY, GetDistFromCenter(scaledX, scaledY), 1 }); //time
-                    // HSV value restrictions
 
-                    outputs[0] = Mathf.Clamp(outputs[2], 0.0f, 1.0f);
-                    outputs[1] = Mathf.Clamp(outputs[2], 0.0f, 1.0f);
-                    outputs[2] = Mathf.Abs(Mathf.Clamp(outputs[2], 1.0f, 1.0f));
-
-                    Color color = Color.HSVToRGB(outputs[0], outputs[1], outputs[2]);
-                    
-                    img.SetPixel(x, y, color);
-                   // coordinatesAndColorList.Add(new CoordinatesAndColor(x, y, color));
-                }
-            }
-            img.Apply();
-
-       /* int i = 0;
-        System.DateTime time = System.DateTime.Now;
-        while (i < coordinatesAndColorList.Count)
+        for (int y = 0; y < height; y++)
         {
-            if (System.DateTime.Now.Millisecond > time.Millisecond)
+            for (int x = 0; x < width; x++)
             {
-                CoordinatesAndColor thisPixel = coordinatesAndColorList[555];
-                Debug.Log("x: " + thisPixel.x);
-                Debug.Log("y: " + thisPixel.y);
-                Debug.Log("color: " + thisPixel.color);
-                img.SetPixel(thisPixel.x, thisPixel.y, thisPixel.color);
-                img.Apply();
-                time = time.Add(new System.TimeSpan(0, 0, 0, 0, 10));
-                i++;
-                Debug.Log("in here: " + time);
-                break;
+                float scaledX = Scale(x, width);
+                float scaledY = Scale(y, height);
+                float[] hsv = cppn.Process(new float[] { scaledX, scaledY, GetDistFromCenter(scaledX, scaledY), 1 });
+
+                // HSV value restrictions
+
+                hsv[0] = Mathf.Clamp(hsv[2], 0.0f, 1.0f);
+                hsv[1] = Mathf.Clamp(hsv[2], 0.0f, 1.0f);
+                hsv[2] = Mathf.Abs(Mathf.Clamp(hsv[2], 1.0f, 1.0f));
+
+                Color color = Color.HSVToRGB(hsv[0], hsv[1], hsv[2]);
+
+                img.SetPixel(x, y, color);
             }
-        }*/
+        }
+
+        img.Apply();
         return img;
     }
 

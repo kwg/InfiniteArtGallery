@@ -7,8 +7,9 @@ public class RoomConfiguration {
     private RoomConfiguration parentRoom;
     private Artwork[] artworks; 
     private RoomConfiguration[] rooms;
+    private int MUTATION_CYCLES = 5; // maximum mutations per evolution
 
-    public RoomConfiguration(RoomConfiguration parentRoom, int returnPortalID, Artwork champion, int numArtworks)
+    public RoomConfiguration(RoomConfiguration parentRoom, int returnPortalID, int championPortalID, Artwork champion, int numArtworks)
     {
         Debug.Log("Creating a new room with " + numArtworks + " artworks");
         this.parentRoom = parentRoom;
@@ -22,14 +23,40 @@ public class RoomConfiguration {
         {
             for (int i = 0; i < numArtworks; i++)
             {
-                artworks[i] = new Artwork(champion.GetGenotype().Copy());
-                artworks[i].GetGenotype().Mutate();
+                // champion art
+                if(i == championPortalID)
+                {
+                    //do little
+                    artworks[i] = new Artwork(champion.GetGenotype().Copy());
+                    int mutations = 1;
+                    for (int m = MUTATION_CYCLES; m > mutations; m--)
+                    {
+                        artworks[i].GetGenotype().Mutate();
+                    }
+                }
+                // return art
+                else if(i == returnPortalID)
+                {
+                    // do nothing - save some cpu
+                    artworks[i] = new Artwork(champion.GetGenotype().Copy());
+
+                }
+                else
+                {
+                    // all other art
+                    artworks[i] = new Artwork(champion.GetGenotype().Copy());
+                    int mutations = System.Math.Abs(championPortalID - i) + 1;
+                    for (int m = MUTATION_CYCLES; m > mutations; m--)
+                    {
+                        artworks[i].GetGenotype().Mutate();
+                    }
+                }
             }
         }
 
     }
 
-    public RoomConfiguration(RoomConfiguration parentRoom, int returnPortalID, Artwork champion) : this(parentRoom, returnPortalID, champion, parentRoom.GetArtworks().Length) { }
+    public RoomConfiguration(RoomConfiguration parentRoom, int returnPortalID, int championPortalID, Artwork champion) : this(parentRoom, returnPortalID, championPortalID, champion, parentRoom.GetArtworks().Length) { }
 
     public RoomConfiguration(int numArtworks)
     {

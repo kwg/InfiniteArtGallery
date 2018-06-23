@@ -16,6 +16,8 @@ public class RandomGenerator {
 
         s = Mathf.Sqrt((-2.0f * Mathf.Log(s)) / s);
 
-        return v1 * s;
+
+        float result = v1 * s;
+        return result ;
     }
 }

@@ -118,9 +118,7 @@ public class Room : MonoBehaviour {
         {
             if (portals[i].GetPortalID() == portals[portalID].GetDestinationID())
             {
-                if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("Found portal with ID " + portals[i].GetPortalID());
                 destination = portals[i].gameObject.transform.position; // set destination to exit portal position
-
             }
         }
         // Bump player to just outside of the portal collision box based on the location of the portal relative to the center

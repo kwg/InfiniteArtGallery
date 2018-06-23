@@ -13,8 +13,9 @@ public class Room : MonoBehaviour {
     private bool debug = ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE;
 
     public GameObject portalObject;
+    public GameObject sculptureObject;
     SortedList<int, Portal> portals; // Portal index is door index
-
+    List<Sculptures> sculpturesCollection;
     int PortalCount = 0; // TODO not in use - decide what to do with it
 
     private int rewindPortalID; // Parent of this room
@@ -31,6 +32,7 @@ public class Room : MonoBehaviour {
         rewindPortalID = -1;
         portals = new SortedList<int, Portal>();
         CreatePortals();
+        CreateSculptures();
         isPopulated = true;
     }
 
@@ -67,6 +69,16 @@ public class Room : MonoBehaviour {
         {
             p.Value.PaintDoor(images[p.Key]);
         }
+    }
+
+    //just one sculpture for now
+    private void CreateSculptures()
+    {
+        GameObject sculpture = Instantiate(sculptureObject) as GameObject;
+        sculpture.AddComponent<Sculptures>();
+
+        //p.transform.position = vecs[img.Key];
+        //p.transform.Rotate(new Vector3(0, (-90 * img.Key), 0)); // HACK Hardcoded - fix once rooms can change the number of portals
     }
 
     private void CreatePortals()

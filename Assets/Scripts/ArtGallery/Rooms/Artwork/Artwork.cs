@@ -22,18 +22,18 @@ public class Artwork
     /// </summary>
     public Artwork() : this(new TWEANNGenotype(4, 3, 0)) { }
 
+
     /// <summary>
     /// Create a new artwork in a room with a given genotype
     /// </summary>
     /// <param name="geno">Genotype for this artwrok to use</param>
     public Artwork(TWEANNGenotype geno)
     {
-        this.geno = geno; 
-        cppnProcess = new Thread ( GenerateImageFromCPPN );
-        img = new Texture2D(width, height, TextureFormat.ARGB32, false);
-        pixels = new Color[width * height];
-        processing = true;
-        cppnProcess.Start();
+
+        geno = new TWEANNGenotype(5, 3, 0); // FIXME archetype index 
+        GenerateCPPN();
+        img = new Texture2D(width, height, TextureFormat.ARGB32, true);
+        img = GenerateImageFromCPPN();
 
     }
 
@@ -90,6 +90,7 @@ public class Artwork
                 //img.SetPixel(x, y, color);
             }
         }
+
         if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("CPPN Imgage generation complete");
     }
 

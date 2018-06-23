@@ -153,7 +153,5 @@ public class Portal : MonoBehaviour {
         rend.material.EnableKeyword("_EMISSION");
         rend.material.SetColor("_EmissionColor", color);
     }
-
-
-
+    
 }

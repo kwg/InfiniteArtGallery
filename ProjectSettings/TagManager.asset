@@ -6,6 +6,8 @@ TagManager:
   tags:
   - portal
   - PrimaryRoom
+  - wall
+  - invSlot
   layers:
   - Default
   - TransparentFX

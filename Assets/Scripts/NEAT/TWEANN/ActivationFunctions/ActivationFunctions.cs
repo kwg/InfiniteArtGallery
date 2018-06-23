@@ -78,6 +78,21 @@ public class ActivationFunctions  {
         return successful;
     }
 
+    public static bool ActivateFunction(FTYPE[] fTypes)
+    {
+        bool successful = false;
+        foreach(FTYPE fType in fTypes)
+        {
+            if (inactiveFunctions.Contains(fType))
+            {
+                activeFunctions.Add(fType);
+                inactiveFunctions.Remove(fType);
+                successful = true;
+            }
+        }
+        return successful;
+    }
+
     public static bool DeactivateFunction(FTYPE fType)
     {
         bool successful = false;

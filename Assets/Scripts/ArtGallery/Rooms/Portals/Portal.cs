@@ -111,6 +111,10 @@ public class Portal : MonoBehaviour {
         return displayColor;
     }
 
+    public Texture2D GetImage()
+    {
+        return displayImg;
+    }
 
     /* Private methods */
     /// <summary>

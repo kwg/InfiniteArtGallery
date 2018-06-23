@@ -9,7 +9,7 @@ public class MainMenu : MonoBehaviour {
 
     public void PlayTWEANNTest()
     {
-        SceneManager.LoadScene("TWEANNTests");
+        SceneManager.LoadScene("CPPNImageTest");
     }
 
     public void PlayEvolutionTest()

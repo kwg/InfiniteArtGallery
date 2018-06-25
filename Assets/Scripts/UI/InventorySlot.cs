@@ -5,13 +5,16 @@ using UnityEngine.UI;
 
 public class InventorySlot : MonoBehaviour {
 
+    public GameObject slotBorder;
     public GameObject thumbnailSlot;
-    private Image thumbnail;
-    private Sprite defaultThumbnail;
+
+    public Sprite defaultThumbnail;
+    public Sprite borderSelected;
+    public Sprite borderDeselected;
 
     public void ChangeBorder(Sprite sprite)
     {
-        gameObject.GetComponent<Image>().sprite = sprite;
+        slotBorder.GetComponent<Image>().sprite = sprite;
     }
 
     public void ChangeThumbnail(Sprite sprite)

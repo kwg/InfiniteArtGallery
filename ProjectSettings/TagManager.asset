@@ -8,6 +8,15 @@ TagManager:
   - PrimaryRoom
   - wall
   - invSlot
+  - inv0
+  - inv1
+  - inv3
+  - inv4
+  - inv5
+  - inv6
+  - inv7
+  - inv8
+  - inv2
   layers:
   - Default
   - TransparentFX

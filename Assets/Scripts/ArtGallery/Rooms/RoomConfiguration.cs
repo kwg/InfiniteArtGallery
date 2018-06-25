@@ -27,23 +27,21 @@ public class RoomConfiguration {
                 if(i == championPortalID)
                 {
                     //do little
+                    Debug.Log("Doing a single mutation for champion " + i);
                     artworks[i] = new Artwork(champion.GetGenotype().Copy());
-                    int mutations = 1;
-                    for (int m = MUTATION_CYCLES; m > mutations; m--)
-                    {
-                        artworks[i].GetGenotype().Mutate();
-                    }
+                    artworks[i].GetGenotype().Mutate();
                 }
                 // return art
                 else if(i == returnPortalID)
                 {
                     // do nothing - save some cpu
+                    Debug.Log("Doing geno copy only for " + i);
                     artworks[i] = new Artwork(champion.GetGenotype().Copy());
-
                 }
                 else
                 {
                     // all other art
+                    Debug.Log("Doing a multiple mutations for other artwork located at " + i);
                     artworks[i] = new Artwork(champion.GetGenotype().Copy());
                     int mutations = System.Math.Abs(championPortalID - i) + 1;
                     for (int m = MUTATION_CYCLES; m > mutations; m--)
@@ -53,7 +51,6 @@ public class RoomConfiguration {
                 }
             }
         }
-
     }
 
     public RoomConfiguration(RoomConfiguration parentRoom, int returnPortalID, int championPortalID, Artwork champion) : this(parentRoom, returnPortalID, championPortalID, champion, parentRoom.GetArtworks().Length) { }
@@ -67,6 +64,7 @@ public class RoomConfiguration {
         {
             artworks[i] = new Artwork();
         }
+        Debug.Log("Lobby created with " + artworks.Length + " artworks.");
     }
 
     public void AddRoom(int artworkID, RoomConfiguration newRoom)

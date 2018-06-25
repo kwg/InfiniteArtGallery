@@ -17,5 +17,13 @@ public class SculptureFromCPPNTest : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         sculptureProp.transform.Rotate(0, ROTATION_SPEED * Time.deltaTime, 0);
+        if (!PauseMenu.isPaused && Input.GetButtonDown("Fire2"))
+        {
+            GameObject.Destroy(sculptureProp);
+            sculptureProp = Instantiate(sculpture) as GameObject;
+            sculptureProp.AddComponent<Sculptures>();
+            sculptureProp.transform.position = new Vector3(0, 1, 0);
+        }
+
     }
 }

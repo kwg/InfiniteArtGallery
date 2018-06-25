@@ -15,7 +15,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
     // FIXME This should not be declared here. This should be a parameter so that we can adjust it at run time
     private float mutationChance = 1.0f; // percent chance for a mutation to occur
 
-    public TWEANNGenotype() : this(0, 0, 0) { }
+    //public TWEANNGenotype() : this(0, 0, 0) { }
 
     public void LoadGenotype(List<NodeGene> nodes, List<LinkGene> links)
     {
@@ -434,24 +434,17 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         List<NodeGene> copyNodes = new List<NodeGene>();
         List<LinkGene> copyLinks = new List<LinkGene>();
 
-        for (int i = 0; i < nodes.Count; i++)
+        foreach(LinkGene lg in links)
         {
-
-            NodeGene ng = new NodeGene(nodes[i].nTYPE, nodes[i].fTYPE, nodes[i].GetInnovation());
-            copyNodes.Add(ng);
-            List<LinkGene> tempLinks = new List<LinkGene>();
-            foreach (LinkGene l in links)
-            {
-                LinkGene lg = new LinkGene(l.GetSourceInnovation(), l.GetTargetInnovation(), l.GetWeight(), l.GetInnovation());
-                tempLinks.Add(lg);
-            }
-            for (int j = 0; j < tempLinks.Count; j++)
-            {
-                copyLinks.Add(tempLinks[j]);
-            }
+            copyLinks.Add(new LinkGene(lg.GetSourceInnovation(), lg.GetTargetInnovation(), lg.GetWeight(), lg.GetInnovation()));
         }
 
-        TWEANNGenotype copy = new TWEANNGenotype(copyNodes, copyLinks);
+        foreach(NodeGene ng in nodes)
+        {
+            copyNodes.Add(new NodeGene(ng.nTYPE, ng.fTYPE, ng.GetInnovation()));
+        }
+
+       TWEANNGenotype copy = new TWEANNGenotype(copyNodes, copyLinks);
         return copy;
     }
     

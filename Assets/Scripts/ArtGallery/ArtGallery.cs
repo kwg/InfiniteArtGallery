@@ -88,11 +88,13 @@ public class ArtGallery : MonoBehaviour {
     public void ChangeRoom(int portalID, int destinationID)
     {
         // is the desitnation a new room or a return?
-        if (room.GetRoomByPortalID(portalID) == null) room.AddRoom(portalID, new RoomConfiguration(room, destinationID, portalID, new Artwork(room.GetArtworks()[portalID].GetGenotype().Copy())));
+        if (room.GetRoomByPortalID(portalID) == null)
+        {
+            room.AddRoom(portalID, new RoomConfiguration(room, destinationID, portalID, room.GetArtworks()[portalID]));
+        }
         room = room.GetRoomByPortalID(portalID);
 
-
-        gameRoom.InitializeRoom(room.GetParentID(), GetImagesFromArtworks(room.GetArtworks()));
+        gameRoom.ConfigureRoom(room.GetParentID(), GetImagesFromArtworks(room.GetArtworks()));
         gameRoom.RedrawRoom();
 
         gameRoom.ClearReturnPortalDecorations();
@@ -108,15 +110,17 @@ public class ArtGallery : MonoBehaviour {
     // Update is called once per frame
     void Update ()
     {
-        //Artwork[] art = room.GetArtworks(); // FIXME This is not a very functional way of dealing with the threads. Just remove threads?
-        //for (int a = 0; a < art.Length; a++)
-        //{
+        Artwork[] art = room.GetArtworks(); // FIXME This is not a very functional way of dealing with the threads. Just remove threads?
+        for (int a = 0; a < art.Length; a++)
+        {
 
-        //    if (art[a].HasFinishedProcessing())
-        //    {
-        //        art[a].ApplyImageProcess();
-        //    }
-        //}
+            if (art[a].HasFinishedProcessing())
+            {
+                art[a].ApplyImageProcess();
+
+
+            }
+        }
     }
 
     private Texture2D[] GetImagesFromArtworks(Artwork[] artworks)

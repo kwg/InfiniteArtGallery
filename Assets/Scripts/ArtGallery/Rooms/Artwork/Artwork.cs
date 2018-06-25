@@ -10,7 +10,7 @@ public class Artwork
     TWEANN cppn;
     Texture2D img;
     Color[] pixels;
-    //Thread cppnProcess;
+    Thread cppnProcess;
     bool processing;
 
     //TODO width, height - These are static for testing but we may want to make them change
@@ -29,12 +29,17 @@ public class Artwork
     public Artwork(TWEANNGenotype geno)
     {
         this.geno = geno; 
-       // cppnProcess = new Thread ( GenerateImageFromCPPN );
+        cppnProcess = new Thread ( GenerateImageFromCPPN );
         img = new Texture2D(width, height, TextureFormat.ARGB32, false);
         pixels = new Color[width * height];
-        //processing = true;
-        GenerateImageFromCPPN();
-       // cppnProcess.Start();
+        processing = true;
+        //GenerateImageFromCPPN();
+        cppnProcess.Start();
+    }
+
+    public bool HasFinishedProcessing()
+    {
+        return processing && !cppnProcess.IsAlive;
     }
 
     public void ApplyImageProcess()
@@ -42,14 +47,7 @@ public class Artwork
         img.SetPixels(pixels);
         img.Apply();
         processing = false;
-    }
-
-    public void ProcessAndApplyCPPN()
-    {
-
-        img.SetPixels(pixels);
-        img.Apply();
-        processing = false;
+        Debug.Log("Apllied new image from process");
     }
 
     public void GenerateImageFromCPPN()
@@ -74,8 +72,8 @@ public class Artwork
             }
         }
 
-        img.SetPixels(pixels);
-        img.Apply();
+        //img.SetPixels(pixels);
+        //img.Apply();
 
         if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("CPPN Imgage generation complete");
     }

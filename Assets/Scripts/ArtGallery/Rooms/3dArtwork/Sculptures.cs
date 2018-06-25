@@ -57,4 +57,9 @@ public class Sculptures : MonoBehaviour {
         return voxelCoordinates;
     }
 
+    public void Mutate()
+    {
+        geno.Mutate();
+    }
+
 }

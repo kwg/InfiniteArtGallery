@@ -56,15 +56,9 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
 
     }
 
-    public TWEANNGenotype(int numInputs, int numOutputs, int archetypeIndex): 
-        this(new TWEANN (numInputs, numOutputs, false, FTYPE.ID, archetypeIndex))
-    {
-    }
+    public TWEANNGenotype(int numInputs, int numOutputs, int archetypeIndex) : this(new TWEANN (numInputs, numOutputs, false, FTYPE.ID, archetypeIndex)) { }
 
-    public TWEANNGenotype(int numInputs, int numOutputs, bool featureSelective, FTYPE fType, int archetypeIndex) :
-    this(new TWEANN(numInputs, numOutputs, featureSelective, fType, archetypeIndex))
-    {
-    }
+    public TWEANNGenotype(int numInputs, int numOutputs, bool featureSelective, FTYPE fType, int archetypeIndex) : this(new TWEANN(numInputs, numOutputs, featureSelective, fType, archetypeIndex)) { }
 
     public TWEANNGenotype(TWEANN tweann)
     {
@@ -91,6 +85,8 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
                 links.Add(tempLinks[j]);
             }
         }
+
+        Debug.Log("TWEANNGenotype created with " + links.Count + " links and " + nodes.Count + " nodes");
         
     }
 
@@ -173,7 +169,6 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
     }
     
     // Mutate
-    // TODO - mutate()
 
     public void Mutate()
     {
@@ -207,8 +202,6 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         }
 
     }
-
-
 
     public void LinkMutation()
     {
@@ -265,7 +258,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
 
     public void PerturbLinks(float cutoffValue)
     {
-        if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("Perturbing links: cutoffValue: " + cutoffValue);
+        if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("Perturbing " + links.Count + " links: cutoffValue: " + cutoffValue);
         float delta;
         foreach(LinkGene lg in links)
         {

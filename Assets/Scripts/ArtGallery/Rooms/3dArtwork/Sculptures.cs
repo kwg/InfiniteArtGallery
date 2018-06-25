@@ -28,23 +28,24 @@ public class Sculptures : MonoBehaviour {
         }
     }
 
-    public List<Vector3> createSculpture (Vector3 lenghtOfDimensions, float voxelSize)
+    public List<Vector3> createSculpture (Vector3 lengthOfDimensions, float voxelSize)
     {
         float halfVoxelSize = voxelSize / 2;
         cppn = new TWEANN(geno);
         List<Vector3> voxelCoordinates = new List<Vector3>();
-        for (int x = 0; x < lenghtOfDimensions[0]; x++)
+        for (int x = 0; x < lengthOfDimensions[0]; x++)
         {
-            for (int y = 0; y < lenghtOfDimensions[1]; y++)
+            for (int y = 0; y < lengthOfDimensions[1]; y++)
             {
-                for (int z = 0; z < lenghtOfDimensions[2]; z++)
+                for (int z = 0; z < lengthOfDimensions[2]; z++)
                 {
-                    float actualX = -(halfVoxelSize * lenghtOfDimensions[0] / 2.0f) + halfVoxelSize + x * halfVoxelSize;
-                    float actualY = -(halfVoxelSize * lenghtOfDimensions[1] / 2.0f) + halfVoxelSize + y * halfVoxelSize;
-                    float actualZ = -(halfVoxelSize * lenghtOfDimensions[2] / 2.0f) + halfVoxelSize + z * halfVoxelSize;
+                    float actualX = -(halfVoxelSize * lengthOfDimensions[0] / 2.0f) + halfVoxelSize + x * halfVoxelSize;
+                    float actualY = -(halfVoxelSize * lengthOfDimensions[1] / 2.0f) + halfVoxelSize + y * halfVoxelSize;
+                    float actualZ = -(halfVoxelSize * lengthOfDimensions[2] / 2.0f) + halfVoxelSize + z * halfVoxelSize;
                     float[] outputs = cppn.Process(new float[] { actualX, actualY, actualZ , BIAS});
                     if (outputs[3] > PRESENCE_THRESHOLD) {
                         GameObject voxelProp = Instantiate(voxel) as GameObject;
+                        voxelProp.transform.parent = this.transform;
                         Renderer rend = voxelProp.gameObject.GetComponent<Renderer>();
                         voxelProp.transform.position = new Vector3(actualX, actualY, actualZ);
                         voxelProp.transform.localScale = new Vector3(halfVoxelSize - .0001f, halfVoxelSize - .0001f, halfVoxelSize - .0001f);

@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public class HUD : MonoBehaviour {
 
     public GameObject hud;
+
     public Sprite deselectedSlotSprite;
     public Sprite selectedSlotSprite;
     int selectedSlotID;
@@ -17,21 +18,13 @@ public class HUD : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         selectedSlotID = 0;                                                                     // start the player with slot 0 selected
-        slots = new List<InventorySlot>();                                                      // list of inventory slots
-        foreach (InventorySlot slot in FindObjectsOfType<InventorySlot>())                      // Add scene UI inventory slots to slots - this may change if the game modifies the number of slots
-        {
-            if(slot.tag == "invSlot")
-            {
-                slots.Add(slot);
-            }
-        }
-        slots.Reverse();
-        UpdateSelectedInventorySlot();
+        slots = new List<InventorySlot>();
     }
 
-    public int NumberOfSlots()
+    public void AddSlots(List<InventorySlot> slots)
     {
-        return slots.Count;
+        this.slots = slots;
+        UpdateSelectedInventorySlot();
     }
 
     public void SelectSlot(int slot)

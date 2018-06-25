@@ -12,10 +12,12 @@ public class ImageFromCPPNTest : MonoBehaviour
     TWEANNGenotype cppnTest;
     TWEANN cppn;
     float[] inputs, outputs;//float x, y, distFromCenter, bias;
+
     int width, height;
     Texture2D img;
     Renderer renderer;
     //int newNodeID = 1000;
+
     bool running = true;
 
     void Start()
@@ -101,18 +103,7 @@ public class ImageFromCPPNTest : MonoBehaviour
         {
             node.fTYPE = ActivationFunctions.RandomFTYPE();
         }
-        //for (int i = 0; i < 5; i++)
-        //{
-        //    long newNodeInnovation = EvolutionaryHistory.NextInnovationID();
-        //    long toLinkInnovation = EvolutionaryHistory.NextInnovationID();
-        //    long fromLinkInnovation = EvolutionaryHistory.NextInnovationID();
-
-        //    cppnTest.SpliceNode(ActivationFunctions.RandomFTYPE(), EvolutionaryHistory.NextInnovationID(), cppnTest.GetNodes()[RandomInput()].GetInnovation(),
-        //        cppnTest.GetNodes()[RandomOut()].GetInnovation(), Random.value * Random.Range(-1, 1), Random.value * Random.Range(-1, 1), toLinkInnovation, fromLinkInnovation);
-        //}
-
         cppn = new TWEANN(cppnTest);
-
     }
 
     float GetDistFromCenter(float x, float y)

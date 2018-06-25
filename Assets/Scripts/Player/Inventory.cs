@@ -52,6 +52,10 @@ public class Inventory : MonoBehaviour {
             items[ActiveSlot] = item;
             hud.UpdateInventoryThumbnail(ActiveSlot, item.Image);
         }
+        else // Overwrite inventory slot
+        {
+            throw new Exception("Inventory overwriting is not implemented");
+        }
     }
 
     public void ChangeActiveSlot(int newSlot)

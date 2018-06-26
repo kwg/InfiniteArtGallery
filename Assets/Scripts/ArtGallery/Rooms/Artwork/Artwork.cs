@@ -1,63 +1,58 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
-public class Artwork {
-
-    int doorID;
+public class Artwork
+{ 
 
     TWEANNGenotype geno;
     TWEANN cppn;
     Texture2D img;
-    int width = 128;
-    int height = 128;
+    Color[] pixels;
+    Thread cppnProcess;
+    bool processing;
+
+    //TODO width, height - These are static for testing but we may want to make them change
+    int width = 256;
+    int height = 256;
 
     /// <summary>
-    /// Create a new door in a room with a new CPPN. 
+    /// Create a new artwork in a room with a new genotype. 
     /// </summary>
-    /// <param name="pc">Reference to the portal controller that can spawn and decorate portals in the scene</param>
-    public Artwork() 
-    {
-        geno = new TWEANNGenotype(4, 3, 0); // FIXME archetype index 
-        GenerateCPPN();
-        img = new Texture2D(width, height, TextureFormat.ARGB32, true);
-        img = GenerateImageFromCPPN();
+    public Artwork() : this(new TWEANNGenotype(4, 3, 0)) { }
 
-    }
-
+    /// <summary>
+    /// Create a new artwork in a room with a given genotype
+    /// </summary>
+    /// <param name="geno">Genotype for this artwrok to use</param>
     public Artwork(TWEANNGenotype geno)
     {
         this.geno = geno; 
-        img = new Texture2D(width, height, TextureFormat.ARGB32, true);
-        img = GenerateImageFromCPPN();
-
+        cppnProcess = new Thread ( GenerateImageFromCPPN );
+        img = new Texture2D(width, height, TextureFormat.ARGB32, false);
+        pixels = new Color[width * height];
+        processing = true;
+        //GenerateImageFromCPPN();
+        cppnProcess.Start();
     }
 
-    private void GenerateCPPN()
+    public bool HasFinishedProcessing()
     {
-
-        //geno = new TWEANNGenotype(4, 3, 0);
-        foreach (NodeGene node in geno.GetNodes())
-        {
-            node.fTYPE = ActivationFunctions.RandomFTYPE();
-        }
-        //for (int i = 0; i < 5; i++)
-        //{
-        //    int newNodeInnovation = newNodeID++;
-        //    int toLinkInnovation = newNodeID++;
-        //    int fromLinkInnovation = newNodeID++;
-
-        //    geno.SpliceNode(ActivationFunctions.RandomFTYPE(), newNodeInnovation++, geno.GetNodes()[RandomInput()].GetInnovation(),
-        //        geno.GetNodes()[RandomOut()].GetInnovation(), Random.Range(-1f, 1f), Random.Range(-1f, 1f), toLinkInnovation, fromLinkInnovation);
-        //}
-
+        return processing && !cppnProcess.IsAlive;
     }
 
-    public Texture2D GenerateImageFromCPPN()
+    public void ApplyImageProcess()
+    {
+        img.SetPixels(pixels);
+        img.Apply();
+        processing = false;
+        Debug.Log("Apllied new image from process");
+    }
+
+    public void GenerateImageFromCPPN()
     {
         cppn = new TWEANN(geno);
-
-        //Texture2D img = new Texture2D(width, height);
 
         for (int y = 0; y < height; y++)
         {
@@ -65,18 +60,27 @@ public class Artwork {
             {
                 float scaledX = Scale(x, width);
                 float scaledY = Scale(y, height);
-                float[] hsv = cppn.Process(new float[] { scaledX, scaledY, GetDistFromCenter(scaledX, scaledY), 1 });
-                Color color = Color.HSVToRGB(hsv[0], hsv[1], hsv[2]);
-
-                img.SetPixel(x, y, color);
+                float distCenter = GetDistFromCenter(scaledX, scaledY);
+                float[] hsv = ProcessCPPNInput(scaledX, scaledY, GetDistFromCenter(scaledX, scaledY), 1);
+                Color colorRGB = new Color(
+                    ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[0]), 
+                    ActivationFunctions.Activation(FTYPE.HLPIECEWISE, hsv[1]), 
+                    Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[2])),
+                    1.0f);
+                Color colorHSV = Color.HSVToRGB(colorRGB.r, colorRGB.g, colorRGB.b);
+                pixels[x + y * width] = colorHSV;
             }
         }
 
-        img.Apply();
+        //img.SetPixels(pixels);
+        //img.Apply();
 
         if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("CPPN Imgage generation complete");
+    }
 
-        return img;
+    private float[] ProcessCPPNInput(float scaledX, float scaledY, float distCenter, int bias)
+    {
+        return cppn.Process(new float[] { scaledX, scaledY, distCenter, 1 });
     }
 
     float Scale(int toScale, int maxDimension)

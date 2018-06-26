@@ -111,6 +111,10 @@ public class Portal : MonoBehaviour {
         return displayColor;
     }
 
+    public Texture2D GetImage()
+    {
+        return displayImg;
+    }
 
     /* Private methods */
     /// <summary>
@@ -149,7 +153,5 @@ public class Portal : MonoBehaviour {
         rend.material.EnableKeyword("_EMISSION");
         rend.material.SetColor("_EmissionColor", color);
     }
-
-
-
+    
 }

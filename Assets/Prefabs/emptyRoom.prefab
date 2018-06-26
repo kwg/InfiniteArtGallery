@@ -37,6 +37,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4640861217436628}
+  - component: {fileID: 114363914089576972}
   m_Layer: 0
   m_Name: emptyRoom
   m_TagString: Untagged
@@ -57,7 +58,7 @@ GameObject:
   - component: {fileID: 65779383880470962}
   m_Layer: 0
   m_Name: wallLeft
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
@@ -75,7 +76,7 @@ GameObject:
   - component: {fileID: 65256742213051106}
   m_Layer: 0
   m_Name: wallRight
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
@@ -109,7 +110,7 @@ GameObject:
   - component: {fileID: 65512987814947494}
   m_Layer: 0
   m_Name: wallFront
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
@@ -208,7 +209,7 @@ GameObject:
   - component: {fileID: 65397247009048300}
   m_Layer: 0
   m_Name: wallBack
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
@@ -850,3 +851,18 @@ Light:
   m_UseColorTemperature: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!114 &114363914089576972
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1077176115033904}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5a743156b2343943acb11e92a9ca957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  portalObject: {fileID: 1837445868807650, guid: cd4ab6e4ab9eb4448ab499de15d3ed02,
+    type: 2}
+  sculptureObject: {fileID: 1087176035944574, guid: 30bf131e8e891fc4c93292a895fe19cc,
+    type: 2}

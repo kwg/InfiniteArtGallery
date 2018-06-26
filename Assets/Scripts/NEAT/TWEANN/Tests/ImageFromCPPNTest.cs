@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ImageFromCPPNTest : MonoBehaviour {
+public class ImageFromCPPNTest : MonoBehaviour
+{
 
     private static readonly int NUM_INPUTS = 4;
     private static readonly int NUM_OUTPUTS = 3;
@@ -11,13 +12,15 @@ public class ImageFromCPPNTest : MonoBehaviour {
     TWEANNGenotype cppnTest;
     TWEANN cppn;
     float[] inputs, outputs;//float x, y, distFromCenter, bias;
+
     int width, height;
     Texture2D img;
     Renderer renderer;
     //int newNodeID = 1000;
+
     bool running = true;
 
-	void Start ()
+    void Start()
     {
         width = height = 128;
         renderer = GetComponent<Renderer>();
@@ -31,9 +34,10 @@ public class ImageFromCPPNTest : MonoBehaviour {
         renderer.material.mainTexture = img;
 
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update()
+    {
         if (!PauseMenu.isPaused && Input.GetButtonDown("Fire2"))
         {
             cppnTest = new TWEANNGenotype(NUM_INPUTS, NUM_OUTPUTS, 0);
@@ -75,12 +79,10 @@ public class ImageFromCPPNTest : MonoBehaviour {
                 cppnTest.LinkMutation();
                 break;
             case 2: // perturbLink
-                int link = Random.Range(0, cppnTest.GetLinks().Count - 1);
-                float delta = RandomGenerator.NextGaussian();
-                debugMsg += "using perturbLink on link " + link + " with a delta of " + delta;
+                debugMsg += "using perturbLinks";
                 if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log(debugMsg);
 
-                cppnTest.PerturbLink(link, delta);
+                cppnTest.PerturbLinks(Random.Range(0.0f, 1.0f));
 
                 break;
             case 3: // spliceMutation
@@ -101,25 +103,14 @@ public class ImageFromCPPNTest : MonoBehaviour {
         {
             node.fTYPE = ActivationFunctions.RandomFTYPE();
         }
-        //for (int i = 0; i < 5; i++)
-        //{
-        //    long newNodeInnovation = EvolutionaryHistory.NextInnovationID();
-        //    long toLinkInnovation = EvolutionaryHistory.NextInnovationID();
-        //    long fromLinkInnovation = EvolutionaryHistory.NextInnovationID();
-
-        //    cppnTest.SpliceNode(ActivationFunctions.RandomFTYPE(), EvolutionaryHistory.NextInnovationID(), cppnTest.GetNodes()[RandomInput()].GetInnovation(),
-        //        cppnTest.GetNodes()[RandomOut()].GetInnovation(), Random.value * Random.Range(-1, 1), Random.value * Random.Range(-1, 1), toLinkInnovation, fromLinkInnovation);
-        //}
-
         cppn = new TWEANN(cppnTest);
-
     }
 
     float GetDistFromCenter(float x, float y)
     {
         float result = float.NaN;
-       
-        result = Mathf.Sqrt((x*x + y*y)) * Mathf.Sqrt(2);
+
+        result = Mathf.Sqrt((x * x + y * y)) * Mathf.Sqrt(2);
 
         return result;
     }
@@ -160,7 +151,7 @@ public class ImageFromCPPNTest : MonoBehaviour {
                 hsv[2] = Mathf.Abs(Mathf.Clamp(hsv[2], 1.0f, 1.0f));
 
                 Color color = Color.HSVToRGB(hsv[0], hsv[1], hsv[2]);
-                
+
                 img.SetPixel(x, y, color);
             }
         }

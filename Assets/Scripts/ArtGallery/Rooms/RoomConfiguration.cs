@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class RoomConfiguration {
 
+    public int ArtArchetypeIndex { get; set; }
+
     private RoomConfiguration parentRoom;
     private Artwork[] artworks; 
     private RoomConfiguration[] rooms;
@@ -54,12 +56,15 @@ public class RoomConfiguration {
 
     public RoomConfiguration(int numArtworks)
     {
+        ArtArchetypeIndex = EvolutionaryHistory.NextPopulationIndex();
+        EvolutionaryHistory.archetypes[ArtArchetypeIndex] = new TWEANNGenotype(4, 3, ArtArchetypeIndex).GetNodes();
+
         parentRoom = null;
         rooms = new RoomConfiguration[numArtworks];
         artworks = new Artwork[numArtworks];
         for (int i = 0; i < numArtworks; i++)
         {
-            artworks[i] = new Artwork();
+            artworks[i] = new Artwork(ArtArchetypeIndex);
         }
     }
 

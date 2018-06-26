@@ -22,16 +22,7 @@ public class ArtGallery : MonoBehaviour {
 
     //Game state information
     int seed;
-    bool hasRecurrency;
-    bool hasAnimations;
-    bool hasSculptures;
-    bool hasRobots;
-    bool hasSounds;
-    // game stats
-    int numberOfArtworks;
-    int numberOfSculptures;
-    int numberOfRobots;
-    int numberOfSounds;
+    
     // active functions
     FTYPE[] activeFunctions;
     // collectedFunctions
@@ -56,6 +47,7 @@ public class ArtGallery : MonoBehaviour {
     {
         seed = 1234567;
         Random.InitState(seed);
+        EvolutionaryHistory.InitializeEvolutionaryHistory();
 
         // Build the game room
         GameObject roomProp = Instantiate(roomObject) as GameObject;
@@ -78,6 +70,11 @@ public class ArtGallery : MonoBehaviour {
         room = lobby;
         gameRoom.InitializeRoom(GetImagesFromArtworks(room.GetArtworks()));
 
+    }
+
+    public RoomConfiguration GetLobby()
+    {
+        return lobby;
     }
 
     public Artwork GetArtwork(int portalID)

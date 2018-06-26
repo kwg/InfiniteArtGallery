@@ -11,7 +11,7 @@ public class TWEANN : INetwork
     long ID;
     int numInputs;
     int numOutputs;
-    int archetypeIndex;
+    public int ArchetypeIndex { get; set; }
 
     List<TWEANNNode> nodes;
 
@@ -27,7 +27,7 @@ public class TWEANN : INetwork
     {
         this.numInputs = numInputs;
         this.numOutputs = numOutputs;
-        this.archetypeIndex = archetypeIndex;
+        ArchetypeIndex = archetypeIndex;
 
         nodes = new List<TWEANNNode>(numInputs + numOutputs);
 
@@ -60,7 +60,7 @@ public class TWEANN : INetwork
 
     public TWEANN(TWEANNGenotype g)
     {
-        archetypeIndex = g.GetArchetypeIndex();
+        ArchetypeIndex = g.GetArchetypeIndex();
         nodes = new List<TWEANNNode>(g.GetNodes().Count);
         int countIn = 0, countOut = 0;
         foreach(NodeGene node in g.GetNodes()) {

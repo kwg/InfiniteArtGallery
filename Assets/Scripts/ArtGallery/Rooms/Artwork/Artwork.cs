@@ -20,7 +20,7 @@ public class Artwork
     /// <summary>
     /// Create a new artwork in a room with a new genotype. 
     /// </summary>
-    public Artwork() : this(new TWEANNGenotype(4, 3, 0)) { }
+    public Artwork(int archetypeIndex) : this(new TWEANNGenotype(4, 3, archetypeIndex)) { }
 
     /// <summary>
     /// Create a new artwork in a room with a given genotype

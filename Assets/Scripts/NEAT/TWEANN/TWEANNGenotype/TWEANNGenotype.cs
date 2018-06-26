@@ -34,9 +34,9 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         archetypeIndex = 0;
     }
 
-    public TWEANNGenotype(TWEANNGenotype copy) : this(copy.nodes, copy.links) { }
+    public TWEANNGenotype(TWEANNGenotype copy) : this(copy.nodes, copy.links, copy.archetypeIndex) { }
 
-    public TWEANNGenotype(List<NodeGene> nodes, List<LinkGene> links)
+    public TWEANNGenotype(List<NodeGene> nodes, List<LinkGene> links, int archetypeIndex)
     {
         this.nodes = nodes;
         this.links = links;
@@ -52,7 +52,6 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
 
         //HACK CROSSOVER: need archetype for matching genes
 
-        archetypeIndex = 0;
 
     }
 
@@ -64,6 +63,9 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
     {
         numInputs = tweann.NumInputs();
         numOutputs = tweann.NumOutputs();
+        archetypeIndex = tweann.ArchetypeIndex;
+        ID = EvolutionaryHistory.NextGenotypeID();
+
         links = new List<LinkGene>();
         nodes = new List<NodeGene>(tweann.GetNodes().Count);
 
@@ -84,7 +86,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
             {
                 links.Add(tempLinks[j]);
             }
-        }       
+        }
     }
 
 
@@ -361,8 +363,8 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         nodes.Insert(System.Math.Min(OutputStartIndex(), System.Math.Max(numInputs, IndexOfNodeInnovation(sourceInnovation) + 1)), ng);
         //int index = EvolutionaryHistory.IndexOfArchetypeInnovation(archetypeIndex, sourceInnovation);
         //int pos = System.Math.Min(EvolutionaryHistory.FirstArchetypeOutputIndex(archetypeIndex), System.Math.Max(numInputs, index + 1));
-        //EvolutionaryHistory.AddArchetype(archetypeIndex, pos, ng.Clone(), "origin");
-        LinkGene toNew = new LinkGene(sourceInnovation, newNodeInnovation, weight1, toLinkInnovation);
+        EvolutionaryHistory.AddArchetype(archetypeIndex, nodes.IndexOf(ng), ng.Clone(), "origin");
+        LinkGene toNew = new LinkGene(sourceInnovation, newNodeInnovation, weight1, toLinkInnovation);  
         LinkGene fromNew = new LinkGene(newNodeInnovation, targetInnovation, weight2, fromLinkInnovation);
         links.Add(toNew);
         links.Add(fromNew);
@@ -441,7 +443,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
             copyNodes.Add(new NodeGene(ng.nTYPE, ng.fTYPE, ng.Innovation));
         }
 
-       TWEANNGenotype copy = new TWEANNGenotype(copyNodes, copyLinks);
+       TWEANNGenotype copy = new TWEANNGenotype(copyNodes, copyLinks, archetypeIndex);
         return copy;
     }
     

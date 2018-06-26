@@ -54,21 +54,21 @@ public class TWEANNCrossover
             }
             else
             {
-                int leftHasRightAt = containsLinkInnovationAt(left, rightInnovation);
-                int rightHasLeftAt = containsLinkInnovationAt(right, leftInnovation);
+                int? leftHasRightAt = ContainsLinkInnovationAt(left, rightInnovation);
+                int? rightHasLeftAt = ContainsLinkInnovationAt(right, leftInnovation);
 
 
                 if (leftHasRightAt == null)
                 {
                     // System.out.println("leftHasRight is null");
-                    alignedLeft.add(null);
-                    alignedRight.add(right.get(rightPos++));
+                    alignedLeft.Add(null);
+                    alignedRight.Add(right[rightPos++]);
                 }
                 else if (rightHasLeftAt == null)
                 {
                     // System.out.println("rightHasLeftAt is null");
-                    alignedLeft.add(left.get(leftPos++));
-                    alignedRight.add(null);
+                    alignedLeft.Add(left[leftPos++]);
+                    alignedRight.Add(null);
                 }
             }
             if (l == leftPos && r == rightPos)
@@ -81,11 +81,25 @@ public class TWEANNCrossover
 
                 return null;
             }
-
-
         }
 
-        return null;
+        while (leftPos < left.Count)
+        {
+            alignedLeft.Add(left[leftPos++]);
+            alignedRight.Add(null);
+        }
+
+        while (rightPos < right.Count)
+        {
+            alignedLeft.Add(null);
+            alignedRight.Add(right[rightPos++]);
+        }
+
+        List<List<LinkGene>> pair = new List<List<LinkGene>>(2);
+        pair.Add(alignedLeft);
+        pair.Add(alignedRight);
+
+        return pair;
     }
 
     public static void SortLinkGenesByInnovationNumber(List<LinkGene> linkedGene)
@@ -194,8 +208,19 @@ public class TWEANNCrossover
     }
 
 
-    private int ContainsLinkInnovationAt(List<LinkGene> left, long rightInnovation)
+    private int? ContainsLinkInnovationAt(List<LinkGene> genes, long innovation)
     {
-        throw new NotImplementedException();
+        int? result = null;
+        for (int i = 0; i < genes.Count; i++)
+        {
+            if (genes[i].Innovation == innovation)
+            {
+                result = i;
+                break;
+            }
+        }
+        return result;
     }
+
+
 }

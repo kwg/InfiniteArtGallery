@@ -5,14 +5,12 @@ using UnityEngine;
 public class SculptureFromCPPNTest : MonoBehaviour {
     public GameObject sculpture;
     private GameObject sculptureProp;
-    private Sculptures sculptureGenotype;
     private Vector3 center;
     private float ROTATION_SPEED = 40;
 
 	void Start () {
         sculptureProp = Instantiate(sculpture) as GameObject;
         sculptureProp.AddComponent<Sculptures>();
-        sculptureGenotype = sculptureProp.GetComponent<Sculptures>();
         sculptureProp.transform.position = new Vector3(0, 1, 0);
     }
 	
@@ -24,7 +22,6 @@ public class SculptureFromCPPNTest : MonoBehaviour {
             GameObject.Destroy(sculptureProp);
             sculptureProp = Instantiate(sculpture) as GameObject;
             sculptureProp.AddComponent<Sculptures>();
-            sculptureGenotype = sculptureProp.GetComponent<Sculptures>();
             sculptureProp.transform.position = new Vector3(0, 1, 0);
         }
 
@@ -34,6 +31,7 @@ public class SculptureFromCPPNTest : MonoBehaviour {
             DeleteOldVoxels();
             sculptureProp.GetComponent<Sculptures>().Invoke("Mutate", 0);
             sculptureProp.GetComponent<Sculptures>().Invoke("createSculpture", 0);
+            
         }
 
     }

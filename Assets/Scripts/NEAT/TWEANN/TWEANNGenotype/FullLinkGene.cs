@@ -24,6 +24,6 @@ public class FullLinkGene : LinkGene {
 
     public new FullLinkGene Clone()
     {
-        return new FullLinkGene(sourceInnovation, targetInnovation, weight, innovation, active, recurrent);
+        return new FullLinkGene(sourceInnovation, targetInnovation, weight, Innovation, active, recurrent);
     }
 }

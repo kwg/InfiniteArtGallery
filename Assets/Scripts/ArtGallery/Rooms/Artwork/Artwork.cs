@@ -47,7 +47,6 @@ public class Artwork
         img.SetPixels(pixels);
         img.Apply();
         processing = false;
-        Debug.Log("Apllied new image from process");
     }
 
     public void GenerateImageFromCPPN()

@@ -61,7 +61,6 @@ public class RoomConfiguration {
         {
             artworks[i] = new Artwork();
         }
-        Debug.Log("Lobby created with " + artworks.Length + " artworks.");
     }
 
     public void AddRoom(int artworkID, RoomConfiguration newRoom)

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311992, g: 0.38074034, b: 0.35872713, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1045,27 +1045,9 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 114157530462549172, guid: 5e9e851c0e142814dac026a256ba2ac0,
         type: 2}
-      propertyPath: camera
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 2000000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
-      propertyPath: orthographic
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114157530462549172, guid: 5e9e851c0e142814dac026a256ba2ac0,
-        type: 2}
-      propertyPath: inv
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 114157530462549172, guid: 5e9e851c0e142814dac026a256ba2ac0,
-        type: 2}
       propertyPath: inventory
       value: 
       objectReference: {fileID: 544029267}
-    - target: {fileID: 400002, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
   m_IsPrefabParent: 0

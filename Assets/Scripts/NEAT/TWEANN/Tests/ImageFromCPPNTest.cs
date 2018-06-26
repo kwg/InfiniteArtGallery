@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+// FIXME Now reverse this test chamber to use the Artwork class instead of hard coding in here
+/// <summary>
+/// Class that was used as the development platform for Artwork
+/// </summary>
 public class ImageFromCPPNTest : MonoBehaviour
 {
 
@@ -22,7 +27,7 @@ public class ImageFromCPPNTest : MonoBehaviour
 
     void Start()
     {
-        width = height = 128;
+        width = height = 256;
         renderer = GetComponent<Renderer>();
         img = new Texture2D(width, height, TextureFormat.ARGB32, true);
 

@@ -84,10 +84,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
             {
                 links.Add(tempLinks[j]);
             }
-        }
-
-        Debug.Log("TWEANNGenotype created with " + links.Count + " links and " + nodes.Count + " nodes");
-        
+        }       
     }
 
 
@@ -127,7 +124,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         bool found = false;
         for (int i = 0; i < genes.Count; i++)
         {
-            if (genes[i].GetInnovation() == innovation)
+            if (genes[i].Innovation == innovation)
             {
                 result = i;
                 found = true;
@@ -148,7 +145,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
     {
         string result = "";
         foreach(T gene in genes) {
-            result += "node innovation: " + gene.GetInnovation() + " ";
+            result += "node innovation: " + gene.Innovation + " ";
         }
         return result;
     }
@@ -273,7 +270,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
 
     public void PerturbLink(LinkGene lg, float delta)
     {
-        if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("Perturbing link: " + lg.innovation + " by " + delta);
+        if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("Perturbing link: " + lg.Innovation + " by " + delta);
         lg.SetWeight(lg.GetWeight() + delta); // TODO PerturbLink(LinkGene lg, float delta) - Do we want the weight to be bounded in any way?
     }
 
@@ -298,7 +295,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
 
     private long GetRandomLinkInnovation()
     {
-        return links[Random.Range(0, links.Count - 1)].GetInnovation();
+        return links[Random.Range(0, links.Count - 1)].Innovation;
     }
 
     private long GetRandomNodeInnovation(long sourceInnovation, bool includeInputs) // HACK this was made to be simple and is not fully featured
@@ -316,7 +313,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
             startingInnovation = numInputs - 1;
         }
 
-        result = nodes[Random.Range(startingInnovation, endingInnovation)].GetInnovation();
+        result = nodes[Random.Range(startingInnovation, endingInnovation)].Innovation;
 
         return result;
     }
@@ -385,7 +382,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         bool found = false;
         foreach(NodeGene ng in nodes)
         {
-            if(ng.GetInnovation() == innovation)
+            if(ng.Innovation == innovation)
             {
                 result = ng;
                 found = true;
@@ -405,7 +402,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         bool found = false;
         foreach(LinkGene lg in links)
         {
-            if(lg.GetInnovation() == innovation)
+            if(lg.Innovation == innovation)
             {
                 result = lg;
                 found = true;
@@ -436,12 +433,12 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
 
         foreach(LinkGene lg in links)
         {
-            copyLinks.Add(new LinkGene(lg.GetSourceInnovation(), lg.GetTargetInnovation(), lg.GetWeight(), lg.GetInnovation()));
+            copyLinks.Add(new LinkGene(lg.GetSourceInnovation(), lg.GetTargetInnovation(), lg.GetWeight(), lg.Innovation));
         }
 
         foreach(NodeGene ng in nodes)
         {
-            copyNodes.Add(new NodeGene(ng.nTYPE, ng.fTYPE, ng.GetInnovation()));
+            copyNodes.Add(new NodeGene(ng.nTYPE, ng.fTYPE, ng.Innovation));
         }
 
        TWEANNGenotype copy = new TWEANNGenotype(copyNodes, copyLinks);

@@ -7,12 +7,29 @@ public class Player : MonoBehaviour {
     public Inventory inventory; // reference to the game inventory
     new Camera camera;
     ArtGallery ag;
+    public GameObject FPC;
+    private bool isInverted;
     float interactionDistance = 30f; // maximum distance to check for raycast collision
 
     public void Start()
     {
         camera = FindObjectOfType<Camera>();
         ag = FindObjectOfType<ArtGallery>();
+
+        //FPC = gameObject;
+        isInverted = OptionsMenu.isInverted;
+        float yAxis = FPC.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.YSensitivity;
+        if (!isInverted && Mathf.Sign(yAxis) < 0)
+        {
+            yAxis = yAxis * -1;
+            FPC.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.YSensitivity = yAxis;
+
+        }
+        else if (isInverted && Mathf.Sign(yAxis) > 0)
+        {
+            yAxis = yAxis * -1;
+            FPC.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.YSensitivity = yAxis;
+        }
     }
     
     /// <summary>

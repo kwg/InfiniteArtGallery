@@ -53,15 +53,13 @@ public class LinkGene : Gene {
 
     public LinkGene Clone()
     {
-        return new LinkGene(sourceInnovation, targetInnovation, weight, innovation);
+        return new LinkGene(sourceInnovation, targetInnovation, weight, Innovation);
     }
-
-    // TODO ToString()
 
     public override string ToString()
     {
         string result = "(";
-        result += "inno=" + innovation;
+        result += "inno=" + Innovation;
         result += ",source=" + sourceInnovation;
         result += ",target=" + targetInnovation;
         result += ",weight=" + weight;

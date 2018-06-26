@@ -64,7 +64,7 @@ public class TWEANN : INetwork
         nodes = new List<TWEANNNode>(g.GetNodes().Count);
         int countIn = 0, countOut = 0;
         foreach(NodeGene node in g.GetNodes()) {
-            TWEANNNode tempNode = new TWEANNNode(node.fTYPE, node.nTYPE, node.GetInnovation(), false, node.GetBias());
+            TWEANNNode tempNode = new TWEANNNode(node.fTYPE, node.nTYPE, node.Innovation, false, node.GetBias());
             nodes.Add(tempNode);
             if (node.nTYPE == NTYPE.INPUT)
             {
@@ -80,15 +80,13 @@ public class TWEANN : INetwork
         numOutputs = countOut;
         foreach(LinkGene link in g.GetLinks())
         {
-            //Debug.Log("Connection for link " + link.GetInnovation() + ": With source node innovation " + link.GetSourceInnovation() + " and target node innovation " + link.GetTargetInnovation());
             TWEANNNode source = GetNodeByInnovationID(link.GetSourceInnovation());
             TWEANNNode target = GetNodeByInnovationID(link.GetTargetInnovation());
             //TODO add asserts
             if (source == null) throw new System.Exception("Source not found with innovation " + link.GetSourceInnovation() + " \n " + ToString());
             if (target == null) throw new System.Exception("Target not found with innovation " + link.GetTargetInnovation() + " \n " + ToString());
-            //if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("Connecting node " + source.GetInnovation() + " to node " + target.GetInnovation() + " with link " + link.GetInnovation());
 
-            source.Connect(target, link.GetWeight(), link.GetInnovation(), false, false);
+            source.Connect(target, link.GetWeight(), link.Innovation, false, false);
         }
     }
 

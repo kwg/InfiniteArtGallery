@@ -88,11 +88,13 @@ public class ArtGallery : MonoBehaviour {
     public void ChangeRoom(int portalID, int destinationID)
     {
         // is the desitnation a new room or a return?
-        if (room.GetRoomByPortalID(portalID) == null) room.AddRoom(portalID, new RoomConfiguration(room, destinationID, portalID, new Artwork(room.GetArtworks()[portalID].GetGenotype().Copy())));
+        if (room.GetRoomByPortalID(portalID) == null)
+        {
+            room.AddRoom(portalID, new RoomConfiguration(room, destinationID, portalID, room.GetArtworks()[portalID]));
+        }
         room = room.GetRoomByPortalID(portalID);
 
-
-        gameRoom.InitializeRoom(room.GetParentID(), GetImagesFromArtworks(room.GetArtworks()));
+        gameRoom.ConfigureRoom(room.GetParentID(), GetImagesFromArtworks(room.GetArtworks()));
         gameRoom.RedrawRoom();
 
         gameRoom.ClearReturnPortalDecorations();
@@ -115,6 +117,8 @@ public class ArtGallery : MonoBehaviour {
             if (art[a].HasFinishedProcessing())
             {
                 art[a].ApplyImageProcess();
+
+
             }
         }
     }

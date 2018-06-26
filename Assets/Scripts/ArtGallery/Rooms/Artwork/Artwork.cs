@@ -33,6 +33,7 @@ public class Artwork
         img = new Texture2D(width, height, TextureFormat.ARGB32, false);
         pixels = new Color[width * height];
         processing = true;
+        //GenerateImageFromCPPN();
         cppnProcess.Start();
     }
 
@@ -46,23 +47,6 @@ public class Artwork
         img.SetPixels(pixels);
         img.Apply();
         processing = false;
-    }
-
-    public void ProcessAndApplyCPPN()
-    {
-
-        img.SetPixels(pixels);
-        img.Apply();
-        processing = false;
-    }
-
-
-    private void GenerateCPPN()
-    {
-        foreach (NodeGene node in geno.GetNodes())
-        {
-            node.fTYPE = ActivationFunctions.RandomFTYPE();
-        }
     }
 
     public void GenerateImageFromCPPN()
@@ -84,11 +68,12 @@ public class Artwork
                     1.0f);
                 Color colorHSV = Color.HSVToRGB(colorRGB.r, colorRGB.g, colorRGB.b);
                 pixels[x + y * width] = colorHSV;
-                //pixels[x + y * width] = Color.HSVToRGB(hsv[0] % 1.0f, hsv[1] % 1.0f, hsv[2] % 1.0f);
-
-                //img.SetPixel(x, y, color);
             }
         }
+
+        //img.SetPixels(pixels);
+        //img.Apply();
+
         if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("CPPN Imgage generation complete");
     }
 

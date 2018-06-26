@@ -37,18 +37,18 @@ public class NodeGene : Gene {
     public bool IsEqualTo(System.Object o)
     {
         NodeGene other = (NodeGene) o;
-        return innovation == other.innovation;
+        return Innovation == other.Innovation;
     }
 
     public NodeGene Clone()
     {
-        return new NodeGene(nTYPE, fTYPE, innovation);
+        return new NodeGene(nTYPE, fTYPE, Innovation);
     }
 
     public override string ToString()
     {
         string result = "(";
-        result += "(inno=" + innovation;
+        result += "(inno=" + Innovation;
         result += ",ftype=" + ActivationFunctions.ActivationName(fTYPE);
         result += ",ntype=" + nTYPE;
         //result += ",frozen=" + IsFrozen();

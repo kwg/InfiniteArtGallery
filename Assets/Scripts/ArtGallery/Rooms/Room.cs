@@ -32,7 +32,7 @@ public class Room : MonoBehaviour {
         rewindPortalID = -1;
         portals = new SortedList<int, Portal>();
         CreatePortals();
-        CreateSculptures();
+        //CreateSculptures();
         isPopulated = true;
     }
 
@@ -40,11 +40,13 @@ public class Room : MonoBehaviour {
     /// Initialize a room with given artworks and parent ID (loading a room)
     /// </summary>
     /// <param name="artworks">SortedList of artwork to be hung on the walls</param>
-    public void InitializeRoom(int rewindPortalID, Texture2D[] images)
+    public void ConfigureRoom(int rewindPortalID, Texture2D[] images)
     {
         this.rewindPortalID = rewindPortalID;
         /* Create art */
         this.images = images;
+        isPopulated = true;
+
     }
 
     /* Public methods */

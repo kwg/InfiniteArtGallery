@@ -26,7 +26,7 @@ public class EvolutionaryHistory {
     public static void AddArchetype(int populationIndex, NodeGene node, string origin)
     {
         if(archetypes != null && archetypes[populationIndex] != null 
-            && IndexOfArchetypeInnovation(populationIndex, node.GetInnovation()) != -1)
+            && IndexOfArchetypeInnovation(populationIndex, node.Innovation) != -1)
         {
             archetypes[populationIndex].Add(node);
             if (node.nTYPE == NTYPE.OUTPUT)
@@ -53,20 +53,20 @@ public class EvolutionaryHistory {
         {
             for(int i = 0; i < archetypes[populationIndex].Count; i++)
             {
-                if(archetypes[populationIndex][i].GetInnovation() == sourceInnovation)
+                if(archetypes[populationIndex][i].Innovation == sourceInnovation)
                 {
                     result = i;
+                    break;
                 }
             }
         }
-
         return result;
     }
 
 
     public static int FirstArchetypeOutputIndex(int archetypeIndex)
     {
-        int result = ArchetypeSize(archetypeIndex);
+        int result = ArchetypeSize(archetypeIndex) - archetypeOut[archetypeIndex];
         // TODO sanity checks
         return result;
     }

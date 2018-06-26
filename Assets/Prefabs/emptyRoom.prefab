@@ -864,3 +864,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   portalObject: {fileID: 1837445868807650, guid: cd4ab6e4ab9eb4448ab499de15d3ed02,
     type: 2}
+  sculptureObject: {fileID: 1087176035944574, guid: 30bf131e8e891fc4c93292a895fe19cc,
+    type: 2}

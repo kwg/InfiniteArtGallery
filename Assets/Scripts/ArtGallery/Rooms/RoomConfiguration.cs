@@ -15,45 +15,39 @@ public class RoomConfiguration {
         this.parentRoom = parentRoom;
 
         rooms = new RoomConfiguration[numArtworks];
+        Debug.Log("Clearing artworks...");
         artworks = new Artwork[numArtworks];
-
+        Debug.Log("Created new artworks: " + artworks.Length);
         rooms[returnPortalID] = parentRoom;
                 
         // clone champion to each artwork and mutate
         {
             for (int i = 0; i < numArtworks; i++)
             {
+                TWEANNGenotype geno = new TWEANNGenotype(champion.GetGenotype().Copy());
                 // champion art
                 if(i == championPortalID)
                 {
                     //do little
-                    artworks[i] = new Artwork(champion.GetGenotype().Copy());
-                    int mutations = 1;
-                    for (int m = MUTATION_CYCLES; m > mutations; m--)
-                    {
-                        artworks[i].GetGenotype().Mutate();
-                    }
+                    geno.Mutate();
                 }
                 // return art
                 else if(i == returnPortalID)
                 {
                     // do nothing - save some cpu
-                    artworks[i] = new Artwork(champion.GetGenotype().Copy());
-
                 }
                 else
                 {
                     // all other art
-                    artworks[i] = new Artwork(champion.GetGenotype().Copy());
                     int mutations = System.Math.Abs(championPortalID - i) + 1;
-                    for (int m = MUTATION_CYCLES; m > mutations; m--)
+                    for(int m = 0; m < MUTATION_CYCLES - mutations; m++)
                     {
-                        artworks[i].GetGenotype().Mutate();
+                        geno.Mutate();
                     }
                 }
+                artworks[i] = new Artwork(geno);
             }
         }
-
     }
 
     public RoomConfiguration(RoomConfiguration parentRoom, int returnPortalID, int championPortalID, Artwork champion) : this(parentRoom, returnPortalID, championPortalID, champion, parentRoom.GetArtworks().Length) { }

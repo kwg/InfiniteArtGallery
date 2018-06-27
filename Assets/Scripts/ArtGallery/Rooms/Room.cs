@@ -8,7 +8,8 @@ using UnityEngine;
 /// <summary>
 /// The only room in the Art Gallery.
 /// </summary>
-public class Room : MonoBehaviour {
+public class Room : MonoBehaviour
+{
 
     private bool debug = ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE;
 
@@ -16,7 +17,13 @@ public class Room : MonoBehaviour {
     public GameObject sculptureObject;
     SortedList<int, Portal> portals; // Portal index is door index
     List<Sculptures> sculpturesCollection;
+
     int PortalCount = 0; // TODO not in use - decide what to do with it
+    int NUM_WALLS = 4;
+    int NUM_PORTALS = 4;
+    float xSpacing = 9.9f;
+    float ySpacing = 2.5f;
+    float zSpacing = 9.9f;
 
     private int rewindPortalID; // Parent of this room
     private bool isPopulated = false;  // is this room initialized?
@@ -67,7 +74,7 @@ public class Room : MonoBehaviour {
 
     public void RedrawRoom()
     {
-        foreach(KeyValuePair<int, Portal> p in portals)
+        foreach (KeyValuePair<int, Portal> p in portals)
         {
             p.Value.PaintDoor(images[p.Key]);
         }
@@ -85,28 +92,53 @@ public class Room : MonoBehaviour {
 
     private void CreatePortals()
     {
-        for(int i = 0; i < images.Length; i++)
+        ArrayList walls = getWallObjects();
+        int numImagesPerWall = images.Length / NUM_WALLS;
+        int idSet = 0;
+        for(int i = 0; i < NUM_WALLS; i++)
         {
-            Portal p = SpawnPortal(i);
-            if (debug) Debug.Log("received portal with ID " + p.GetPortalID());
+            for (int j = 1; j <= numImagesPerWall; j++)
+            {
+                Portal p = SpawnPortal(idSet);
+                idSet++;
+                if (true)//debug)
+                {
+                    Debug.Log("received portal with ID " + p.GetPortalID());
+                    Debug.Log("Wall " + walls[i]);
+                }
+                float tempZ = ((GameObject)walls[i]).transform.position.z / j;//forward.magnitude;// + (zSpacing / j);
+                float tempY = ((GameObject)walls[i]).transform.position.y;// + ySpacing;
+                float tempX = ((GameObject)walls[i]).transform.position.x / j;// + (xSpacing / j);
+                Quaternion tempRot = ((GameObject)walls[i]).transform.rotation;
 
-            // TODO make a method to do this correctly
-            float x_spacing = 9.9f;
-            float z_spacing = 9.9f;
-            float y_spacing = 2.5f;
+                Debug.Log("Portal " + idSet + ":  X=" + tempX + "  Y=" + tempY +" Z=" + tempZ);
 
-            Vector3[] vecs = {
-                new Vector3((0 + x_spacing), (0 + y_spacing), 0),
-                new Vector3(0, (0 + y_spacing), (0 + z_spacing)),
-                new Vector3((0 - x_spacing), (0 + y_spacing), 0),
-                new Vector3(0, (0 + y_spacing), (0 - z_spacing)),
-            };
+                Vector3 wallCenter = new Vector3(tempX, tempY, tempZ);
+                Vector3 origin = new Vector3(0, 0, 0);
+                Vector3 fromWallTowardCenter = origin - wallCenter;
+                Vector3 slightlyAwayFromWall = wallCenter + 0.005f * fromWallTowardCenter;
 
-            // put each portal on a wall
-            p.transform.position = vecs[i];
-            p.transform.Rotate(new Vector3(0, (-90 * i), 0)); // HACK Hardcoded - fix once rooms can change the number of portals
-            p.PaintDoor(images[i]);
+                //vecs[i];
+                //p.transform.position = vecs[i];
+                p.transform.position = slightlyAwayFromWall;
+                //p.transform.Rotate(new Vector3(0, (-90 * i), 0)); // HACK Hardcoded - fix once rooms can change the number of portals
+                p.transform.Rotate(tempRot.eulerAngles);
+                p.PaintDoor(images[i]);
+            }
         }
+    }
+
+    private ArrayList getWallObjects()
+    {
+        ArrayList walls = new ArrayList();
+        foreach (GameObject gameObj in FindObjectsOfType<GameObject>())
+        {
+            if (gameObj.tag == "wall")
+            {
+                walls.Add(gameObj);
+            }
+        }
+        return walls;
     }
 
     private Portal SpawnPortal(int portalID)
@@ -118,8 +150,8 @@ public class Room : MonoBehaviour {
         p.SetPortalID(portalID);
 
         // give each portal a destination ID
-        p.SetDestinationID((2 + p.GetPortalID()) % 4);
-        if(debug) Debug.Log("Portal created with ID " + p.GetPortalID() + " and DestinationId " + p.GetDestinationID());
+        p.SetDestinationID((2 + p.GetPortalID()) % NUM_PORTALS);
+        if (debug) Debug.Log("Portal created with ID " + p.GetPortalID() + " and DestinationId " + p.GetDestinationID());
         portals.Add(portalID, p);
         return p;
     }
@@ -168,12 +200,12 @@ public class Room : MonoBehaviour {
 
     public void SetReturnPortalDecoration(int portalID)
     {
-        if(portalID > -1) portals[portalID].SetEmmisive(Color.white);
+        if (portalID > -1) portals[portalID].SetEmmisive(Color.white);
     }
 
     public void ClearReturnPortalDecorations()
     {
-        foreach(KeyValuePair<int, Portal> p in portals)
+        foreach (KeyValuePair<int, Portal> p in portals)
         {
             p.Value.SetEmmisive(new Color(0f, 0f, 0f, 0f));
 

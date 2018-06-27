@@ -14,8 +14,8 @@ public class Artwork
     bool processing;
 
     //TODO width, height - These are static for testing but we may want to make them change
-    int width = 256;
-    int height = 256;
+    int width = 64;
+    int height = 64;
 
     /// <summary>
     /// Default empty constructor
@@ -71,12 +71,16 @@ public class Artwork
                 float scaledY = Scale(y, height);
                 float distCenter = GetDistFromCenter(scaledX, scaledY);
                 float[] hsv = ProcessCPPNInput(scaledX, scaledY, GetDistFromCenter(scaledX, scaledY), 1);
-                Color colorRGB = new Color(
-                    ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[0]), 
-                    ActivationFunctions.Activation(FTYPE.HLPIECEWISE, hsv[1]), 
+                // This initial hue is in the range [-1,1] as in the MM-NEAT code
+                float initialHue = ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[0]);
+                // However, C Sharp's Colors do not automatically map negative numbers to the proper hue range as in Java, so an additional step is needed
+                float finalHue = initialHue < 0 ? initialHue + 1 : initialHue;
+                Color colorHSV = Color.HSVToRGB(
+                    finalHue,
+                    ActivationFunctions.Activation(FTYPE.HLPIECEWISE, hsv[1]),
                     Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[2])),
-                    1.0f);
-                Color colorHSV = Color.HSVToRGB(colorRGB.r, colorRGB.g, colorRGB.b);
+                    true
+                    );
                 pixels[x + y * width] = colorHSV;
             }
         }

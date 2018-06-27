@@ -107,15 +107,12 @@ public class ArtGallery : MonoBehaviour {
     // Update is called once per frame
     void Update ()
     {
-        Artwork[] art = room.GetArtworks(); // FIXME This is not a very functional way of dealing with the threads. Just remove threads?
+        Artwork[] art = room.GetArtworks(); // FIXME This is not a very functional way of dealing with the threads. However removing threads is not an option.
         for (int a = 0; a < art.Length; a++)
         {
-
             if (art[a].HasFinishedProcessing())
             {
                 art[a].ApplyImageProcess();
-
-
             }
         }
     }

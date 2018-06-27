@@ -18,6 +18,11 @@ public class Artwork
     int height = 256;
 
     /// <summary>
+    /// Default empty constructor
+    /// </summary>
+    public Artwork() : this(new TWEANNGenotype(4, 3, 0)) { }
+
+    /// <summary>
     /// Create a new artwork in a room with a new genotype. 
     /// </summary>
     public Artwork(int archetypeIndex) : this(new TWEANNGenotype(4, 3, archetypeIndex)) { }
@@ -33,7 +38,7 @@ public class Artwork
         img = new Texture2D(width, height, TextureFormat.ARGB32, false);
         pixels = new Color[width * height];
         processing = true;
-        //GenerateImageFromCPPN();
+        //GenerateImageFromCPPN();  // non threaded version of generation
         cppnProcess.Start();
     }
 
@@ -47,6 +52,11 @@ public class Artwork
         img.SetPixels(pixels);
         img.Apply();
         processing = false;
+    }
+
+    public void Refresh()
+    {
+        cppnProcess.Start();
     }
 
     public void GenerateImageFromCPPN()

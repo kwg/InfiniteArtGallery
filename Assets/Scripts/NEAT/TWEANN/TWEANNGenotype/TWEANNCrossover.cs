@@ -29,8 +29,10 @@ public class TWEANNCrossover
 
         toModify.Nodes = crossedNodes[0];
         toModify.Links = crossedLinks[0];
+        toReturn.Nodes = crossedNodes[1];
+        toReturn.Links = crossedLinks[1];
 
-        return null;
+        return toReturn;
     }
 
     private List<List<LinkGene>> CrossLinks(List<LinkGene> left, List<LinkGene> right)
@@ -80,9 +82,27 @@ public class TWEANNCrossover
         return pair;
     }
 
-    private void CrossIndexLinks(LinkGene linkGene1, LinkGene linkGene2, List<LinkGene> crossedLeft, List<LinkGene> crossedRight)
+    private void CrossIndexLinks(LinkGene leftGene, LinkGene rightGene, List<LinkGene> crossedLeft, List<LinkGene> crossedRight)
     {
-        throw new NotImplementedException();
+        bool swap = RandomGenerator.NextBool(); ;
+        if (swap)
+        {
+            Pair<LinkGene, LinkGene> p = SwapLinks(leftGene, rightGene);
+            leftGene = p.t1;
+            rightGene = p.t2;
+        }
+        crossedLeft.Add(leftGene);
+        crossedRight.Add(rightGene);
+    }
+
+    private Pair<LinkGene, LinkGene> SwapLinks(LinkGene left, LinkGene right)
+    {
+        return new Pair<LinkGene, LinkGene>(right, left);
+    }
+
+    private Pair<NodeGene, NodeGene> SwapNodes(NodeGene left, NodeGene right)
+    {
+        return new Pair<NodeGene, NodeGene>(right, left);
     }
 
     private List<List<LinkGene>> AlignLinkGenes(List<LinkGene> left, List<LinkGene> right)
@@ -225,9 +245,18 @@ public class TWEANNCrossover
         return pair;
     }
 
-    private void CrossIndexNodes(NodeGene nodeGene1, NodeGene nodeGene2, List<NodeGene> crossedLeft, List<NodeGene> crossedRight)
+    private void CrossIndexNodes(NodeGene leftGene, NodeGene rightGene, List<NodeGene> crossedLeft, List<NodeGene> crossedRight)
     {
-        throw new NotImplementedException();
+        bool swap = RandomGenerator.NextBool(); ;
+        if (swap)
+        {
+            Pair<NodeGene, NodeGene> p = SwapNodes(leftGene, rightGene);
+            leftGene = p.t1;
+            rightGene = p.t2;
+        }
+        crossedLeft.Add(leftGene);
+        crossedRight.Add(rightGene);
+
     }
 
     private List<NodeGene> AlignNodesToArchetype(List<NodeGene> nodes, int archetypeIndex)

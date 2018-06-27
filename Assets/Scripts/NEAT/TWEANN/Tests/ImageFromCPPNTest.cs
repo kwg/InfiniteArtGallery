@@ -104,7 +104,7 @@ public class ImageFromCPPNTest : MonoBehaviour
 
     void GenerateCPPN()
     {
-        foreach (NodeGene node in cppnTest.GetNodes())
+        foreach (NodeGene node in cppnTest.Nodes)
         {
             node.fTYPE = ActivationFunctions.RandomFTYPE();
         }

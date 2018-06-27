@@ -18,16 +18,71 @@ public class TWEANNCrossover
 
         List<List<NodeGene>> alignedNodes = new List<List<NodeGene>>(2)
         {
-            AlignNodesToArchetype(toModify.GetNodes(), toModify.GetArchetypeIndex()),
-            AlignNodesToArchetype(toReturn.GetNodes(), toReturn.GetArchetypeIndex())
+            AlignNodesToArchetype(toModify.Nodes, toModify.GetArchetypeIndex()),
+            AlignNodesToArchetype(toReturn.Nodes, toReturn.GetArchetypeIndex())
         };
 
         List<List<NodeGene>> crossedNodes = CrossNodes(alignedNodes[0], alignedNodes[1]);
 
-        List<List<LinkGene>> alignedLinks = AlignLinkGenes(toModify.GetLinks(), toReturn.GetLinks());
+        List<List<LinkGene>> alignedLinks = AlignLinkGenes(toModify.Links, toReturn.Links);
+        List<List<LinkGene>> crossedLinks = CrossLinks(alignedLinks[0], alignedLinks[1]);
 
+        toModify.Nodes = crossedNodes[0];
+        toModify.Links = crossedLinks[0];
 
         return null;
+    }
+
+    private List<List<LinkGene>> CrossLinks(List<LinkGene> left, List<LinkGene> right)
+    {
+        if (left.Count != right.Count) throw new Exception("Cannot cross lists of different sizes!");
+
+        List<LinkGene> crossedLeft = new List<LinkGene>(left.Count);
+        List<LinkGene> crossedRight = new List<LinkGene>(right.Count);
+
+        for (int i = 0; i < left.Count; i++)
+        {
+            LinkGene leftGene = left[i];
+            LinkGene rightGene = right[i];
+
+            if (leftGene != null && rightGene != null)
+            {
+                CrossIndexLinks((LinkGene)leftGene.CopyGene(), (LinkGene)rightGene.CopyGene(), crossedLeft, crossedRight);
+            }
+            else
+            {
+                if (leftGene != null)
+                {
+                    crossedLeft.Add((LinkGene)leftGene.CopyGene());
+                    if (includeExcess)
+                    {
+                        crossedRight.Add((LinkGene)leftGene.CopyGene());
+                    }
+                }
+
+                if (rightGene != null)
+                {
+                    crossedRight.Add((LinkGene)rightGene.CopyGene());
+                    if (includeExcess)
+                    {
+                        crossedLeft.Add((LinkGene)rightGene.CopyGene());
+                    }
+                }
+            }
+        }
+
+        List<List<LinkGene>> pair = new List<List<LinkGene>>(2)
+        {
+            crossedLeft,
+            crossedRight
+        };
+
+        return pair;
+    }
+
+    private void CrossIndexLinks(LinkGene linkGene1, LinkGene linkGene2, List<LinkGene> crossedLeft, List<LinkGene> crossedRight)
+    {
+        throw new NotImplementedException();
     }
 
     private List<List<LinkGene>> AlignLinkGenes(List<LinkGene> left, List<LinkGene> right)

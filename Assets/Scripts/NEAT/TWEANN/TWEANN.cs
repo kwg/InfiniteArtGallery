@@ -11,7 +11,7 @@ public class TWEANN : INetwork
     long ID;
     int numInputs;
     int numOutputs;
-    int archetypeIndex;
+    public int ArchetypeIndex { get; set; }
 
     List<TWEANNNode> nodes;
 
@@ -27,7 +27,7 @@ public class TWEANN : INetwork
     {
         this.numInputs = numInputs;
         this.numOutputs = numOutputs;
-        this.archetypeIndex = archetypeIndex;
+        ArchetypeIndex = archetypeIndex;
 
         nodes = new List<TWEANNNode>(numInputs + numOutputs);
 
@@ -60,10 +60,10 @@ public class TWEANN : INetwork
 
     public TWEANN(TWEANNGenotype g)
     {
-        archetypeIndex = g.GetArchetypeIndex();
-        nodes = new List<TWEANNNode>(g.GetNodes().Count);
+        ArchetypeIndex = g.GetArchetypeIndex();
+        nodes = new List<TWEANNNode>(g.Nodes.Count);
         int countIn = 0, countOut = 0;
-        foreach(NodeGene node in g.GetNodes()) {
+        foreach(NodeGene node in g.Nodes) {
             TWEANNNode tempNode = new TWEANNNode(node.fTYPE, node.nTYPE, node.Innovation, false, node.GetBias());
             nodes.Add(tempNode);
             if (node.nTYPE == NTYPE.INPUT)
@@ -78,7 +78,7 @@ public class TWEANN : INetwork
         }
         numInputs = countIn;
         numOutputs = countOut;
-        foreach(LinkGene link in g.GetLinks())
+        foreach(LinkGene link in g.Links)
         {
             TWEANNNode source = GetNodeByInnovationID(link.GetSourceInnovation());
             TWEANNNode target = GetNodeByInnovationID(link.GetTargetInnovation());

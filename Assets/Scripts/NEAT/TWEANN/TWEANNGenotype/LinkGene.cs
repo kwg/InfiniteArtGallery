@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LinkGene : Gene {
+public class LinkGene : Gene, IComparer<LinkGene> {
 
     protected long sourceInnovation, targetInnovation;
     protected float weight;
@@ -67,6 +67,25 @@ public class LinkGene : Gene {
         //result += ",recurrent=" + IsRecurrent();
         //result += ",frozen=" + IsFrozen();
         result +=  ")";
+        return result;
+    }
+
+    public int Compare(LinkGene x, LinkGene y)
+    {
+        int result = 0;
+        if (x.Innovation >= y.Innovation) result = 1;
+        else result = -1;
+        return result;
+    }
+
+    public int CompareTo(LinkGene comp)
+    {
+        int result = 0;
+        if (comp == null) result = 1;
+        else
+        {
+            result = Innovation.CompareTo(comp.Innovation);
+        }
         return result;
     }
 }

@@ -11,7 +11,7 @@ public class TestXOR : MonoBehaviour{
     public void Start()
     {
         xorTest = new TWEANNGenotype(2, 1, 0);
-        List<NodeGene> nodes = xorTest.GetNodes();
+        List<NodeGene> nodes = xorTest.Nodes;
 
         /* Quick test for dotProduct */
         float[] dotProdTestInputs = new float[] { 3, 5 };
@@ -39,10 +39,10 @@ public class TestXOR : MonoBehaviour{
 
 
         /* List all nodes to output to verify network */
-        foreach (NodeGene ng in xorTest.GetNodes()) {
+        foreach (NodeGene ng in xorTest.Nodes) {
             Debug.Log(ng.ToString());
         }
-        foreach (LinkGene lg in xorTest.GetLinks())
+        foreach (LinkGene lg in xorTest.Links)
         {
             Debug.Log(lg.ToString());
         }

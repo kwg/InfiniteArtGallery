@@ -26,7 +26,7 @@ public class Sculptures : MonoBehaviour {
 
     private void GenerateCPPN()
     {
-        foreach (NodeGene node in geno.GetNodes())
+        foreach (NodeGene node in geno.Nodes)
         {
             node.fTYPE = ActivationFunctions.RandomFTYPE();
         }

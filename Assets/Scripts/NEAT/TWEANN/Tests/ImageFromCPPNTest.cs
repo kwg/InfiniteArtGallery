@@ -16,6 +16,7 @@ public class ImageFromCPPNTest : MonoBehaviour
 
     TWEANNGenotype cppnTest;
     TWEANN cppn;
+    Artwork art;
     float[] inputs, outputs;//float x, y, distFromCenter, bias;
 
     int width, height;
@@ -27,34 +28,48 @@ public class ImageFromCPPNTest : MonoBehaviour
 
     void Start()
     {
-        width = height = 256;
+        EvolutionaryHistory.InitializeEvolutionaryHistory();
+        EvolutionaryHistory.archetypes[0] = new TWEANNGenotype(4, 3, 0).Nodes;
+
+        art = new Artwork();
+
+        ActivationFunctions.ActivateAllFunctions();
+        //width = height = 256;
         renderer = GetComponent<Renderer>();
         img = new Texture2D(width, height, TextureFormat.ARGB32, true);
 
-        ActivationFunctions.ActivateAllFunctions();
+        //ActivationFunctions.ActivateAllFunctions();
 
-        cppnTest = new TWEANNGenotype(NUM_INPUTS, NUM_OUTPUTS, 0);
-        GenerateCPPN();
-        DoImage();
-        renderer.material.mainTexture = img;
+        //cppnTest = new TWEANNGenotype(NUM_INPUTS, NUM_OUTPUTS, 0);
+        //GenerateCPPN();
+        //DoImage();
+        //renderer.material.mainTexture = img;
 
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(art.HasFinishedProcessing())
+        {
+            art.ApplyImageProcess();
+            img = art.GetArtwork();
+            renderer.material.mainTexture = img;
+            Debug.Log("Image applied");
+        }
+
         if (!PauseMenu.isPaused && Input.GetButtonDown("Fire2"))
         {
-            cppnTest = new TWEANNGenotype(NUM_INPUTS, NUM_OUTPUTS, 0);
-            GenerateCPPN();
-            DoImage();
-            renderer.material.mainTexture = img;
+            img = new Texture2D(width, height, TextureFormat.ARGB32, true);
+            art = new Artwork();
         }
 
         if (!PauseMenu.isPaused && Input.GetButtonDown("Fire1"))
         {
-            EvolveImage();
-            renderer.material.mainTexture = img;
+            TWEANNGenotype geno = art.GetGenotype();
+            geno.Mutate();
+            art = new Artwork(geno);
+            
         }
     }
 

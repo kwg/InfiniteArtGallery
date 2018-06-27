@@ -445,8 +445,8 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
     {
         string result = "" + ID;
         //result += " (modules:" + numModules + ")";
-        result += "\n" + Nodes;
-        result += "\n" + Links;
+        result += " : " + Nodes.ToArray();
+        result += " : " + Links.ToArray();
 
         return result;
        

@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LinkGene : Gene, IComparer<LinkGene> {
+public class LinkGene : Gene, IComparer<LinkGene>, System.IComparable<LinkGene>
+{
 
     protected long sourceInnovation, targetInnovation;
     protected float weight;

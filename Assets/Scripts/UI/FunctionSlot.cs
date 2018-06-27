@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class InventorySlot : MonoBehaviour {
+
+public class FunctionSlot : MonoBehaviour {
 
     public GameObject slotBorder;
     public GameObject thumbnailSlot;
@@ -22,14 +23,14 @@ public class InventorySlot : MonoBehaviour {
         slotBorder.GetComponent<Image>().sprite = borderDeselected;
     }
 
-    public void ChangeThumbnail(Sprite sprite)
+    public void SetThumbnail(Sprite sprite)
     {
         thumbnailSlot.GetComponent<Image>().sprite = sprite;
     }
 
     // Use this for initialization
     void Start () {
-
+		
 	}
 	
 	// Update is called once per frame

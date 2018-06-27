@@ -14,4 +14,9 @@ public class TWEANNTests : MonoBehaviour {
     {
         SceneManager.LoadScene("3DObjectTest");
     }
+
+    public void CrossoverTest()
+    {
+        SceneManager.LoadScene("CrossoverTest");
+    }
 }

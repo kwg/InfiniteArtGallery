@@ -94,8 +94,10 @@ public class Room : MonoBehaviour
     {
         ArrayList walls = getWallObjects();
         int numImagesPerWall = images.Length / NUM_WALLS;
+        //used for portal id
         int idSet = 0;
-        for(int i = 0; i < NUM_WALLS; i++)
+
+        for (int i = 0; i < NUM_WALLS; i++)
         {
             for (int j = 1; j <= numImagesPerWall; j++)
             {
@@ -103,26 +105,45 @@ public class Room : MonoBehaviour
                 idSet++;
                 if (true)//debug)
                 {
-                    Debug.Log("received portal with ID " + p.GetPortalID());
-                    Debug.Log("Wall " + walls[i]);
+                    //Debug.Log("received portal with ID " + p.GetPortalID());
+                    Debug.Log("Wall " + ((GameObject)walls[i]).name);
                 }
-                float tempZ = ((GameObject)walls[i]).transform.position.z / j;//forward.magnitude;// + (zSpacing / j);
-                float tempY = ((GameObject)walls[i]).transform.position.y;// + ySpacing;
-                float tempX = ((GameObject)walls[i]).transform.position.x / j;// + (xSpacing / j);
-                Quaternion tempRot = ((GameObject)walls[i]).transform.rotation;
+
+
+                float tempZ = ((GameObject)walls[i]).transform.position.z / j;
+                float tempY = ((GameObject)walls[i]).transform.position.y;
+                float tempX = ((GameObject)walls[i]).transform.position.x / j;
+                //Quaternion tempRot = ((GameObject)walls[i]).transform.rotation;
 
                 Debug.Log("Portal " + idSet + ":  X=" + tempX + "  Y=" + tempY +" Z=" + tempZ);
 
+                //correctly position portal on wall
                 Vector3 wallCenter = new Vector3(tempX, tempY, tempZ);
-                Vector3 origin = new Vector3(0, 0, 0);
+                Vector3 origin = new Vector3(0, 0, 0); // Center of room
                 Vector3 fromWallTowardCenter = origin - wallCenter;
-                Vector3 slightlyAwayFromWall = wallCenter + 0.005f * fromWallTowardCenter;
-
-                //vecs[i];
-                //p.transform.position = vecs[i];
+                Vector3 slightlyAwayFromWall = wallCenter + 0.005f * fromWallTowardCenter; // So that portal is not inside of wall
+                // Places portal just in front of the wall
                 p.transform.position = slightlyAwayFromWall;
-                //p.transform.Rotate(new Vector3(0, (-90 * i), 0)); // HACK Hardcoded - fix once rooms can change the number of portals
-                p.transform.Rotate(tempRot.eulerAngles);
+
+
+                //correctly rotate portal on wall
+                Vector3 noon = new Vector3(0, 0, 1);
+                Vector3 other = new Vector3(slightlyAwayFromWall.x, 0, slightlyAwayFromWall.z);
+                float angle = Vector3.SignedAngle(noon, other, noon);
+
+                // BEWARE: Not sure if this special case is an ugly hack or a general solution.
+                // The problem is that SignedAngle will return the smaller of the two possible rotation amounts.
+                // So, in the case of a room with 4 walls, when the rotation should be 270, a result of 90 is computed (wrong direction).
+                // This check fixes this issue, but will it break for more than 4 walls? The actual solution is probably close to this,
+                // but we won't know until we test this with more walls.
+                if (other.x < 0)
+                {
+                    angle = 360 - angle;
+                }
+
+                float rotAmount = angle - (360/NUM_WALLS);
+                p.transform.Rotate(new Vector3(0, rotAmount, 0));
+
                 p.PaintDoor(images[i]);
             }
         }

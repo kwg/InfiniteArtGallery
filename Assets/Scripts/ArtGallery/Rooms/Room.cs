@@ -165,7 +165,7 @@ public class Room : MonoBehaviour
     private Portal SpawnPortal(int portalID)
     {
         GameObject portalProp = Instantiate(portalObject) as GameObject;
-        portalProp.AddComponent<Portal>();
+        //portalProp.AddComponent<Portal>();
         Portal p = portalProp.GetComponent<Portal>();
         // give each portal an ID
         p.SetPortalID(portalID);

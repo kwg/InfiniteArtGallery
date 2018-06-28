@@ -13,7 +13,7 @@ public class Portal : MonoBehaviour {
     public GameObject portalObject;
 
     // TODO change these to private and use getters and setters since we are no longer using the editor to do this by hand
-    int portalID;
+    public int portalID;
     int destinationID;
 
     float x, y, z;

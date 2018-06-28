@@ -22,16 +22,7 @@ public class ArtGallery : MonoBehaviour {
 
     //Game state information
     int seed;
-    bool hasRecurrency;
-    bool hasAnimations;
-    bool hasSculptures;
-    bool hasRobots;
-    bool hasSounds;
-    // game stats
-    int numberOfArtworks;
-    int numberOfSculptures;
-    int numberOfRobots;
-    int numberOfSounds;
+    
     // active functions
     FTYPE[] activeFunctions;
     // collectedFunctions
@@ -56,6 +47,7 @@ public class ArtGallery : MonoBehaviour {
     {
         seed = 1234567;
         Random.InitState(seed);
+        EvolutionaryHistory.InitializeEvolutionaryHistory();
 
         // Build the game room
         GameObject roomProp = Instantiate(roomObject) as GameObject;
@@ -78,6 +70,11 @@ public class ArtGallery : MonoBehaviour {
         room = lobby;
         gameRoom.InitializeRoom(GetImagesFromArtworks(room.GetArtworks()));
 
+    }
+
+    public RoomConfiguration GetLobby()
+    {
+        return lobby;
     }
 
     public Artwork GetArtwork(int portalID)
@@ -110,15 +107,12 @@ public class ArtGallery : MonoBehaviour {
     // Update is called once per frame
     void Update ()
     {
-        Artwork[] art = room.GetArtworks(); // FIXME This is not a very functional way of dealing with the threads. Just remove threads?
+        Artwork[] art = room.GetArtworks(); // FIXME This is not a very functional way of dealing with the threads. However removing threads is not an option.
         for (int a = 0; a < art.Length; a++)
         {
-
             if (art[a].HasFinishedProcessing())
             {
                 art[a].ApplyImageProcess();
-
-
             }
         }
     }

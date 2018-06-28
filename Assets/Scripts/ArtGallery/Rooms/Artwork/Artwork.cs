@@ -14,13 +14,18 @@ public class Artwork
     bool processing;
 
     //TODO width, height - These are static for testing but we may want to make them change
-    int width = 256;
-    int height = 256;
+    int width = 64;
+    int height = 64;
+
+    /// <summary>
+    /// Default empty constructor
+    /// </summary>
+    public Artwork() : this(new TWEANNGenotype(4, 3, 0)) { }
 
     /// <summary>
     /// Create a new artwork in a room with a new genotype. 
     /// </summary>
-    public Artwork() : this(new TWEANNGenotype(4, 3, 0)) { }
+    public Artwork(int archetypeIndex) : this(new TWEANNGenotype(4, 3, archetypeIndex)) { }
 
     /// <summary>
     /// Create a new artwork in a room with a given genotype
@@ -33,7 +38,7 @@ public class Artwork
         img = new Texture2D(width, height, TextureFormat.ARGB32, false);
         pixels = new Color[width * height];
         processing = true;
-        //GenerateImageFromCPPN();
+        //GenerateImageFromCPPN();  // non threaded version of generation
         cppnProcess.Start();
     }
 
@@ -49,6 +54,11 @@ public class Artwork
         processing = false;
     }
 
+    public void Refresh()
+    {
+        cppnProcess.Start();
+    }
+
     public void GenerateImageFromCPPN()
     {
         cppn = new TWEANN(geno);
@@ -61,12 +71,16 @@ public class Artwork
                 float scaledY = Scale(y, height);
                 float distCenter = GetDistFromCenter(scaledX, scaledY);
                 float[] hsv = ProcessCPPNInput(scaledX, scaledY, GetDistFromCenter(scaledX, scaledY), 1);
-                Color colorRGB = new Color(
-                    ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[0]), 
-                    ActivationFunctions.Activation(FTYPE.HLPIECEWISE, hsv[1]), 
+                // This initial hue is in the range [-1,1] as in the MM-NEAT code
+                float initialHue = ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[0]);
+                // However, C Sharp's Colors do not automatically map negative numbers to the proper hue range as in Java, so an additional step is needed
+                float finalHue = initialHue < 0 ? initialHue + 1 : initialHue;
+                Color colorHSV = Color.HSVToRGB(
+                    finalHue,
+                    ActivationFunctions.Activation(FTYPE.HLPIECEWISE, hsv[1]),
                     Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[2])),
-                    1.0f);
-                Color colorHSV = Color.HSVToRGB(colorRGB.r, colorRGB.g, colorRGB.b);
+                    true
+                    );
                 pixels[x + y * width] = colorHSV;
             }
         }

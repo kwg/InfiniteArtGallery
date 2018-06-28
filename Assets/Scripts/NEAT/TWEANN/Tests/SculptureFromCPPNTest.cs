@@ -7,7 +7,7 @@ public class SculptureFromCPPNTest : MonoBehaviour {
     private GameObject sculptureProp;
     private Vector3 center;
     private float ROTATION_SPEED = 40;
-    // Use this for initialization
+
 	void Start () {
         sculptureProp = Instantiate(sculpture) as GameObject;
         sculptureProp.AddComponent<Sculptures>();
@@ -25,5 +25,26 @@ public class SculptureFromCPPNTest : MonoBehaviour {
             sculptureProp.transform.position = new Vector3(0, 1, 0);
         }
 
+
+        if (!PauseMenu.isPaused && Input.GetButtonDown("Fire1"))
+        {
+            DeleteOldVoxels();
+            sculptureProp.GetComponent<Sculptures>().Invoke("Mutate", 0);
+            sculptureProp.GetComponent<Sculptures>().Invoke("createSculpture", 0);
+            
+        }
+
+    }
+
+    public void DeleteOldVoxels()
+    {
+        foreach (GameObject g in FindObjectsOfType<GameObject>())
+        {
+            if (g.name == "voxel")
+            {
+                System.Console.WriteLine("found a voxel!");
+                GameObject.Destroy(g);
+            }
+        }
     }
 }

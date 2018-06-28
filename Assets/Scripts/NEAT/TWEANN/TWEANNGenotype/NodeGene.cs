@@ -12,6 +12,7 @@ public class NodeGene : Gene {
     {
         this.fTYPE = fTYPE;
         this.nTYPE = nTYPE;
+        bias = 0.0f;
     }
 
     public float GetBias()

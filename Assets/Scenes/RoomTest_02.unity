@@ -246,6 +246,7 @@ GameObject:
   - component: {fileID: 186204844}
   - component: {fileID: 186204843}
   - component: {fileID: 186204845}
+  - component: {fileID: 186204846}
   m_Layer: 5
   m_Name: Functions
   m_TagString: Untagged
@@ -326,6 +327,18 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
   m_ChildControlHeight: 0
+--- !u!114 &186204846
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 186204841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d2c76753b607164c8d6e7a27a14db27, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HUD: {fileID: 417514996}
 --- !u!1 &235689056
 GameObject:
   m_ObjectHideFlags: 0

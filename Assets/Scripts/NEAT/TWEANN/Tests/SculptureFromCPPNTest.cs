@@ -6,17 +6,24 @@ public class SculptureFromCPPNTest : MonoBehaviour {
     public GameObject sculpture;
     private GameObject sculptureProp;
     private Vector3 center;
-    private float ROTATION_SPEED = 40;
+    private Vector3 rotSave;
+    private float ROTATION_SPEED = 4;
+    private float rotationY;
 
 	void Start () {
         sculptureProp = Instantiate(sculpture) as GameObject;
         sculptureProp.AddComponent<Sculptures>();
         sculptureProp.transform.position = new Vector3(0, 1, 0);
+        rotSave = sculptureProp.transform.rotation.eulerAngles;
+        rotationY = 0.0f;
     }
 	
 	// Update is called once per frame
 	void Update () {
-        sculptureProp.transform.Rotate(0, ROTATION_SPEED * Time.deltaTime, 0);
+
+        rotationY = sculptureProp.transform.rotation.eulerAngles.y + (ROTATION_SPEED * Time.deltaTime);
+
+        sculptureProp.transform.Rotate(0, rotationY, 0);
         if (!PauseMenu.isPaused && Input.GetButtonDown("Fire2"))
         {
             GameObject.Destroy(sculptureProp);
@@ -28,10 +35,12 @@ public class SculptureFromCPPNTest : MonoBehaviour {
 
         if (!PauseMenu.isPaused && Input.GetButtonDown("Fire1"))
         {
+            rotSave = sculptureProp.transform.rotation.eulerAngles;
+            sculptureProp.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
             DeleteOldVoxels();
             sculptureProp.GetComponent<Sculptures>().Invoke("Mutate", 0);
             sculptureProp.GetComponent<Sculptures>().Invoke("createSculpture", 0);
-            
+            sculptureProp.transform.Rotate(rotSave);          
         }
 
     }

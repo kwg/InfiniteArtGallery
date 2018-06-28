@@ -15,19 +15,4 @@ public class SavedArtwork : IInventoryItem {
     public Sprite Image { get; set; }
     public TWEANNGenotype Geno { get; set; }
 
-    public void OnPickup()
-    {
-        //throw new System.NotImplementedException();
-    }
-
-
-    // Use this for initialization
-    void Start () {
-	    	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }

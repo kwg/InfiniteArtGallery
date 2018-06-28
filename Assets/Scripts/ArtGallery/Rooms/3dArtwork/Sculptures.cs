@@ -47,12 +47,13 @@ public class Sculptures : MonoBehaviour {
                     float actualZ = -(halfVoxelSize * sculptureDimensions[2] / 2.0f) + halfVoxelSize + z * halfVoxelSize;
                     float[] outputs = cppn.Process(new float[] { actualX, actualY, actualZ , BIAS});
                     if (outputs[3] > PRESENCE_THRESHOLD) {
-                        GameObject voxelProp = Instantiate(voxel) as GameObject;
+                        GameObject voxelProp = Instantiate(voxel, new Vector3(transform.position.x, transform.position.y, transform.position.z), Quaternion.identity);
                         voxelProp.transform.parent = this.transform;
                         Renderer rend = voxelProp.gameObject.GetComponent<Renderer>();
                         voxelProp.transform.position = new Vector3(actualX, actualY, actualZ);
                         voxelProp.transform.localScale = new Vector3(halfVoxelSize - .0001f, halfVoxelSize - .0001f, halfVoxelSize - .0001f);
                         rend.material.SetColor("_Color", Color.HSVToRGB(outputs[0], outputs[1], outputs[2]));
+                        //voxelProp.transform.localRotation = transform.rotation;
                         //set props name so that we can identify it
                         voxelProp.name = "voxel";
                     }

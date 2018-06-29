@@ -135,13 +135,11 @@ public class TWEANNCrossover
 
                 if (leftHasRightAt == null)
                 {
-                    // System.out.println("leftHasRight is null");
                     alignedLeft.Add(null);
                     alignedRight.Add(right[rightPos++]);
                 }
                 else if (rightHasLeftAt == null)
                 {
-                    // System.out.println("rightHasLeftAt is null");
                     alignedLeft.Add(left[leftPos++]);
                     alignedRight.Add(null);
                 }

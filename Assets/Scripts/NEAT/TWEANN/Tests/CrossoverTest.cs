@@ -29,7 +29,7 @@ public class CrossoverTest : MonoBehaviour
         EvolutionaryHistory.archetypes[0] = new TWEANNGenotype(4, 3, 0).Nodes;
         leftArt = new Artwork();
         rightArt = new Artwork();
-        width = height = 256;
+        width = height = 64;
         ActivationFunctions.ActivateAllFunctions();
         leftRenderer = leftQuad.GetComponent<Renderer>();
         rightRenderer = rightQuad.GetComponent<Renderer>();
@@ -43,7 +43,7 @@ public class CrossoverTest : MonoBehaviour
         TWEANNGenotype leftGeno = leftArt.GetGenotype().Copy();
         TWEANNGenotype rightGeno = rightArt.GetGenotype().Copy();
 
-        for(int i = 0; i < 5; i++)
+        for(int i = 0; i < 50; i++)
         {
             leftGeno.Mutate();
             rightGeno.Mutate();
@@ -74,14 +74,15 @@ public class CrossoverTest : MonoBehaviour
         if (!PauseMenu.isPaused && Input.GetButtonDown("Fire2"))
         {
             leftImg = new Texture2D(width, height, TextureFormat.ARGB32, true);
-            leftArt = new Artwork();
             rightImg = new Texture2D(width, height, TextureFormat.ARGB32, true);
+            leftArt = new Artwork();
             rightArt = new Artwork();
+            BuildArtworks();
+
         }
 
         if (!PauseMenu.isPaused && Input.GetButtonDown("Fire1"))
         {
-            Debug.Log("crossing over left to right");
             TWEANNGenotype leftGeno = leftArt.GetGenotype().Copy();
             TWEANNGenotype rightGeno = rightArt.GetGenotype().Copy();
 
@@ -91,7 +92,6 @@ public class CrossoverTest : MonoBehaviour
 
             leftArt = new Artwork(leftGeno);
             rightArt = new Artwork(rightGeno);
-            Debug.Log("Crossover completed " + leftGeno);
 
         }
     }

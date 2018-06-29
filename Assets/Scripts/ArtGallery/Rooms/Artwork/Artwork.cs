@@ -11,7 +11,8 @@ public class Artwork
     Texture2D img;
     Color[] pixels;
     Thread cppnProcess;
-    bool processing;
+    bool processingCPPN;
+    bool needsRedraw;
 
     //TODO width, height - These are static for testing but we may want to make them change
     int width = 64;
@@ -33,35 +34,43 @@ public class Artwork
     /// <param name="geno">Genotype for this artwrok to use</param>
     public Artwork(TWEANNGenotype geno)
     {
+        needsRedraw = false;
+        processingCPPN = false;
         this.geno = geno; 
-        cppnProcess = new Thread ( GenerateImageFromCPPN );
+        cppnProcess = new Thread ( new ThreadStart (GenerateImageFromCPPN) );
         img = new Texture2D(width, height, TextureFormat.ARGB32, false);
         pixels = new Color[width * height];
-        processing = true;
         //GenerateImageFromCPPN();  // non threaded version of generation
         cppnProcess.Start();
     }
 
-    public bool HasFinishedProcessing()
+    public bool NeedsRedraw()
     {
-        return processing && !cppnProcess.IsAlive;
+        return needsRedraw;
     }
 
     public void ApplyImageProcess()
     {
         img.SetPixels(pixels);
         img.Apply();
-        processing = false;
+        needsRedraw = false;
     }
 
     public void Refresh()
     {
+        cppnProcess = new Thread(new ThreadStart(GenerateImageFromCPPN));
         cppnProcess.Start();
+
     }
 
     public void GenerateImageFromCPPN()
     {
+        processingCPPN = true;
+        if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("CPPN Imgage generation started...");
+
+        if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("NETWORK OUTPUT : BEFORE CPPN : Building TWEANN from geno " + geno.ToString());
         cppn = new TWEANN(geno);
+        if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("NETWORK OUTPUT : AFTER CPPN  : Building TWEANN from geno " + geno.ToString());
 
         for (int y = 0; y < height; y++)
         {
@@ -84,7 +93,8 @@ public class Artwork
                 pixels[x + y * width] = colorHSV;
             }
         }
-
+        processingCPPN = false;
+        needsRedraw = true;
         //img.SetPixels(pixels);
         //img.Apply();
 
@@ -120,8 +130,9 @@ public class Artwork
 
     }
 
-    public void SetGenotypePortal(TWEANNGenotype geno)
+    public void SetGenotype(TWEANNGenotype geno)
     {
+
         this.geno = geno;
     }
 

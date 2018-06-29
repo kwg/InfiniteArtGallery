@@ -84,7 +84,7 @@ public class Inventory : MonoBehaviour {
                 if (hit.collider.tag == "portal")
                 {
                     Portal p = hit.collider.gameObject.GetComponent<Portal>();
-                    Texture2D img = new Texture2D(256, 256, TextureFormat.ARGB32, false); // HACK hardcoded width and height
+                    Texture2D img = new Texture2D(p.GetImage().width, p.GetImage().height, TextureFormat.ARGB32, false); // HACK hardcoded width and height
                     Graphics.CopyTexture(p.GetImage(), img);
                     int portalID = p.GetPortalID();
                     TWEANNGenotype geno = ag.GetArtwork(portalID).GetGenotype().Copy();
@@ -110,7 +110,7 @@ public class Inventory : MonoBehaviour {
                 if (hit.collider.tag == "portal")
                 {
                     Portal p = hit.collider.gameObject.GetComponent<Portal>();
-                    ag.GetArtwork(p.GetPortalID()).SetGenotypePortal(GetActiveSlotItem().Geno.Copy()); // FIXME Null ref possible here - add checks
+                    ag.GetArtwork(p.GetPortalID()).SetGenotype(GetActiveSlotItem().Geno.Copy()); // FIXME Null ref possible here - add checks
                     ag.GetArtwork(p.GetPortalID()).GenerateImageFromCPPN();
                     ag.GetArtwork(p.GetPortalID()).ApplyImageProcess();
                 }

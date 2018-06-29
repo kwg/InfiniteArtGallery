@@ -10,9 +10,14 @@ public class CrossoverTest : MonoBehaviour
 
     private static readonly int NUM_INPUTS = 4;
     private static readonly int NUM_OUTPUTS = 3;
-
+    // active functions
+    FTYPE[] activeFunctions;
+    // collectedFunctions
+    FTYPE[] collectedFunctions;
 
     Artwork leftArt, rightArt;
+    TWEANNGenotype leftGeno;
+    TWEANNGenotype rightGeno;
     float[] inputs, outputs;//float x, y, distFromCenter, bias;
 
     int width, height;
@@ -27,10 +32,12 @@ public class CrossoverTest : MonoBehaviour
     {
         EvolutionaryHistory.InitializeEvolutionaryHistory();
         EvolutionaryHistory.archetypes[0] = new TWEANNGenotype(4, 3, 0).Nodes;
-        leftArt = new Artwork();
-        rightArt = new Artwork();
         width = height = 64;
-        ActivationFunctions.ActivateAllFunctions();
+        //ActivationFunctions.ActivateAllFunctions();
+        collectedFunctions = new FTYPE[] { FTYPE.ID, FTYPE.TANH, FTYPE.SQUAREWAVE, FTYPE.GAUSS, FTYPE.SINE };
+        activeFunctions = new FTYPE[] { FTYPE.ID, FTYPE.GAUSS, FTYPE.SINE };
+        ActivationFunctions.ActivateFunction(activeFunctions);
+
         leftRenderer = leftQuad.GetComponent<Renderer>();
         rightRenderer = rightQuad.GetComponent<Renderer>();
         leftImg = new Texture2D(width, height, TextureFormat.ARGB32, true);
@@ -38,17 +45,21 @@ public class CrossoverTest : MonoBehaviour
         BuildArtworks();
     }
 
-    private void BuildArtworks()
+    private void MutateArtworks()
     {
-        TWEANNGenotype leftGeno = leftArt.GetGenotype().Copy();
-        TWEANNGenotype rightGeno = rightArt.GetGenotype().Copy();
+        leftGeno = new TWEANNGenotype(NUM_INPUTS, NUM_OUTPUTS, 0);
+        rightGeno = new TWEANNGenotype(NUM_INPUTS, NUM_OUTPUTS, 0);
 
-        for(int i = 0; i < 50; i++)
+        for (int i = 0; i < 50; i++)
         {
             leftGeno.Mutate();
             rightGeno.Mutate();
         }
+    }
 
+    private void BuildArtworks()
+    {
+        MutateArtworks();
         leftArt = new Artwork(leftGeno);
         rightArt = new Artwork(rightGeno);
     }
@@ -56,14 +67,14 @@ public class CrossoverTest : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (leftArt.HasFinishedProcessing())
+        if (leftArt.NeedsRedraw())
         {
             leftArt.ApplyImageProcess();
             leftImg = leftArt.GetArtwork();
             leftRenderer.material.mainTexture = leftImg;
             Debug.Log("leftImg applied");
         }
-        if (rightArt.HasFinishedProcessing())
+        if (rightArt.NeedsRedraw())
         {
             rightArt.ApplyImageProcess();
             rightImg = rightArt.GetArtwork();
@@ -75,21 +86,22 @@ public class CrossoverTest : MonoBehaviour
         {
             leftImg = new Texture2D(width, height, TextureFormat.ARGB32, true);
             rightImg = new Texture2D(width, height, TextureFormat.ARGB32, true);
-            leftArt = new Artwork();
-            rightArt = new Artwork();
             BuildArtworks();
+            //leftArt = new Artwork(leftGeno);
+            //rightArt = new Artwork(rightGeno);
 
         }
 
         if (!PauseMenu.isPaused && Input.GetButtonDown("Fire1"))
         {
-            TWEANNGenotype leftGeno = leftArt.GetGenotype().Copy();
-            TWEANNGenotype rightGeno = rightArt.GetGenotype().Copy();
+            leftGeno = leftArt.GetGenotype().Copy();
+            rightGeno = rightArt.GetGenotype().Copy();
 
 
             TWEANNCrossover cr = new TWEANNCrossover(false);
             cr.Crossover(leftGeno, rightGeno);
-
+            leftImg = new Texture2D(width, height, TextureFormat.ARGB32, true);
+            rightImg = new Texture2D(width, height, TextureFormat.ARGB32, true);
             leftArt = new Artwork(leftGeno);
             rightArt = new Artwork(rightGeno);
 

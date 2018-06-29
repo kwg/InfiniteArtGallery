@@ -132,7 +132,7 @@ public class HUD : MonoBehaviour
     {
         if (inventorySlot < 0 || inventorySlot > inventorySlots.Count)
         {
-            throw new System.Exception("Selected slot does not exist in the HUD: " + inventorySlot);
+            throw new System.Exception("Selected inventory slot does not exist in the HUD: " + inventorySlot);
         }
         else
         {
@@ -142,9 +142,9 @@ public class HUD : MonoBehaviour
 
     internal void UpdateFunctionThumbnail(int functionSlot, Sprite thumbnail)
     {
-        if (functionSlot < 0 || functionSlot > inventorySlots.Count)
+        if (functionSlot < 0 || functionSlot > functionSlots.Count)
         {
-            throw new System.Exception("Selected slot does not exist in the HUD: " + functionSlot);
+            throw new System.Exception("Selected function slot does not exist in the HUD: " + functionSlot);
         }
         else
         {

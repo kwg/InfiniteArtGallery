@@ -37,13 +37,34 @@ public class Functions : MonoBehaviour {
 
 
         /*** TESTING SECTION ***/
-        SavedFunction testFunction = new SavedFunction
+        SavedFunction testFunction1 = new SavedFunction
+        {
+            fTYPE = FTYPE.GAUSS,
+        };
+        testFunction1.GenerateThumbnail();
+        AddFunction(testFunction1);
+        CycleActiveSlot(1);
+        SavedFunction testFunction2 = new SavedFunction
         {
             fTYPE = FTYPE.SINE,
         };
-        testFunction.GenerateThumbnail();
-        AddFunction(testFunction);
-
+        testFunction2.GenerateThumbnail();
+        AddFunction(testFunction2);
+        CycleActiveSlot(1);
+        SavedFunction testFunction3 = new SavedFunction
+        {
+            fTYPE = FTYPE.SAWTOOTH,
+        };
+        testFunction3.GenerateThumbnail();
+        AddFunction(testFunction3);
+        CycleActiveSlot(1);
+        SavedFunction testFunction4 = new SavedFunction
+        {
+            fTYPE = FTYPE.SQUAREWAVE,
+        };
+        testFunction4.GenerateThumbnail();
+        AddFunction(testFunction4);
+        CycleActiveSlot(1);
 
     }
 	

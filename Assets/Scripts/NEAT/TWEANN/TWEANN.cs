@@ -63,6 +63,7 @@ public class TWEANN : INetwork
         ArchetypeIndex = g.GetArchetypeIndex();
         nodes = new List<TWEANNNode>(g.Nodes.Count);
         int countIn = 0, countOut = 0;
+        Debug.Log("Starting TWEANNNodes build...");
         foreach(NodeGene node in g.Nodes) {
             TWEANNNode tempNode = new TWEANNNode(node.fTYPE, node.nTYPE, node.Innovation, false, node.GetBias());
             nodes.Add(tempNode);
@@ -78,16 +79,19 @@ public class TWEANN : INetwork
         }
         numInputs = countIn;
         numOutputs = countOut;
-        foreach(LinkGene link in g.Links)
+        Debug.Log("Starting TWEANNLinks build...");
+        foreach (LinkGene link in g.Links)
         {
             TWEANNNode source = GetNodeByInnovationID(link.GetSourceInnovation());
             TWEANNNode target = GetNodeByInnovationID(link.GetTargetInnovation());
-            //TODO add asserts
-            if (source == null) throw new System.Exception("Source not found with innovation " + link.GetSourceInnovation() + " \n " + ToString());
-            if (target == null) throw new System.Exception("Target not found with innovation " + link.GetTargetInnovation() + " \n " + ToString());
+
+            //if (source == null) throw new System.Exception("Source not found with innovation " + link.GetSourceInnovation() + " : " + ToString());
+            //if (target == null) throw new System.Exception("Target not found with innovation " + link.GetTargetInnovation() + " : " + ToString());
 
             source.Connect(target, link.GetWeight(), link.Innovation, false, false);
         }
+        Debug.Log("TWEANN build from TWEANNGenotype completed");
+
     }
 
 

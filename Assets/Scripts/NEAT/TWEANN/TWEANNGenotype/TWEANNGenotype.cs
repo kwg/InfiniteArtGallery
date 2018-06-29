@@ -7,9 +7,9 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
 {
     public List<NodeGene> Nodes { get; set; }
     public List<LinkGene> Links { get; set; }
+    public long ID { get; private set; } // FIXME need genetic history ID assignment
 
     private int numInputs, numOutputs;
-    private long ID; // FIXME need genetic history ID assignment
     private int archetypeIndex;
 
     // FIXME This should not be declared here. This should be a parameter so that we can adjust it at run time
@@ -32,6 +32,8 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         }
 
         archetypeIndex = 0;
+        ID = EvolutionaryHistory.NextGenotypeID();
+
     }
 
     public TWEANNGenotype(TWEANNGenotype copy) : this(copy.Nodes, copy.Links, copy.archetypeIndex) { }
@@ -50,8 +52,8 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
             else if(n.nTYPE == NTYPE.OUTPUT) { numOutputs++; }
         }
 
-        //HACK CROSSOVER: need archetype for matching genes
-
+        this.archetypeIndex = archetypeIndex;
+        ID = EvolutionaryHistory.NextGenotypeID();
 
     }
 
@@ -444,9 +446,21 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
     public override string ToString()
     {
         string result = "" + ID;
+        string nodesOut = "";
+        foreach(NodeGene ng in Nodes)
+        {
+            nodesOut += ng.ToString() + "\n";
+        }
+
+        string linksOut = "";
+        foreach (LinkGene lg in Links)
+        {
+            linksOut += lg.ToString() + "\n";
+        }
+
         //result += " (modules:" + numModules + ")";
-        result += " : " + Nodes.ToArray();
-        result += " : " + Links.ToArray();
+        result += "\n:NODES:\n" + nodesOut;
+        result += "\n:LINKS:\n" + linksOut;
 
         return result;
        

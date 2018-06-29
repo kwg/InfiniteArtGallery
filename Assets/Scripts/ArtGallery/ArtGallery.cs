@@ -110,7 +110,7 @@ public class ArtGallery : MonoBehaviour {
         Artwork[] art = room.GetArtworks(); // FIXME This is not a very functional way of dealing with the threads. However removing threads is not an option.
         for (int a = 0; a < art.Length; a++)
         {
-            if (art[a].HasFinishedProcessing())
+            if (art[a].NeedsRedraw())
             {
                 art[a].ApplyImageProcess();
             }

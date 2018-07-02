@@ -3,35 +3,47 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class SculptureFromCPPNTest : MonoBehaviour {
-    public GameObject sculpture;
+    public GameObject sculptureObject;
     private GameObject sculptureProp;
+    private Sculpture sculpture;
     private Vector3 center;
+    private Vector3 rotSave;
     private float ROTATION_SPEED = 40;
+    private float rotationY;
 
 	void Start () {
-        sculptureProp = Instantiate(sculpture) as GameObject;
-        sculptureProp.AddComponent<Sculptures>();
+        sculptureProp = Instantiate(sculptureObject) as GameObject;
+        //sculptureProp.AddComponent<Sculpture>();
+        sculpture = sculptureProp.GetComponent<Sculpture>();
         sculptureProp.transform.position = new Vector3(0, 1, 0);
+        rotSave = sculptureProp.transform.rotation.eulerAngles;
+        rotationY = 0.0f;
     }
 	
 	// Update is called once per frame
 	void Update () {
-        sculptureProp.transform.Rotate(0, ROTATION_SPEED * Time.deltaTime, 0);
+
+        rotationY = (ROTATION_SPEED * Time.deltaTime) % 180;
+
+        sculptureProp.transform.Rotate(0, rotationY, 0);
         if (!PauseMenu.isPaused && Input.GetButtonDown("Fire2"))
         {
-            GameObject.Destroy(sculptureProp);
-            sculptureProp = Instantiate(sculpture) as GameObject;
-            sculptureProp.AddComponent<Sculptures>();
-            sculptureProp.transform.position = new Vector3(0, 1, 0);
+            //Destroy(sculptureProp);
+            //sculptureProp = Instantiate(sculptureObject) as GameObject;
+            //sculptureProp.AddComponent<Sculpture>();
+            //sculptureProp.transform.position = new Vector3(0, 1, 0);
+            sculpture.NewSculpture();
         }
 
 
         if (!PauseMenu.isPaused && Input.GetButtonDown("Fire1"))
         {
+            rotSave = sculptureProp.transform.rotation.eulerAngles;
+            sculptureProp.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
             DeleteOldVoxels();
-            sculptureProp.GetComponent<Sculptures>().Invoke("Mutate", 0);
-            sculptureProp.GetComponent<Sculptures>().Invoke("createSculpture", 0);
-            
+            sculpture.Mutate();
+            sculpture.CreateSculture();
+            sculptureProp.transform.Rotate(rotSave);          
         }
 
     }
@@ -42,8 +54,7 @@ public class SculptureFromCPPNTest : MonoBehaviour {
         {
             if (g.name == "voxel")
             {
-                System.Console.WriteLine("found a voxel!");
-                GameObject.Destroy(g);
+                Destroy(g);
             }
         }
     }

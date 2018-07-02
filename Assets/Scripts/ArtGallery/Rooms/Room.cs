@@ -16,7 +16,7 @@ public class Room : MonoBehaviour
     public GameObject portalObject;
     public GameObject sculptureObject;
     SortedList<int, Portal> portals; // Portal index is door index
-    List<Sculptures> sculpturesCollection;
+    List<Sculpture> sculpturesCollection;
 
     int PortalCount = 0; // TODO not in use - decide what to do with it
     int NUM_WALLS = 4;
@@ -84,7 +84,7 @@ public class Room : MonoBehaviour
     private void CreateSculptures()
     {
         GameObject sculpture = Instantiate(sculptureObject) as GameObject;
-        sculpture.AddComponent<Sculptures>();
+        sculpture.AddComponent<Sculpture>();
 
         //p.transform.position = vecs[img.Key];
         //p.transform.Rotate(new Vector3(0, (-90 * img.Key), 0)); // HACK Hardcoded - fix once rooms can change the number of portals

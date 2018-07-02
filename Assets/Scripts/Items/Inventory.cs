@@ -6,6 +6,7 @@ public class Inventory : MonoBehaviour {
 
     public GameObject HUD;
 
+    private const TRAYS tray = TRAYS.inventory;
     private int numberOfInventorySlots = 9;
     private HUD hud;
 
@@ -13,7 +14,6 @@ public class Inventory : MonoBehaviour {
     ArtGallery ag;
 
     float interactionDistance = 50f; // maximum distance to check for raycast collision
-
 
     List<InventorySlot> slots;
 
@@ -25,34 +25,12 @@ public class Inventory : MonoBehaviour {
         camera = FindObjectOfType<Camera>();
         ag = FindObjectOfType<ArtGallery>();
         slots = new List<InventorySlot>();
-        List<InventorySlot> tempSlots = new List<InventorySlot>();
-
-        foreach (InventorySlot slot in FindObjectsOfType<InventorySlot>())
-        {
-            tempSlots.Add(slot);
-        }
-
-        //if(numberOfInventorySlots != tempSlots.Count) throw new Exception("Expected " + numberOfInventorySlots + " slots in scene but found " + tempSlots.Count);
-
-        for (int s = 0; s < tempSlots.Count; s++)
-        {
-            string invTag = "inv" + s;
-            foreach(InventorySlot slot in tempSlots)
-            {
-                if(slot.tag == invTag)
-                {
-                    slots.Add(slot);
-                }
-            }
-        }
-        
-        hud = HUD.GetComponent<HUD>();
-        hud.AddSlots(TRAYS.inventory, 9);
-        ActiveSlot = 0;
-        hud.SelectSlot(ActiveSlot);
         items = new IInventoryItem[numberOfInventorySlots]; // item storage - contains geno and other data we want to save as well as the thumbnail
 
-
+        hud = HUD.GetComponent<HUD>();
+        hud.AddSlots(tray, numberOfInventorySlots);
+        ActiveSlot = 0;
+        hud.SelectSlot(tray, ActiveSlot);
     }
 
     public void AddItem(IInventoryItem item)
@@ -81,7 +59,7 @@ public class Inventory : MonoBehaviour {
             ActiveSlot = ActiveSlot + delta;
             if (ActiveSlot < 0) ActiveSlot = numberOfInventorySlots - 1;
             if (ActiveSlot >= numberOfInventorySlots) ActiveSlot = 0;
-            hud.SelectSlot(ActiveSlot);
+            hud.SelectSlot(tray, ActiveSlot);
         }
         else
         {
@@ -106,7 +84,7 @@ public class Inventory : MonoBehaviour {
                 if (hit.collider.tag == "portal")
                 {
                     Portal p = hit.collider.gameObject.GetComponent<Portal>();
-                    Texture2D img = new Texture2D(256, 256, TextureFormat.ARGB32, false); // HACK hardcoded width and height
+                    Texture2D img = new Texture2D(p.GetImage().width, p.GetImage().height, TextureFormat.ARGB32, false); // HACK hardcoded width and height
                     Graphics.CopyTexture(p.GetImage(), img);
                     int portalID = p.GetPortalID();
                     TWEANNGenotype geno = ag.GetArtwork(portalID).GetGenotype().Copy();
@@ -132,11 +110,20 @@ public class Inventory : MonoBehaviour {
                 if (hit.collider.tag == "portal")
                 {
                     Portal p = hit.collider.gameObject.GetComponent<Portal>();
-                    ag.GetArtwork(p.GetPortalID()).SetGenotypePortal(GetActiveSlotItem().Geno.Copy()); // FIXME Null ref possible here - add checks
+                    ag.GetArtwork(p.GetPortalID()).SetGenotype(GetActiveSlotItem().Geno.Copy()); // FIXME Null ref possible here - add checks
                     ag.GetArtwork(p.GetPortalID()).GenerateImageFromCPPN();
                     ag.GetArtwork(p.GetPortalID()).ApplyImageProcess();
                 }
             }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Keypad4) || Input.GetKeyDown(KeyCode.Q))
+        {
+            CycleActiveSlot(-1);
+        }
+        if (Input.GetKeyDown(KeyCode.Keypad6) || Input.GetKeyDown(KeyCode.E))
+        {
+            CycleActiveSlot(1);
         }
 
         float wheel = Input.GetAxis("Mouse ScrollWheel");

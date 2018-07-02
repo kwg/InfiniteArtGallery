@@ -50,7 +50,7 @@ public class ImageFromCPPNTest : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(art.HasFinishedProcessing())
+        if(art.NeedsRedraw())
         {
             art.ApplyImageProcess();
             img = art.GetArtwork();

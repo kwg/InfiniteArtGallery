@@ -36,7 +36,8 @@ public class Functions : MonoBehaviour {
         functions = new IFunctionItem[numberOfFunctionSlots];
 
 
-        /*** TESTING SECTION ***/
+        /*** TESTING SECTION 
+         * Adding functions to the hud ***/
         SavedFunction testFunction1 = new SavedFunction
         {
             fTYPE = FTYPE.GAUSS,

@@ -9,9 +9,9 @@ public class Sculpture : MonoBehaviour {
     Vector3 sculptureDimensions;
     float voxelSize;
     const float PRESENCE_THRESHOLD = .1f;
-    const int SCULP_X = 10;
-    const int SCULP_Y = 20;
-    const int SCULP_Z = 10;
+    const int SCULP_X = 5;
+    const int SCULP_Y = 10;
+    const int SCULP_Z = 5;
     const float BIAS = 1;
     GameObject[,,] vox;
 
@@ -99,7 +99,8 @@ public class Sculpture : MonoBehaviour {
                             true
                             );
                         rend.enabled = true;
-                        rend.material.SetColor("_Color", colorHSV);
+                        Color color = new Color(colorHSV.r, colorHSV.g, colorHSV.b, outputs[3]);
+                        rend.material.SetColor("_Color", color);
                     }
                     else
                     {

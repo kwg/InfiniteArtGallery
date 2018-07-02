@@ -33,9 +33,37 @@ public class Inventory : MonoBehaviour {
         hud.SelectSlot(tray, ActiveSlot);
     }
 
+    private void FindNextEmptySlot()
+    {
+        for(int i = 0; i < items.Length; i++)
+        {
+            if(items[i] == null)
+            {
+                ChangeActiveSlot(i);
+                hud.SelectSlot(tray, ActiveSlot);
+                break;
+            }
+        }
+    }
+
+
+    private bool Contains(IInventoryItem comp) // FIXME compare isnt working for items - switch compare to geno ID?
+    {
+        bool result = false;
+        foreach(IInventoryItem i in items)
+        {
+            if (i == comp)
+            {
+                result = true;
+                break;
+            }
+        }
+        return result;
+    }
+
     public void AddItem(IInventoryItem item)
     {
-        if(items[ActiveSlot] == null) // Only add an item to the active slot if the slot is empty
+        if(items[ActiveSlot] == null && !Contains(item)) // Only add an item to the active slot if the slot is empty
         {
             items[ActiveSlot] = item;
             hud.UpdateInventoryThumbnail(ActiveSlot, item.Image);
@@ -84,7 +112,7 @@ public class Inventory : MonoBehaviour {
                 if (hit.collider.tag == "portal")
                 {
                     Portal p = hit.collider.gameObject.GetComponent<Portal>();
-                    Texture2D img = new Texture2D(p.GetImage().width, p.GetImage().height, TextureFormat.ARGB32, false); // HACK hardcoded width and height
+                    Texture2D img = new Texture2D(p.GetImage().width, p.GetImage().height, TextureFormat.ARGB32, false);
                     Graphics.CopyTexture(p.GetImage(), img);
                     int portalID = p.GetPortalID();
                     TWEANNGenotype geno = ag.GetArtwork(portalID).GetGenotype().Copy();
@@ -96,6 +124,7 @@ public class Inventory : MonoBehaviour {
 
                     };
                     AddItem(newArtwork);
+                    FindNextEmptySlot();
                 }
             }
         }
@@ -110,9 +139,18 @@ public class Inventory : MonoBehaviour {
                 if (hit.collider.tag == "portal")
                 {
                     Portal p = hit.collider.gameObject.GetComponent<Portal>();
-                    ag.GetArtwork(p.GetPortalID()).SetGenotype(GetActiveSlotItem().Geno.Copy()); // FIXME Null ref possible here - add checks
-                    ag.GetArtwork(p.GetPortalID()).GenerateImageFromCPPN();
-                    ag.GetArtwork(p.GetPortalID()).ApplyImageProcess();
+                    if(GetActiveSlotItem() != null)
+                    {
+                        ag.GetArtwork(p.GetPortalID()).SetGenotype(GetActiveSlotItem().Geno.Copy()); // FIXME Null ref possible here - add checks
+                        ag.GetArtwork(p.GetPortalID()).GenerateImageFromCPPN();
+                        ag.GetArtwork(p.GetPortalID()).ApplyImageProcess();
+                        items[ActiveSlot] = null;
+                        hud.UpdateInventoryThumbnail(ActiveSlot, null);
+                    }
+                    else
+                    {
+                        // do nothing for now
+                    }
                 }
             }
         }

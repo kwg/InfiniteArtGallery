@@ -136,7 +136,15 @@ public class HUD : MonoBehaviour
         }
         else
         {
-            inventorySlots[inventorySlot].GetComponent<InventorySlot>().ChangeThumbnail(thumbnail);
+            if (thumbnail != null)
+            {
+                inventorySlots[inventorySlot].GetComponent<InventorySlot>().ChangeThumbnail(thumbnail);
+            }
+            else
+            {
+                Debug.Log("Thumbnail was null. Resetting thumbnail to default");
+                inventorySlots[inventorySlot].GetComponent<InventorySlot>().ResetThumbnail();
+            }
         }
     }
 

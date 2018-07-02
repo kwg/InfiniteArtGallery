@@ -27,6 +27,11 @@ public class InventorySlot : MonoBehaviour {
         thumbnailSlot.GetComponent<Image>().sprite = sprite;
     }
 
+    public void ResetThumbnail()
+    {
+        thumbnailSlot.GetComponent<Image>().sprite = defaultThumbnail;
+    }
+
     // Use this for initialization
     void Start () {
 

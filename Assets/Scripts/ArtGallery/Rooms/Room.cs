@@ -106,7 +106,7 @@ public class Room : MonoBehaviour
                 if (true)//debug)
                 {
                     //Debug.Log("received portal with ID " + p.GetPortalID());
-                    Debug.Log("Wall " + ((GameObject)walls[i]).name);
+                    if (debug) Debug.Log("Wall " + ((GameObject)walls[i]).name);
                 }
 
 
@@ -115,7 +115,7 @@ public class Room : MonoBehaviour
                 float tempX = ((GameObject)walls[i]).transform.position.x / j;
                 //Quaternion tempRot = ((GameObject)walls[i]).transform.rotation;
 
-                Debug.Log("Portal " + idSet + ":  X=" + tempX + "  Y=" + tempY +" Z=" + tempZ);
+                if(debug) Debug.Log("Portal " + idSet + ":  X=" + tempX + "  Y=" + tempY +" Z=" + tempZ);
 
                 //correctly position portal on wall
                 Vector3 wallCenter = new Vector3(tempX, tempY, tempZ);

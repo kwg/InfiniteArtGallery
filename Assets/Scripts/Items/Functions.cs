@@ -38,6 +38,13 @@ public class Functions : MonoBehaviour {
 
         /*** TESTING SECTION 
          * Adding functions to the hud ***/
+        SavedFunction testFunction0 = new SavedFunction
+        {
+            fTYPE = FTYPE.ID,
+        };
+        testFunction0.GenerateThumbnail();
+        AddFunction(testFunction0);
+        CycleActiveSlot(1);
         SavedFunction testFunction1 = new SavedFunction
         {
             fTYPE = FTYPE.GAUSS,

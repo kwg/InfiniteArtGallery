@@ -4,7 +4,8 @@ using System.Threading;
 using UnityEngine;
 
 public class Artwork
-{ 
+{
+    private bool debug = ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE;
 
     TWEANNGenotype geno;
     TWEANN cppn;
@@ -66,11 +67,11 @@ public class Artwork
     public void GenerateImageFromCPPN()
     {
         processingCPPN = true;
-        if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("CPPN Imgage generation started...");
+        if (debug) Debug.Log("CPPN Imgage generation started...");
 
-        if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("NETWORK OUTPUT : BEFORE CPPN : Building TWEANN from geno " + geno.ToString());
+        if (debug) Debug.Log("NETWORK OUTPUT : BEFORE CPPN : Building TWEANN from geno " + geno.ToString());
         cppn = new TWEANN(geno);
-        if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("NETWORK OUTPUT : AFTER CPPN  : Building TWEANN from geno " + geno.ToString());
+        if (debug) Debug.Log("NETWORK OUTPUT : AFTER CPPN  : Building TWEANN from geno " + geno.ToString());
 
         for (int y = 0; y < height; y++)
         {

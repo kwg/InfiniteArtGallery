@@ -63,7 +63,7 @@ public class TWEANN : INetwork
         ArchetypeIndex = g.GetArchetypeIndex();
         nodes = new List<TWEANNNode>(g.Nodes.Count);
         int countIn = 0, countOut = 0;
-        Debug.Log("Starting TWEANNNodes build...");
+        if(ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("Starting TWEANNNodes build...");
         foreach(NodeGene node in g.Nodes) {
             TWEANNNode tempNode = new TWEANNNode(node.fTYPE, node.nTYPE, node.Innovation, false, node.GetBias());
             nodes.Add(tempNode);
@@ -79,7 +79,7 @@ public class TWEANN : INetwork
         }
         numInputs = countIn;
         numOutputs = countOut;
-        Debug.Log("Starting TWEANNLinks build...");
+        if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("Starting TWEANNLinks build...");
         foreach (LinkGene link in g.Links)
         {
             TWEANNNode source = GetNodeByInnovationID(link.GetSourceInnovation());
@@ -90,7 +90,7 @@ public class TWEANN : INetwork
 
             source.Connect(target, link.GetWeight(), link.Innovation, false, false);
         }
-        Debug.Log("TWEANN build from TWEANNGenotype completed");
+        if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("TWEANN build from TWEANNGenotype completed");
 
     }
 

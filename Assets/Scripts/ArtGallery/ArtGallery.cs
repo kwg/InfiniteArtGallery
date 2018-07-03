@@ -9,7 +9,7 @@ using UnityEngine;
 public class ArtGallery : MonoBehaviour {
 
     public enum DEBUG { NONE = 0, POLITE = 1, VERBOSE = 2 };
-    public static DEBUG DEBUG_LEVEL = DEBUG.POLITE;
+    public static DEBUG DEBUG_LEVEL = DEBUG.NONE;
     public const int STARTING_NUM_ARTWORKS = 4;
     public GameObject roomObject; // RoomObject for room to load (set in the editor)
     [HideInInspector] public Room gameRoom; // Reference to the in-game room that the player is currently in (set by the script)
@@ -28,20 +28,6 @@ public class ArtGallery : MonoBehaviour {
     // collectedFunctions
     FTYPE[] collectedFunctions;
 
-
-    // Access for game flags
-    public int NumberOfArtworks { get; set; }
-    public int NumberOfAnimations { get; set; }
-    public int NumberOfSculptures { get; set; }
-    public int NumberOfRobots { get; set; }
-    public int NumberOfSounds { get; set; }
-    public bool HasArtwork { get; set; }
-    public bool HasRecurrency { get; set; }
-    public bool HasAnimations { get; set; }
-    public bool HasSculptures { get; set; }
-    public bool HasRobots { get; set; }
-    public bool HasSounds { get; set; }
-
     // Use this for initialization
     void Start()
     {
@@ -53,9 +39,6 @@ public class ArtGallery : MonoBehaviour {
         GameObject roomProp = Instantiate(roomObject) as GameObject;
         gameRoom = roomProp.GetComponent<Room>();
 
-        // set parameters for the game
-        HasArtwork = true;
-        NumberOfArtworks = STARTING_NUM_ARTWORKS;
         // starting functions
         collectedFunctions = new FTYPE[] {FTYPE.ID, FTYPE.TANH, FTYPE.SQUAREWAVE, FTYPE.GAUSS, FTYPE.SINE };
         activeFunctions = new FTYPE[] { FTYPE.ID, FTYPE.GAUSS, FTYPE.SINE };

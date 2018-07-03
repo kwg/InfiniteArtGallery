@@ -4,17 +4,22 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 
-    public Inventory inventory; // reference to the game inventory
+    public Inventory inventory { get; set; } // reference to the game inventory
+    public Functions functions { get; set; }
+
     new Camera camera;
     ArtGallery ag;
     public GameObject FPC;
     private bool isInverted;
     float interactionDistance = 30f; // maximum distance to check for raycast collision
 
+
+
     public void Start()
     {
         camera = FindObjectOfType<Camera>();
         ag = FindObjectOfType<ArtGallery>();
+        ag.player = this;
 
         //FPC = gameObject;
         isInverted = OptionsMenu.isInverted;
@@ -30,6 +35,7 @@ public class Player : MonoBehaviour {
             yAxis = yAxis * -1;
             FPC.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.YSensitivity = yAxis;
         }
+
     }
     
     /// <summary>
@@ -44,6 +50,23 @@ public class Player : MonoBehaviour {
             if(ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("player activating portal " + collider.gameObject.GetComponent<Portal>().GetPortalID());
             /* Tell portal controller to handle collision between specified portal and this player */
             FindObjectOfType<Room>().DoTeleport(this, collider.gameObject.GetComponent<Portal>().GetPortalID());
+        }
+
+        /* TAG: Function Pickup */
+        if (collider.tag == "FunctionPickup")
+        {
+            FunctionPickup fp = collider.GetComponent<FunctionPickup>();
+            if (!functions.HasFunction(fp.Function))
+            {
+                functions.AddFunction(fp.Function);
+                ag.ActivateFunction(fp.Function.fTYPE);
+                Destroy(fp.gameObject);
+            }
+            else
+            {
+                //Destroy(fp.gameObject);
+
+            }
         }
     }
 

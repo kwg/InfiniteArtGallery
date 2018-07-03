@@ -14,6 +14,7 @@ public class ArtGallery : MonoBehaviour {
     public GameObject roomObject; // RoomObject for room to load (set in the editor)
     [HideInInspector] public Room gameRoom; // Reference to the in-game room that the player is currently in (set by the script)
     public GameObject FPC; // Reference to the first person contoller ( set in the editor)
+    public Player player;
 
     //private SortedList<int, RoomConfiguration> history;
     private RoomConfiguration lobby; // Root of the room tree
@@ -24,9 +25,15 @@ public class ArtGallery : MonoBehaviour {
     int seed;
     
     // active functions
-    FTYPE[] activeFunctions;
+    List<FTYPE> activeFunctions;
     // collectedFunctions
-    FTYPE[] collectedFunctions;
+    List<FTYPE> collectedFunctions;
+
+    private void Awake()
+    {
+        player = FindObjectOfType<Player>();
+
+    }
 
     // Use this for initialization
     void Start()
@@ -38,10 +45,11 @@ public class ArtGallery : MonoBehaviour {
         // Build the game room
         GameObject roomProp = Instantiate(roomObject) as GameObject;
         gameRoom = roomProp.GetComponent<Room>();
+        gameRoom.SetArtGallery(this);
 
         // starting functions
-        collectedFunctions = new FTYPE[] {FTYPE.ID, FTYPE.TANH, FTYPE.SQUAREWAVE, FTYPE.GAUSS, FTYPE.SINE };
-        activeFunctions = new FTYPE[] { FTYPE.ID, FTYPE.GAUSS, FTYPE.SINE };
+        collectedFunctions = new List<FTYPE> { FTYPE.ID, FTYPE.TANH, FTYPE.SQUAREWAVE, FTYPE.GAUSS, FTYPE.SINE };
+        activeFunctions = new List<FTYPE> { FTYPE.ID, FTYPE.GAUSS, FTYPE.SINE };
 
         //activate functions
         // Testing: activating all functions
@@ -58,6 +66,19 @@ public class ArtGallery : MonoBehaviour {
     public RoomConfiguration GetLobby()
     {
         return lobby;
+    }
+
+    public FTYPE GetRandomCollectedFunction()
+    {
+        return collectedFunctions[Random.Range(0, activeFunctions.Count)];
+    }
+
+    public void ActivateFunction(FTYPE fTYPE)
+    {
+        if (!activeFunctions.Contains(fTYPE))
+        {
+            activeFunctions.Add(fTYPE);
+        }
     }
 
     public Artwork GetArtwork(int portalID)

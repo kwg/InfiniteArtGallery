@@ -13,13 +13,13 @@ public class RoomConfiguration {
 
     public RoomConfiguration(RoomConfiguration parentRoom, int returnPortalID, int championPortalID, Artwork champion, int numArtworks)
     {
-        Debug.Log("Creating a new room with " + numArtworks + " artworks");
+        if(ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE) Debug.Log("Creating a new room with " + numArtworks + " artworks");
         this.parentRoom = parentRoom;
 
         rooms = new RoomConfiguration[numArtworks];
-        Debug.Log("Clearing artworks...");
+        if (ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE) Debug.Log("Clearing artworks...");
         artworks = new Artwork[numArtworks];
-        Debug.Log("Created new artworks: " + artworks.Length);
+        if (ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE) Debug.Log("Created new artworks: " + artworks.Length);
         rooms[returnPortalID] = parentRoom;
                 
         // clone champion to each artwork and mutate

@@ -11,9 +11,9 @@ public class CrossoverTest : MonoBehaviour
     private static readonly int NUM_INPUTS = 4;
     private static readonly int NUM_OUTPUTS = 3;
     // active functions
-    FTYPE[] activeFunctions;
+    List<FTYPE> activeFunctions;
     // collectedFunctions
-    FTYPE[] collectedFunctions;
+    List<FTYPE> collectedFunctions;
 
     Artwork leftArt, rightArt;
     TWEANNGenotype leftGeno;
@@ -34,8 +34,8 @@ public class CrossoverTest : MonoBehaviour
         EvolutionaryHistory.archetypes[0] = new TWEANNGenotype(4, 3, 0).Nodes;
         width = height = 64;
         //ActivationFunctions.ActivateAllFunctions();
-        collectedFunctions = new FTYPE[] { FTYPE.ID, FTYPE.TANH, FTYPE.SQUAREWAVE, FTYPE.GAUSS, FTYPE.SINE };
-        activeFunctions = new FTYPE[] { FTYPE.ID, FTYPE.GAUSS, FTYPE.SINE };
+        collectedFunctions = new List<FTYPE> { FTYPE.ID, FTYPE.TANH, FTYPE.SQUAREWAVE, FTYPE.GAUSS, FTYPE.SINE };
+        activeFunctions = new List<FTYPE> { FTYPE.ID, FTYPE.GAUSS, FTYPE.SINE };
         ActivationFunctions.ActivateFunction(activeFunctions);
 
         leftRenderer = leftQuad.GetComponent<Renderer>();

@@ -19,8 +19,8 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
 
     public void LoadGenotype(List<NodeGene> nodes, List<LinkGene> links)
     {
-        this.Nodes = nodes;
-        this.Links = links;
+        Nodes = nodes;
+        Links = links;
 
         numInputs = 0;
         numOutputs = 0;
@@ -172,7 +172,6 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
 
         if(mutationRoll < mutationChance)
         {
-            Debug.Log("Mutating...");
             int mutationType = Random.Range(0, 4);
             switch (mutationType)
             {

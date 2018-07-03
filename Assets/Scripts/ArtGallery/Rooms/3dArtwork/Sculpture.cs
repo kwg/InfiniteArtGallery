@@ -21,10 +21,9 @@ public class Sculpture : MonoBehaviour {
         geno = new TWEANNGenotype(4, 4, 0); // FIXME archetype index 
         vox = new GameObject[SCULP_X, SCULP_Z, SCULP_Y];
 
-        sculptureDimensions = new Vector3(5, 5, 5);
-        transform.SetPositionAndRotation(new Vector3((SCULP_X * voxelSize) / 2f, (SCULP_Y * voxelSize) / 2f, (SCULP_Z * voxelSize) / 2f), Quaternion.identity);
+        //transform.SetPositionAndRotation(new Vector3((SCULP_X * voxelSize) / 2f, (SCULP_Y * voxelSize) / 2f, (SCULP_Z * voxelSize) / 2f), Quaternion.identity);
 
-        voxelSize = 1;
+        voxelSize = 0.5f;
         ActivationFunctions.ActivateAllFunctions();
         GenerateCPPN();
         PregenSculpture();

@@ -8,6 +8,8 @@ public class SavedFunction : IFunctionItem {
 
     public Sprite Image { get; set; }
 
+    public Texture2D Texture { get; set; }
+
     public FTYPE fTYPE { get; set; }
 
     public void GenerateThumbnail()
@@ -37,7 +39,7 @@ public class SavedFunction : IFunctionItem {
 
         thumb.SetPixels(pixels);
         thumb.Apply();
-
+        Texture = thumb;
         Image = Sprite.Create(thumb, new Rect(0, 0, thumb.width, thumb.height), new Vector2(0.5f, 0.5f));
     }
 

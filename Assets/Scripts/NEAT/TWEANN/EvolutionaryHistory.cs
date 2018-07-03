@@ -64,10 +64,10 @@ public class EvolutionaryHistory {
     {
         if (archetypes != null && archetypes[populationIndex] != null)
         {
-            Debug.Log("Adding at pos " + pos + ". Length of archetype is now " + archetypes[populationIndex].Count);
+            if (ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE) Debug.Log("Adding at pos " + pos + ". Length of archetype is now " + archetypes[populationIndex].Count);
             // TODO sanity checks - .Insert() is brutal about index out of bounds problems
             archetypes[populationIndex].Insert(pos, node);
-            Debug.Log("Node added at pos " + pos + ". Length of archetype is now " + archetypes[populationIndex].Count);
+            if (ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE) Debug.Log("Node added at pos " + pos + ". Length of archetype is now " + archetypes[populationIndex].Count);
         }
     }
 

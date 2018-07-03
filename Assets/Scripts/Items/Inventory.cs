@@ -31,6 +31,8 @@ public class Inventory : MonoBehaviour {
         hud.AddSlots(tray, numberOfInventorySlots);
         ActiveSlot = 0;
         hud.SelectSlot(tray, ActiveSlot);
+
+        ag.player.inventory = this;
     }
 
     private void FindNextEmptySlot()

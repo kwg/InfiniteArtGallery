@@ -35,6 +35,7 @@ public class Functions : MonoBehaviour {
         hud.SelectSlot(tray, ActiveSlot);
         functions = new IFunctionItem[numberOfFunctionSlots];
 
+        ag.player.functions = this;
 
         /*** TESTING SECTION 
          * Adding functions to the hud ***/
@@ -59,20 +60,20 @@ public class Functions : MonoBehaviour {
         testFunction2.GenerateThumbnail();
         AddFunction(testFunction2);
         CycleActiveSlot(1);
-        SavedFunction testFunction3 = new SavedFunction
-        {
-            fTYPE = FTYPE.SAWTOOTH,
-        };
-        testFunction3.GenerateThumbnail();
-        AddFunction(testFunction3);
-        CycleActiveSlot(1);
-        SavedFunction testFunction4 = new SavedFunction
-        {
-            fTYPE = FTYPE.SQUAREWAVE,
-        };
-        testFunction4.GenerateThumbnail();
-        AddFunction(testFunction4);
-        CycleActiveSlot(1);
+        //SavedFunction testFunction3 = new SavedFunction
+        //{
+        //    fTYPE = FTYPE.SAWTOOTH,
+        //};
+        //testFunction3.GenerateThumbnail();
+        //AddFunction(testFunction3);
+        //CycleActiveSlot(1);
+        //SavedFunction testFunction4 = new SavedFunction
+        //{
+        //    fTYPE = FTYPE.SQUAREWAVE,
+        //};
+        //testFunction4.GenerateThumbnail();
+        //AddFunction(testFunction4);
+        //CycleActiveSlot(1);
 
     }
 	
@@ -94,10 +95,12 @@ public class Functions : MonoBehaviour {
         {
             functions[ActiveSlot] = function;
             hud.UpdateFunctionThumbnail(ActiveSlot, function.Image);
+            CycleActiveSlot(1);
         }
         else // Overwrite inventory slot
         {
-            throw new Exception("Inventory overwriting is not implemented yet");
+            functions[ActiveSlot] = function;
+            hud.UpdateFunctionThumbnail(ActiveSlot, function.Image);
         }
     }
 
@@ -121,5 +124,22 @@ public class Functions : MonoBehaviour {
         {
             throw new ArgumentException("Delta was not +/- 1");
         }
+    }
+
+    public bool HasFunction(SavedFunction comapre)
+    {
+        bool result = false;
+
+        foreach(SavedFunction sf in functions)
+        {
+            if(sf != null && sf.fTYPE == comapre.fTYPE)
+            {
+                Debug.Log("FOUND IT");
+                result = true;
+                break;
+            }
+        }
+
+        return result;
     }
 }

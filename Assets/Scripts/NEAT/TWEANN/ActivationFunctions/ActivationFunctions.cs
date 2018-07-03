@@ -78,7 +78,7 @@ public class ActivationFunctions  {
         return successful;
     }
 
-    public static bool ActivateFunction(FTYPE[] fTypes)
+    public static bool ActivateFunction(List<FTYPE> fTypes)
     {
         bool successful = false;
         foreach(FTYPE fType in fTypes)

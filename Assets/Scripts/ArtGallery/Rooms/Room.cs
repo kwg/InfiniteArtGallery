@@ -15,6 +15,8 @@ public class Room : MonoBehaviour
 
     public GameObject portalObject;
     public GameObject sculptureObject;
+    public GameObject functionPickupObject;
+    public GameObject VoxelObject;
     SortedList<int, Portal> portals; // Portal index is door index
     List<Sculpture> sculpturesCollection;
 
@@ -28,6 +30,7 @@ public class Room : MonoBehaviour
     private int rewindPortalID; // Parent of this room
     private bool isPopulated = false;  // is this room initialized?
     private Texture2D[] images;
+    private ArtGallery artGallery;
 
     /// <summary>
     /// Initial creation of the room
@@ -39,7 +42,7 @@ public class Room : MonoBehaviour
         rewindPortalID = -1;
         portals = new SortedList<int, Portal>();
         CreatePortals();
-        //CreateSculptures();
+        CreateSculptures();
         isPopulated = true;
     }
 
@@ -49,14 +52,23 @@ public class Room : MonoBehaviour
     /// <param name="artworks">SortedList of artwork to be hung on the walls</param>
     public void ConfigureRoom(int rewindPortalID, Texture2D[] images)
     {
+        foreach(FunctionPickup fp in FindObjectsOfType<FunctionPickup>())
+        {
+            Destroy(fp.GetPickup());
+        }
         this.rewindPortalID = rewindPortalID;
         /* Create art */
         this.images = images;
         isPopulated = true;
-
+        SpawnPickups();
     }
 
     /* Public methods */
+    public void SetArtGallery(ArtGallery artGallery)
+    {
+        this.artGallery = artGallery;
+    }
+
     public void SetParentID(int rewindPortalID)
     {
         this.rewindPortalID = rewindPortalID;
@@ -83,11 +95,32 @@ public class Room : MonoBehaviour
     //just one sculpture for now
     private void CreateSculptures()
     {
-        GameObject sculpture = Instantiate(sculptureObject) as GameObject;
-        sculpture.AddComponent<Sculpture>();
+        Vector3[] sculps = new Vector3[] { new Vector3(-7.5f, 1f, -7.5f), new Vector3(7.5f, 1f, -7.5f), new Vector3(7.5f, 1f, 7.5f), new Vector3(-7.5f, 1f, 7.5f) };
 
-        //p.transform.position = vecs[img.Key];
-        //p.transform.Rotate(new Vector3(0, (-90 * img.Key), 0)); // HACK Hardcoded - fix once rooms can change the number of portals
+        for(int i = 0; i < sculps.Length; i++)
+        {
+            GameObject sculpture = Instantiate(sculptureObject) as GameObject;
+            sculpture.transform.SetParent(transform);
+            sculpture.transform.position = sculps[i];
+            sculpture.AddComponent<Sculpture>();
+            sculpture.GetComponent<Sculpture>().VoxelObject = VoxelObject;
+        }
+
+    }
+
+    private void SpawnPickups()
+    {
+        if(UnityEngine.Random.Range(0f, 1f) < 0.9f)
+        {
+            GameObject functionPickup = Instantiate(functionPickupObject) as GameObject;
+            FunctionPickup fp = functionPickup.GetComponent<FunctionPickup>();
+            SavedFunction sf = new SavedFunction
+            {
+                fTYPE = artGallery.GetRandomCollectedFunction()
+            };
+            sf.GenerateThumbnail();
+            fp.Function = sf;
+        }
     }
 
     private void CreatePortals()

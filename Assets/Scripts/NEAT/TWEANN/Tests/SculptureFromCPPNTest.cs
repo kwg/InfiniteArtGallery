@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class SculptureFromCPPNTest : MonoBehaviour {
     public GameObject sculptureObject;
+    public GameObject VoxelObject;
     private GameObject sculptureProp;
     private Sculpture sculpture;
     private Vector3 center;
@@ -13,8 +14,9 @@ public class SculptureFromCPPNTest : MonoBehaviour {
 
 	void Start () {
         sculptureProp = Instantiate(sculptureObject) as GameObject;
-        //sculptureProp.AddComponent<Sculpture>();
+        sculptureProp.AddComponent<Sculpture>();
         sculpture = sculptureProp.GetComponent<Sculpture>();
+        sculpture.LoadVoxel(VoxelObject);
         sculptureProp.transform.position = new Vector3(0, 1, 0);
         rotSave = sculptureProp.transform.rotation.eulerAngles;
         rotationY = 0.0f;

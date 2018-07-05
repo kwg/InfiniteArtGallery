@@ -16,8 +16,8 @@ public class Artwork
     bool needsRedraw;
 
     //TODO width, height - These are static for testing but we may want to make them change
-    int width = 64;
-    int height = 64;
+    int width = 256;
+    int height = 256;
 
     /// <summary>
     /// Default empty constructor

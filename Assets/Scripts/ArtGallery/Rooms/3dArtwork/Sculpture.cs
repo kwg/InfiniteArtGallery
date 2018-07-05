@@ -20,7 +20,6 @@ public class Sculpture : MonoBehaviour {
         //inputs: (x,y,z) outputs: r,g,b and presence
         geno = new TWEANNGenotype(4, 4, 0); // FIXME archetype index 
         vox = new GameObject[SCULP_X, SCULP_Z, SCULP_Y];
-
         //transform.SetPositionAndRotation(new Vector3((SCULP_X * voxelSize) / 2f, (SCULP_Y * voxelSize) / 2f, (SCULP_Z * voxelSize) / 2f), Quaternion.identity);
 
         voxelSize = 0.5f;
@@ -117,4 +116,8 @@ public class Sculpture : MonoBehaviour {
         geno.Mutate();
     }
 
+    public void LoadVoxel(GameObject Voxel)
+    {
+        VoxelObject = Voxel;
+    }
 }

@@ -50,7 +50,7 @@ public class CrossoverTest : MonoBehaviour
         leftGeno = new TWEANNGenotype(NUM_INPUTS, NUM_OUTPUTS, 0);
         rightGeno = new TWEANNGenotype(NUM_INPUTS, NUM_OUTPUTS, 0);
 
-        for (int i = 0; i < 50; i++)
+        for (int i = 0; i < 10; i++)
         {
             leftGeno.Mutate();
             rightGeno.Mutate();

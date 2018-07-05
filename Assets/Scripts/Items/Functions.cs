@@ -45,21 +45,21 @@ public class Functions : MonoBehaviour {
         };
         testFunction0.GenerateThumbnail();
         AddFunction(testFunction0);
-        CycleActiveSlot(1);
+        //CycleActiveSlot(1);
         SavedFunction testFunction1 = new SavedFunction
         {
             fTYPE = FTYPE.GAUSS,
         };
         testFunction1.GenerateThumbnail();
         AddFunction(testFunction1);
-        CycleActiveSlot(1);
+        //CycleActiveSlot(1);
         SavedFunction testFunction2 = new SavedFunction
         {
             fTYPE = FTYPE.SINE,
         };
         testFunction2.GenerateThumbnail();
         AddFunction(testFunction2);
-        CycleActiveSlot(1);
+        //CycleActiveSlot(1);
         //SavedFunction testFunction3 = new SavedFunction
         //{
         //    fTYPE = FTYPE.SAWTOOTH,
@@ -134,7 +134,6 @@ public class Functions : MonoBehaviour {
         {
             if(sf != null && sf.fTYPE == comapre.fTYPE)
             {
-                Debug.Log("FOUND IT");
                 result = true;
                 break;
             }

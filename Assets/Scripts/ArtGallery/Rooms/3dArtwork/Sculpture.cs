@@ -9,9 +9,9 @@ public class Sculpture : MonoBehaviour {
     Vector3 sculptureDimensions;
     float voxelSize;
     const float PRESENCE_THRESHOLD = .1f;
-    const int SCULP_X = 5;
-    const int SCULP_Z = 5;
-    const int SCULP_Y = 10;
+    const int SCULP_X = 10;
+    const int SCULP_Z = 10;
+    const int SCULP_Y = 20;
     const float BIAS = 1;
     const float NUDGE = 0f;
     GameObject[,,] vox;
@@ -19,7 +19,7 @@ public class Sculpture : MonoBehaviour {
     private void Start()
     {
         //inputs: (x,y,z) outputs: r,g,b and presence
-        geno = new TWEANNGenotype(4, 4, 0); // Use archetype 0 for test chamber
+        geno = new TWEANNGenotype(5, 4, 0); // Use archetype 0 for test chamber
         vox = new GameObject[SCULP_X, SCULP_Z, SCULP_Y];
 
         voxelSize = 0.5f;
@@ -93,7 +93,8 @@ public class Sculpture : MonoBehaviour {
                     float actualX = -(halfVoxelSize * SCULP_X / 2.0f) + halfVoxelSize + x * halfVoxelSize;
                     float actualZ = -(halfVoxelSize * SCULP_Z / 2.0f) + halfVoxelSize + z * halfVoxelSize;
                     float actualY = -(halfVoxelSize * SCULP_Y / 2.0f) + halfVoxelSize + y * halfVoxelSize;
-                    float[] outputs = cppn.Process(new float[] { actualX, actualY, actualZ , BIAS});
+                    float distFromCenter = GetDistFromCenter(actualX, actualZ, actualY);
+                    float[] outputs = cppn.Process(new float[] { actualX, actualY, actualZ, distFromCenter, BIAS});
                     if (outputs[3] > PRESENCE_THRESHOLD) {
                         float initialHue = ActivationFunctions.Activation(FTYPE.PIECEWISE, outputs[0]);
                         float finalHue = initialHue < 0 ? initialHue + 1 : initialHue;
@@ -104,7 +105,9 @@ public class Sculpture : MonoBehaviour {
                             true
                             );
                         rend.enabled = true;
-                        Color color = new Color(colorHSV.r, colorHSV.g, colorHSV.b, outputs[3]);
+                        float alpha = ActivationFunctions.Activation(FTYPE.HLPIECEWISE, outputs[3]);
+                        //float alpha = -1.0f;
+                        Color color = new Color(colorHSV.r, colorHSV.g, colorHSV.b, alpha);
                         rend.material.SetColor("_Color", color);
                     }
                     else
@@ -112,7 +115,7 @@ public class Sculpture : MonoBehaviour {
                         // This option will make the voxel turn off (requires matching  = true statement above)
                         rend.enabled = false; 
                         // This option will enable the "glass block" effect
-                        rend.material.SetColor("_Color", new Color(0f, 0f, 0f, 0f));
+                        //rend.material.SetColor("_Color", new Color(0f, 0f, 0f, 0f));
                     }
                 }
             }
@@ -134,5 +137,23 @@ public class Sculpture : MonoBehaviour {
     public void LoadVoxel(GameObject Voxel)
     {
         VoxelObject = Voxel;
+    }
+
+    float GetDistFromCenter(float x, float z, float y)
+    {
+        float result = float.NaN;
+
+        result = Mathf.Sqrt((x * x + z * z + y * y)) * Mathf.Sqrt(2);
+
+        return result;
+    }
+
+    float Scale(int toScale, int maxDimension)
+    {
+        float result;
+
+        result = ((toScale * 1.0f / (maxDimension - 1)) * 2) - 1;
+
+        return result;
     }
 }

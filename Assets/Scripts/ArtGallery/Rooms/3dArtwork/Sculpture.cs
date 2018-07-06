@@ -10,25 +10,28 @@ public class Sculpture : MonoBehaviour {
     float voxelSize;
     const float PRESENCE_THRESHOLD = .1f;
     const int SCULP_X = 5;
-    const int SCULP_Y = 10;
     const int SCULP_Z = 5;
+    const int SCULP_Y = 10;
     const float BIAS = 1;
+    const float NUDGE = 0f;
     GameObject[,,] vox;
 
     private void Start()
     {
         //inputs: (x,y,z) outputs: r,g,b and presence
-        geno = new TWEANNGenotype(4, 4, 0); // FIXME archetype index 
+        geno = new TWEANNGenotype(4, 4, 0); // Use archetype 0 for test chamber
         vox = new GameObject[SCULP_X, SCULP_Z, SCULP_Y];
-        //transform.SetPositionAndRotation(new Vector3((SCULP_X * voxelSize) / 2f, (SCULP_Y * voxelSize) / 2f, (SCULP_Z * voxelSize) / 2f), Quaternion.identity);
 
         voxelSize = 0.5f;
         ActivationFunctions.ActivateAllFunctions();
-        GenerateCPPN();
         PregenSculpture();
+        GenerateCPPN();
         CreateSculture();
     }
 
+    /// <summary>
+    /// Fill the sculpture space with voxels
+    /// </summary>
     private void PregenSculpture()
     {
         float halfVoxelSize = voxelSize / 2;
@@ -42,11 +45,11 @@ public class Sculpture : MonoBehaviour {
                     GameObject voxel = Instantiate(VoxelObject) as GameObject;
                     // set this vox position
                     float actualX = transform.position.x + (-(halfVoxelSize * SCULP_X / 2.0f) + halfVoxelSize + x * halfVoxelSize);
-                    float actualY = transform.position.y + (-(halfVoxelSize * SCULP_Z / 2.0f) + halfVoxelSize + y * halfVoxelSize);
-                    float actualZ = transform.position.z + (-(halfVoxelSize * SCULP_Y / 2.0f) + halfVoxelSize + z * halfVoxelSize);
+                    float actualY = transform.position.z + (-(halfVoxelSize * SCULP_Z / 2.0f) + halfVoxelSize + z * halfVoxelSize);
+                    float actualZ = transform.position.y + (-(halfVoxelSize * SCULP_Y / 2.0f) + halfVoxelSize + y * halfVoxelSize);
                     voxel.transform.SetParent(transform);
-                    voxel.transform.position = new Vector3(actualX, actualY, actualZ);
-                    voxel.transform.localScale = new Vector3(halfVoxelSize - .0001f, halfVoxelSize - .0001f, halfVoxelSize - .0001f);
+                    voxel.transform.position = new Vector3(actualX, actualZ, actualY);
+                    voxel.transform.localScale = new Vector3(halfVoxelSize - NUDGE, halfVoxelSize - NUDGE, halfVoxelSize - NUDGE);
 
                     vox[x, z, y] = voxel;
                 }
@@ -54,12 +57,14 @@ public class Sculpture : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Reset the sculpture
+    /// </summary>
     public void NewSculpture()
     {
-        geno = new TWEANNGenotype(4, 4, 0); // FIXME archetype index 
+        geno = new TWEANNGenotype(4, 4, 0); 
         GenerateCPPN();
         CreateSculture();
-
     }
 
     private void GenerateCPPN()
@@ -70,6 +75,9 @@ public class Sculpture : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Change voxels in sculpture based on CPPN outputs
+    /// </summary>
     public void CreateSculture ()
     {
         float halfVoxelSize = voxelSize / 2;
@@ -83,8 +91,8 @@ public class Sculpture : MonoBehaviour {
                     GameObject voxelProp = vox[x, z, y];
                     Renderer rend = voxelProp.gameObject.GetComponent<Renderer>();
                     float actualX = -(halfVoxelSize * SCULP_X / 2.0f) + halfVoxelSize + x * halfVoxelSize;
-                    float actualZ = -(halfVoxelSize * SCULP_Z / 2.0f) + halfVoxelSize + y * halfVoxelSize;
-                    float actualY = -(halfVoxelSize * SCULP_Y / 2.0f) + halfVoxelSize + z * halfVoxelSize;
+                    float actualZ = -(halfVoxelSize * SCULP_Z / 2.0f) + halfVoxelSize + z * halfVoxelSize;
+                    float actualY = -(halfVoxelSize * SCULP_Y / 2.0f) + halfVoxelSize + y * halfVoxelSize;
                     float[] outputs = cppn.Process(new float[] { actualX, actualY, actualZ , BIAS});
                     if (outputs[3] > PRESENCE_THRESHOLD) {
                         float initialHue = ActivationFunctions.Activation(FTYPE.PIECEWISE, outputs[0]);
@@ -111,11 +119,18 @@ public class Sculpture : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Mutate genome
+    /// </summary>
     public void Mutate()
     {
         geno.Mutate();
     }
 
+    /// <summary>
+    /// Tell sculpture what object we are using as a voxel
+    /// </summary>
+    /// <param name="Voxel">Unity prefab we are using as a voxel</param>
     public void LoadVoxel(GameObject Voxel)
     {
         VoxelObject = Voxel;

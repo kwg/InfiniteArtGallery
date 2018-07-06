@@ -9,11 +9,15 @@ public class Sculpture : MonoBehaviour {
     Vector3 sculptureDimensions;
     float voxelSize;
     const float PRESENCE_THRESHOLD = .1f;
-    const int SCULP_X = 10;
-    const int SCULP_Z = 10;
-    const int SCULP_Y = 20;
-    const float BIAS = 1;
+    const int SCULP_X = 5;
+    const int SCULP_Z = 5;
+    const int SCULP_Y = 10;
+    const float BIAS = 1f;
     const float NUDGE = 0f;
+    public static int THREE_DIMENSIONAL_VOXEL_INDEX = 0;
+    public static int THREE_DIMENSIONAL_HUE_INDEX = 1;
+    public static int THREE_DIMENSIONAL_SATURATION_INDEX = 2;
+    public static int THREE_DIMENSIONAL_BRIGHTNESS_INDEX = 3;
     GameObject[,,] vox;
 
     private void Start()
@@ -95,17 +99,17 @@ public class Sculpture : MonoBehaviour {
                     float actualY = -(halfVoxelSize * SCULP_Y / 2.0f) + halfVoxelSize + y * halfVoxelSize;
                     float distFromCenter = GetDistFromCenter(actualX, actualZ, actualY);
                     float[] outputs = cppn.Process(new float[] { actualX, actualY, actualZ, distFromCenter, BIAS});
-                    if (outputs[3] > PRESENCE_THRESHOLD) {
-                        float initialHue = ActivationFunctions.Activation(FTYPE.PIECEWISE, outputs[0]);
+                    if (outputs[THREE_DIMENSIONAL_BRIGHTNESS_INDEX] > PRESENCE_THRESHOLD) {
+                        float initialHue = ActivationFunctions.Activation(FTYPE.PIECEWISE, outputs[THREE_DIMENSIONAL_VOXEL_INDEX]);
                         float finalHue = initialHue < 0 ? initialHue + 1 : initialHue;
                         Color colorHSV = Color.HSVToRGB(
                             finalHue,
-                            ActivationFunctions.Activation(FTYPE.HLPIECEWISE, outputs[1]),
-                            Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, outputs[2])),
+                            ActivationFunctions.Activation(FTYPE.HLPIECEWISE, outputs[THREE_DIMENSIONAL_HUE_INDEX]),
+                            Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, outputs[THREE_DIMENSIONAL_SATURATION_INDEX])),
                             true
                             );
                         rend.enabled = true;
-                        float alpha = ActivationFunctions.Activation(FTYPE.HLPIECEWISE, outputs[3]);
+                        float alpha = ActivationFunctions.Activation(FTYPE.HLPIECEWISE, outputs[THREE_DIMENSIONAL_BRIGHTNESS_INDEX]);
                         //float alpha = -1.0f;
                         Color color = new Color(colorHSV.r, colorHSV.g, colorHSV.b, alpha);
                         rend.material.SetColor("_Color", color);

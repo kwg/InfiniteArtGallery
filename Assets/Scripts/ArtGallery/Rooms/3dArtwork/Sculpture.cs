@@ -9,9 +9,9 @@ public class Sculpture : MonoBehaviour {
     Vector3 sculptureDimensions;
     float voxelSize;
     const float PRESENCE_THRESHOLD = .1f;
-    const int SCULP_X = 5;
-    const int SCULP_Z = 5;
-    const int SCULP_Y = 10;
+    int SCULP_X = 5;
+    int SCULP_Z = 5;
+    int SCULP_Y = 10;
     const float BIAS = 1f;
     const float NUDGE = 0f;
     public static int THREE_DIMENSIONAL_VOXEL_INDEX = 0;
@@ -23,7 +23,7 @@ public class Sculpture : MonoBehaviour {
     private void Start()
     {
         //inputs: (x,y,z) outputs: r,g,b and presence
-        geno = new TWEANNGenotype(5, 4, 0); // Use archetype 0 for test chamber
+        geno = new TWEANNGenotype(8, 4, 0); // Use archetype 0 for test chamber
         vox = new GameObject[SCULP_X, SCULP_Z, SCULP_Y];
 
         voxelSize = 0.5f;
@@ -66,9 +66,17 @@ public class Sculpture : MonoBehaviour {
     /// </summary>
     public void NewSculpture()
     {
-        geno = new TWEANNGenotype(4, 4, 0); 
+        geno = new TWEANNGenotype(8, 4, 0); 
         GenerateCPPN();
         CreateSculture();
+    }
+
+    public void SculptureSize(int x, int z, int y)
+    {
+        SCULP_X = x;
+        SCULP_Z = z;
+        SCULP_Y = y;
+
     }
 
     private void GenerateCPPN()
@@ -98,7 +106,11 @@ public class Sculpture : MonoBehaviour {
                     float actualZ = -(halfVoxelSize * SCULP_Z / 2.0f) + halfVoxelSize + z * halfVoxelSize;
                     float actualY = -(halfVoxelSize * SCULP_Y / 2.0f) + halfVoxelSize + y * halfVoxelSize;
                     float distFromCenter = GetDistFromCenter(actualX, actualZ, actualY);
-                    float[] outputs = cppn.Process(new float[] { actualX, actualY, actualZ, distFromCenter, BIAS});
+                    float distFromCenterXZ = GetDistFromCenterXY(actualX, actualZ);
+                    float distfromCenterYZ = GetDistFromCenterZY(actualY, actualZ);
+                    float distfromCenterZY = GetDistFromCenterZY(actualX, actualZ);
+                    //float[] outputs = cppn.Process(new float[] { actualX, actualY, actualZ, distFromCenter, BIAS});
+                    float[] outputs = cppn.Process(new float[] { actualX, actualY, actualZ, distFromCenter, distFromCenterXZ, distfromCenterYZ, distfromCenterZY, BIAS });
                     if (outputs[THREE_DIMENSIONAL_BRIGHTNESS_INDEX] > PRESENCE_THRESHOLD) {
                         float initialHue = ActivationFunctions.Activation(FTYPE.PIECEWISE, outputs[THREE_DIMENSIONAL_VOXEL_INDEX]);
                         float finalHue = initialHue < 0 ? initialHue + 1 : initialHue;
@@ -148,6 +160,33 @@ public class Sculpture : MonoBehaviour {
         float result = float.NaN;
 
         result = Mathf.Sqrt((x * x + z * z + y * y)) * Mathf.Sqrt(2);
+
+        return result;
+    }
+
+    float GetDistFromCenterXY(float x, float y)
+    {
+        float result = float.NaN;
+
+        result = Mathf.Sqrt((x * x + y * y)) * Mathf.Sqrt(2);
+
+        return result;
+    }
+
+    float GetDistFromCenterZY(float z, float y)
+    {
+        float result = float.NaN;
+
+        result = Mathf.Sqrt((z * z + y * y)) * Mathf.Sqrt(2);
+
+        return result;
+    }
+
+    float GetDistFromCenterXZ(float x, float z)
+    {
+        float result = float.NaN;
+
+        result = Mathf.Sqrt((x * x + z * z)) * Mathf.Sqrt(2);
 
         return result;
     }

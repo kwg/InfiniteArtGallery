@@ -9,9 +9,9 @@ public class Sculpture : MonoBehaviour {
     Vector3 sculptureDimensions;
     float voxelSize;
     const float PRESENCE_THRESHOLD = .1f;
-    const int SCULP_X = 5;
-    const int SCULP_Y = 10;
-    const int SCULP_Z = 5;
+    const int SCULP_X = 10;
+    const int SCULP_Y = 20;
+    const int SCULP_Z = 10;
     const float BIAS = 1;
     GameObject[,,] vox;
 

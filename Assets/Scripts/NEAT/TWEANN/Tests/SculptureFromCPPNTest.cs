@@ -11,8 +11,10 @@ public class SculptureFromCPPNTest : MonoBehaviour {
     private Vector3 rotSave;
     private float ROTATION_SPEED = 40;
     private float rotationY;
+    OutputText textbox;
 
 	void Start () {
+        textbox = GetComponent<OutputText>();
         sculptureProp = Instantiate(sculptureObject) as GameObject;
         sculptureProp.AddComponent<Sculpture>();
         sculpture = sculptureProp.GetComponent<Sculpture>();
@@ -30,6 +32,7 @@ public class SculptureFromCPPNTest : MonoBehaviour {
         sculptureProp.transform.Rotate(0, rotationY, 0);
         if (!PauseMenu.isPaused && Input.GetButtonDown("Fire2"))
         {
+            textbox.Text("New sculpture and genome");
             //Destroy(sculptureProp);
             //sculptureProp = Instantiate(sculptureObject) as GameObject;
             //sculptureProp.AddComponent<Sculpture>();
@@ -40,12 +43,18 @@ public class SculptureFromCPPNTest : MonoBehaviour {
 
         if (!PauseMenu.isPaused && Input.GetButtonDown("Fire1"))
         {
+            textbox.Text("Mutating...");
             rotSave = sculptureProp.transform.rotation.eulerAngles;
             sculptureProp.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
             DeleteOldVoxels();
             sculpture.Mutate();
             sculpture.CreateSculture();
             sculptureProp.transform.Rotate(rotSave);          
+        }
+
+        if (!PauseMenu.isPaused && Input.GetButtonDown("Fire3"))
+        {
+            textbox.Text("Fire3...");
         }
 
     }

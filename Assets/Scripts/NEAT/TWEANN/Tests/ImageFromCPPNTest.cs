@@ -13,7 +13,7 @@ public class ImageFromCPPNTest : MonoBehaviour
     private static readonly int NUM_INPUTS = 4;
     private static readonly int NUM_OUTPUTS = 3;
 
-
+    OutputText textbox;
     TWEANNGenotype cppnTest;
     TWEANN cppn;
     Artwork art;
@@ -30,6 +30,7 @@ public class ImageFromCPPNTest : MonoBehaviour
     {
         EvolutionaryHistory.InitializeEvolutionaryHistory();
         EvolutionaryHistory.archetypes[0] = new TWEANNGenotype(4, 3, 0).Nodes;
+        textbox = GetComponent<OutputText>();
 
         art = new Artwork();
 
@@ -62,12 +63,14 @@ public class ImageFromCPPNTest : MonoBehaviour
         {
             img = new Texture2D(width, height, TextureFormat.ARGB32, true);
             art = new Artwork();
+            textbox.Text("New image and genome");
         }
 
         if (!PauseMenu.isPaused && Input.GetButtonDown("Fire1"))
         {
             TWEANNGenotype geno = art.GetGenotype();
             geno.Mutate();
+            textbox.Text("Mutating...");
             art = new Artwork(geno);
             
         }

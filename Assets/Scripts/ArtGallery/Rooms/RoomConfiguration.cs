@@ -23,32 +23,37 @@ public class RoomConfiguration {
         rooms[returnPortalID] = parentRoom;
                 
         // clone champion to each artwork and mutate
+        for (int i = 0; i < numArtworks; i++)
         {
-            for (int i = 0; i < numArtworks; i++)
+            TWEANNGenotype geno = new TWEANNGenotype(champion.GetGenotype().Copy());
+            // champion art
+            if(i == championPortalID)
             {
-                TWEANNGenotype geno = new TWEANNGenotype(champion.GetGenotype().Copy());
-                // champion art
-                if(i == championPortalID)
+                //do little
+                geno.Mutate();
+            }
+            // return art
+            else if(i == returnPortalID)
+            {
+                // do nothing - save some cpu
+            }
+            else
+            {
+                // all other art
+                int mutations = System.Math.Abs(championPortalID - i) + 1;
+                for(int m = 0; m < MUTATION_CYCLES - mutations; m++)
                 {
-                    //do little
                     geno.Mutate();
                 }
-                // return art
-                else if(i == returnPortalID)
-                {
-                    // do nothing - save some cpu
-                }
-                else
-                {
-                    // all other art
-                    int mutations = System.Math.Abs(championPortalID - i) + 1;
-                    for(int m = 0; m < MUTATION_CYCLES - mutations; m++)
-                    {
-                        geno.Mutate();
-                    }
-                }
-                artworks[i] = new Artwork(geno);
             }
+            artworks[i] = new Artwork(geno);
+        }
+
+        //FIXME This does nothing yet. Sculptures need added to the room config
+        // Mutate Sculptures
+        foreach(Sculpture sculpture in ArtGallery.FindObjectOfType<Room>().GetComponents<Sculpture>())
+        {
+            sculpture.Mutate();
         }
     }
 

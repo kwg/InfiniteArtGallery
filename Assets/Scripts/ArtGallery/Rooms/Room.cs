@@ -104,6 +104,10 @@ public class Room : MonoBehaviour
             sculpture.transform.position = sculps[i];
             sculpture.AddComponent<Sculpture>();
             sculpture.GetComponent<Sculpture>().VoxelObject = VoxelObject;
+            if(UnityEngine.Random.Range(0,1) < .5f)
+            {
+                sculpture.GetComponent<Sculpture>().ToggleTransparency();
+            }
         }
 
     }

@@ -14,6 +14,7 @@ public class Sculpture : MonoBehaviour {
     int SCULP_Y = 10;
     const float BIAS = 1f;
     const float NUDGE = 0f;
+    bool transparent;
     public static int THREE_DIMENSIONAL_VOXEL_INDEX = 0;
     public static int THREE_DIMENSIONAL_HUE_INDEX = 1;
     public static int THREE_DIMENSIONAL_SATURATION_INDEX = 2;
@@ -87,6 +88,12 @@ public class Sculpture : MonoBehaviour {
         }
     }
 
+    public bool ToggleTransparency()
+    {
+        transparent = !transparent;
+        return transparent;
+    }
+
     /// <summary>
     /// Change voxels in sculpture based on CPPN outputs
     /// </summary>
@@ -121,7 +128,12 @@ public class Sculpture : MonoBehaviour {
                             true
                             );
                         rend.enabled = true;
-                        float alpha = ActivationFunctions.Activation(FTYPE.HLPIECEWISE, outputs[THREE_DIMENSIONAL_BRIGHTNESS_INDEX]);
+                        float alpha = 1f;
+                        if (transparent)
+                        {
+                            alpha = ActivationFunctions.Activation(FTYPE.HLPIECEWISE, outputs[THREE_DIMENSIONAL_BRIGHTNESS_INDEX]);
+                        }
+
                         //float alpha = -1.0f;
                         Color color = new Color(colorHSV.r, colorHSV.g, colorHSV.b, alpha);
                         rend.material.SetColor("_Color", color);

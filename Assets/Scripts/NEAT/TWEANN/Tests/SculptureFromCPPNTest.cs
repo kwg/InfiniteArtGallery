@@ -13,7 +13,8 @@ public class SculptureFromCPPNTest : MonoBehaviour {
     private float rotationY;
     OutputText textbox;
 
-	void Start () {
+
+    void Start () {
         textbox = GetComponent<OutputText>();
         sculptureProp = Instantiate(sculptureObject) as GameObject;
         sculptureProp.AddComponent<Sculpture>();
@@ -55,7 +56,8 @@ public class SculptureFromCPPNTest : MonoBehaviour {
 
         if (!PauseMenu.isPaused && Input.GetButtonDown("Fire3"))
         {
-            textbox.Text("Fire3...");
+            
+            textbox.Text("Transparency: " + sculpture.ToggleTransparency());
         }
 
     }

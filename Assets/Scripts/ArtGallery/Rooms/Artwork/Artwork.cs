@@ -14,10 +14,14 @@ public class Artwork
     Thread cppnProcess;
     bool processingCPPN;
     bool needsRedraw;
+    const float BIAS = 1f;
+    public static int TWO_DIMENSIONAL_HUE_INDEX = 0;
+    public static int TWO_DIMENSIONAL_SATURATION_INDEX = 1;
+    public static int TWO_DIMENSIONAL_BRIGHTNESS_INDEX = 2;
 
     //TODO width, height - These are static for testing but we may want to make them change
-    int width = 256;
-    int height = 256;
+    int width = 128;
+    int height = 128;
 
     /// <summary>
     /// Default empty constructor
@@ -80,15 +84,15 @@ public class Artwork
                 float scaledX = Scale(x, width);
                 float scaledY = Scale(y, height);
                 float distCenter = GetDistFromCenter(scaledX, scaledY);
-                float[] hsv = ProcessCPPNInput(scaledX, scaledY, GetDistFromCenter(scaledX, scaledY), 1);
+                float[] hsv = ProcessCPPNInput(scaledX, scaledY, GetDistFromCenter(scaledX, scaledY), BIAS);
                 // This initial hue is in the range [-1,1] as in the MM-NEAT code
-                float initialHue = ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[0]);
+                float initialHue = ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[TWO_DIMENSIONAL_HUE_INDEX]);
                 // However, C Sharp's Colors do not automatically map negative numbers to the proper hue range as in Java, so an additional step is needed
                 float finalHue = initialHue < 0 ? initialHue + 1 : initialHue;
                 Color colorHSV = Color.HSVToRGB(
                     finalHue,
-                    ActivationFunctions.Activation(FTYPE.HLPIECEWISE, hsv[1]),
-                    Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[2])),
+                    ActivationFunctions.Activation(FTYPE.HLPIECEWISE, hsv[TWO_DIMENSIONAL_SATURATION_INDEX]),
+                    Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[TWO_DIMENSIONAL_BRIGHTNESS_INDEX])),
                     true
                     );
                 pixels[x + y * width] = colorHSV;
@@ -102,9 +106,9 @@ public class Artwork
         if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("CPPN Imgage generation complete");
     }
 
-    private float[] ProcessCPPNInput(float scaledX, float scaledY, float distCenter, int bias)
+    private float[] ProcessCPPNInput(float scaledX, float scaledY, float distCenter, float bias)
     {
-        return cppn.Process(new float[] { scaledX, scaledY, distCenter, 1 });
+        return cppn.Process(new float[] { scaledX, scaledY, distCenter, bias });
     }
 
     float Scale(int toScale, int maxDimension)

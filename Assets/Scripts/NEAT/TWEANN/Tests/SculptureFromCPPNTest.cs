@@ -18,6 +18,7 @@ public class SculptureFromCPPNTest : MonoBehaviour {
         sculptureProp = Instantiate(sculptureObject) as GameObject;
         sculptureProp.AddComponent<Sculpture>();
         sculpture = sculptureProp.GetComponent<Sculpture>();
+        sculpture.SculptureSize(10,10,20);
         sculpture.LoadVoxel(VoxelObject);
         sculptureProp.transform.position = new Vector3(0, 1, 0);
         rotSave = sculptureProp.transform.rotation.eulerAngles;

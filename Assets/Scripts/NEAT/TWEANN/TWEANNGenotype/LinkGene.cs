@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class LinkGene : Gene, IComparer<LinkGene>, System.IComparable<LinkGene>
 {
 

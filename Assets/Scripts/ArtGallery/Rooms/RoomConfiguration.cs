@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class RoomConfiguration {
 
     public int ArtArchetypeIndex { get; set; }
 
-    private RoomConfiguration parentRoom;
-    private Artwork[] artworks; 
-    private RoomConfiguration[] rooms;
+    public RoomConfiguration parentRoom { get; set; }
+    public Artwork[] artworks { get; set; }
+    public RoomConfiguration[] rooms { get; set; }
     private int MUTATION_CYCLES = 5; // maximum mutations per evolution
 
     public RoomConfiguration(RoomConfiguration parentRoom, int returnPortalID, int championPortalID, Artwork champion, int numArtworks)

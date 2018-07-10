@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
+[System.Serializable]
 public class Artwork
 {
     private bool debug = ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE;

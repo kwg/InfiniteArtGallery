@@ -9,8 +9,9 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
     public List<LinkGene> Links { get; set; }
     public long ID { get; private set; } // FIXME need genetic history ID assignment
 
-    private int numInputs, numOutputs;
-    private int archetypeIndex;
+    public int numInputs { get; set; }
+    public int numOutputs { get; set; }
+    public int archetypeIndex { get; set; }
 
     // FIXME This should not be declared here. This should be a parameter so that we can adjust it at run time
     private float mutationChance = 1.0f; // percent chance for a mutation to occur

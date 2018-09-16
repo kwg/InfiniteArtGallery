@@ -26,6 +26,11 @@ public class ImageFromCPPNTest : MonoBehaviour
 
     bool running = true;
 
+    const float BIAS = 1f;
+    public static int TWO_DIMENSIONAL_HUE_INDEX = 0;
+    public static int TWO_DIMENSIONAL_SATURATION_INDEX = 1;
+    public static int TWO_DIMENSIONAL_BRIGHTNESS_INDEX = 2;
+
     void Start()
     {
         EvolutionaryHistory.InitializeEvolutionaryHistory();
@@ -35,16 +40,10 @@ public class ImageFromCPPNTest : MonoBehaviour
         art = new Artwork();
 
         ActivationFunctions.ActivateAllFunctions();
-        //width = height = 256;
+        //ActivationFunctions.ActivateFunction(new List<FTYPE> { FTYPE.SAWTOOTH });
+        width = height = 256;
         renderer = GetComponent<Renderer>();
         img = new Texture2D(width, height, TextureFormat.ARGB32, true);
-
-        //ActivationFunctions.ActivateAllFunctions();
-
-        //cppnTest = new TWEANNGenotype(NUM_INPUTS, NUM_OUTPUTS, 0);
-        //GenerateCPPN();
-        //DoImage();
-        //renderer.material.mainTexture = img;
 
     }
 
@@ -165,22 +164,31 @@ public class ImageFromCPPNTest : MonoBehaviour
             {
                 float scaledX = Scale(x, width);
                 float scaledY = Scale(y, height);
-                float[] hsv = cppn.Process(new float[] { scaledX, scaledY, GetDistFromCenter(scaledX, scaledY), 1 });
+                float distCenter = GetDistFromCenter(scaledX, scaledY);
+                float[] hsv = ProcessCPPNInput(scaledX, scaledY, GetDistFromCenter(scaledX, scaledY), BIAS);
+                // This initial hue is in the range [-1,1] as in the MM-NEAT code
+                float initialHue = ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[TWO_DIMENSIONAL_HUE_INDEX]);
+                // However, C Sharp's Colors do not automatically map negative numbers to the proper hue range as in Java, so an additional step is needed
+                float finalHue = initialHue < 0 ? initialHue + 1 : initialHue;
+                Color colorHSV = Color.HSVToRGB(
+                    finalHue,
+                    ActivationFunctions.Activation(FTYPE.HLPIECEWISE, hsv[TWO_DIMENSIONAL_SATURATION_INDEX]),
+                    Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[TWO_DIMENSIONAL_BRIGHTNESS_INDEX])),
+                    true
+                    );
 
-                // HSV value restrictions
 
-                hsv[0] = Mathf.Clamp(hsv[2], 0.0f, 1.0f);
-                hsv[1] = Mathf.Clamp(hsv[2], 0.0f, 1.0f);
-                hsv[2] = Mathf.Abs(Mathf.Clamp(hsv[2], 1.0f, 1.0f));
-
-                Color color = Color.HSVToRGB(hsv[0], hsv[1], hsv[2]);
-
-                img.SetPixel(x, y, color);
+                img.SetPixel(x, y, colorHSV);
             }
         }
 
         img.Apply();
         return img;
+    }
+
+    private float[] ProcessCPPNInput(float scaledX, float scaledY, float distCenter, float bias)
+    {
+        return cppn.Process(new float[] { scaledX, scaledY, distCenter, bias });
     }
 
     float Scale(int toScale, int maxDimension)

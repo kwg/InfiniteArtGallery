@@ -9,6 +9,9 @@ TagManager:
   - wall
   - invSlot
   - FunctionPickup
+  - inv0
+  - sculpturePlatform
+  - sculpture
   layers:
   - Default
   - TransparentFX

@@ -17,6 +17,7 @@ public class Room : MonoBehaviour
     public GameObject sculptureObject;
     public GameObject functionPickupObject;
     public GameObject VoxelObject;
+    public GameObject SculpturePlatformObject;
     SortedList<int, Portal> portals; // Portal index is door index
     List<Sculpture> sculpturesCollection;
 
@@ -95,7 +96,7 @@ public class Room : MonoBehaviour
     //just one sculpture for now
     private void CreateSculptures()
     {
-        Vector3[] sculps = new Vector3[] { new Vector3(-7.5f, 1.25f, -7.5f), new Vector3(7.5f, 1.25f, -7.5f), new Vector3(7.5f, 1.25f, 7.5f), new Vector3(-7.5f, 1f, 7.5f) };
+        Vector3[] sculps = new Vector3[] { new Vector3(-7.5f, 1.25f, -7.5f), new Vector3(7.5f, 1.25f, -7.5f), new Vector3(7.5f, 1.25f, 7.5f), new Vector3(-7.5f, 1.25f, 7.5f) };
 
         for(int i = 0; i < sculps.Length; i++)
         {
@@ -104,6 +105,7 @@ public class Room : MonoBehaviour
             sculpture.transform.position = sculps[i];
             sculpture.AddComponent<Sculpture>();
             sculpture.GetComponent<Sculpture>().VoxelObject = VoxelObject;
+            sculpture.GetComponent<Sculpture>().SculturePlatformObject = SculpturePlatformObject;
             if(UnityEngine.Random.Range(0,1) < .5f)
             {
                 sculpture.GetComponent<Sculpture>().ToggleTransparency();
@@ -148,7 +150,7 @@ public class Room : MonoBehaviour
 
 
                 float tempZ = ((GameObject)walls[i]).transform.position.z / j;
-                float tempY = ((GameObject)walls[i]).transform.position.y;
+                float tempY = ((GameObject)walls[i]).transform.position.y - 1.25f;
                 float tempX = ((GameObject)walls[i]).transform.position.x / j;
                 //Quaternion tempRot = ((GameObject)walls[i]).transform.rotation;
 

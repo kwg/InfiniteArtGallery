@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Sculpture : MonoBehaviour {
     public GameObject VoxelObject;
+    public GameObject SculturePlatformObject;
     TWEANNGenotype geno;
     TWEANN cppn;
     Vector3 sculptureDimensions;
@@ -20,6 +21,21 @@ public class Sculpture : MonoBehaviour {
     public static int THREE_DIMENSIONAL_SATURATION_INDEX = 2;
     public static int THREE_DIMENSIONAL_BRIGHTNESS_INDEX = 3;
     GameObject[,,] vox;
+    GameObject platform;
+    private bool selected;
+    bool needsUpdated = false;
+
+    public bool GetSelected()
+    {
+        return selected;
+    }
+
+    public void SetSelected(bool value)
+    {
+        selected = value;
+        needsUpdated = true;
+    }
+
 
     private void Start()
     {
@@ -27,11 +43,30 @@ public class Sculpture : MonoBehaviour {
         geno = new TWEANNGenotype(8, 4, 0); // Use archetype 0 for test chamber
         vox = new GameObject[SCULP_X, SCULP_Z, SCULP_Y];
 
+        platform = Instantiate(SculturePlatformObject) as GameObject;
+        platform.transform.position = new Vector3(transform.position.x, transform.position.y - 1.25f, transform.position.z);
+
         voxelSize = 0.5f;
-        ActivationFunctions.ActivateAllFunctions();
+        ActivationFunctions.ActivateAllFunctions(); // FIXME all functions active
         PregenSculpture();
         GenerateCPPN();
         CreateSculture();
+    }
+
+    private void Update()
+    {
+        if (GetSelected() && needsUpdated)
+        {
+            platform.GetComponent<sculpturePlatform>().SetColor(Color.green);
+            
+            needsUpdated = false;
+        }
+        else if(!GetSelected() && needsUpdated)
+        {
+            platform.GetComponent<sculpturePlatform>().SetColor(Color.white);
+
+            needsUpdated = false;
+        }
     }
 
     /// <summary>
@@ -156,6 +191,11 @@ public class Sculpture : MonoBehaviour {
     public void Mutate()
     {
         geno.Mutate();
+    }
+
+    public TWEANNGenotype GetGenotype()
+    {
+        return geno;
     }
 
     /// <summary>

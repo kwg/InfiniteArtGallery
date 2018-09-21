@@ -18,6 +18,7 @@ public class Inventory : MonoBehaviour {
     List<InventorySlot> slots;
 
     private IInventoryItem[] items;
+    private TWEANNGenotype sculptureGeno;
     private int ActiveSlot { get; set; }
 
     private void Start()
@@ -127,6 +128,20 @@ public class Inventory : MonoBehaviour {
                     };
                     AddItem(newArtwork);
                     FindNextEmptySlot();
+                }
+
+                if (hit.collider.tag == "sculpture")
+                {
+                    Sculpture s = hit.collider.gameObject.GetComponent<Sculpture>();
+
+                    Debug.Log("sculp click pass");
+
+                    sculptureGeno = s.GetComponent<Sculpture>().GetGenotype();
+
+                    Debug.Log("sculp saved");
+
+                    s.GetComponent<Sculpture>().SetSelected(!s.GetComponent<Sculpture>().GetSelected());
+
                 }
             }
         }

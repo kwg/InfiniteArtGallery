@@ -5,16 +5,16 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/MainMenu.unity
     guid: f7c81479a75b6d04ea64777d2a72aad3
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/CPPNImageTest.unity
     guid: a30a5a5ab50b7c844af143e3f330161f
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/3DObjectTest.unity
     guid: 8f44d0b9068729941838270de19fc3a0
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/CrossoverTest.unity
     guid: f2637d3d02e50644da64a9acc3242d6f
   - enabled: 1

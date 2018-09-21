@@ -95,7 +95,7 @@ public class Room : MonoBehaviour
     //just one sculpture for now
     private void CreateSculptures()
     {
-        Vector3[] sculps = new Vector3[] { new Vector3(-7.5f, 1f, -7.5f), new Vector3(7.5f, 1f, -7.5f), new Vector3(7.5f, 1f, 7.5f), new Vector3(-7.5f, 1f, 7.5f) };
+        Vector3[] sculps = new Vector3[] { new Vector3(-7.5f, 1.25f, -7.5f), new Vector3(7.5f, 1.25f, -7.5f), new Vector3(7.5f, 1.25f, 7.5f), new Vector3(-7.5f, 1f, 7.5f) };
 
         for(int i = 0; i < sculps.Length; i++)
         {

@@ -13,14 +13,14 @@ public class Artwork
     Texture2D img;
     Color[] pixels;
     Thread cppnProcess;
-    bool processingCPPN;
+    bool processingCPPN;  //FIXME PROTOTYPE this is no longer being checked 
     bool needsRedraw;
     const float BIAS = 1f;
     public static int TWO_DIMENSIONAL_HUE_INDEX = 0;
     public static int TWO_DIMENSIONAL_SATURATION_INDEX = 1;
     public static int TWO_DIMENSIONAL_BRIGHTNESS_INDEX = 2;
 
-    //TODO width, height - These are static for testing but we may want to make them change
+    //FIXME PROTOTYPE width, height - These are static for testing but we may want to make them change
     int width = 256;
     int height = 256;
 

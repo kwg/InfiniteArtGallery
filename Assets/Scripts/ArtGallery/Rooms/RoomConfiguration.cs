@@ -8,8 +8,14 @@ public class RoomConfiguration {
     public int ArtArchetypeIndex { get; set; }
 
     public RoomConfiguration parentRoom { get; set; }
+
+    //KNC these might be in the wrong place. let's talk about these and see if we should move them... or maybe we're just thinking about this class incorrectly
     public Artwork[] artworks { get; set; }
+    public Sculpture[] scultures { get; set; }
+
     public RoomConfiguration[] rooms { get; set; }
+
+    // mutation
     private int MUTATION_CYCLES = 5; // maximum mutations per evolution
 
     public RoomConfiguration(RoomConfiguration parentRoom, int returnPortalID, int championPortalID, Artwork champion, int numArtworks)
@@ -60,6 +66,10 @@ public class RoomConfiguration {
 
     public RoomConfiguration(RoomConfiguration parentRoom, int returnPortalID, int championPortalID, Artwork champion) : this(parentRoom, returnPortalID, championPortalID, champion, parentRoom.GetArtworks().Length) { }
 
+    /// <summary>
+    /// Constructor for the initial room. invoked once per game
+    /// </summary>
+    /// <param name="numArtworks"></param>
     public RoomConfiguration(int numArtworks)
     {
         ArtArchetypeIndex = EvolutionaryHistory.NextPopulationIndex();

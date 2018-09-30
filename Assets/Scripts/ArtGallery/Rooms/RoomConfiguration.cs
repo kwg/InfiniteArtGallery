@@ -52,16 +52,6 @@ public class RoomConfiguration {
             {
                 // all other art
                 int mutations = System.Math.Abs(championPortalID - i) + 1;
-                TWEANNCrossover cross = new TWEANNCrossover(false)
-                {
-                    Sucessful = false
-                }; //HACK PROTOTYPE hardcoded value
-                TWEANNGenotype crossedGeno = cross.Crossover(geno, artworks[i].GetGenotype());
-                if (cross.Sucessful)
-                {
-                    geno = crossedGeno;
-                    Debug.Log("artwork crossed!");
-                }
                 for (int m = 0; m < MUTATION_CYCLES - mutations; m++)
                 {
                     geno.Mutate();

@@ -82,7 +82,13 @@ public class RoomConfiguration {
                 Sculpture ms = toMutate[m];
                 if(ms != null)
                 {
-                    sculptureGeno.Mutate();
+                    TWEANNGenotype mgeno = ms.GetGenotype().Copy();
+
+                    for(int mr = 0; mr < Random.Range(1,5); mr++)
+                    {
+                        sculptureGeno.Mutate();
+                    }
+
                     ms.NewSculpture(sculptureGeno);
 
                 }
@@ -118,11 +124,6 @@ public class RoomConfiguration {
     public void SetSculptures(Sculpture[] sculptures)
     {
         this.sculptures = sculptures;
-        List<Sculpture> toMutate = new List<Sculpture>();
-        foreach (Sculpture sculpture in sculptures)
-        {
-            //sculpture.DrawSculpture();
-        }
     }
 
     public void AddRoom(int artworkID, RoomConfiguration newRoom)

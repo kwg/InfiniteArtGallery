@@ -8,6 +8,8 @@ public class Artwork
 {
     private bool debug = ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE;
 
+    ArtGallery ag;
+
     TWEANNGenotype geno;
     TWEANN cppn;
     Texture2D img;
@@ -40,6 +42,7 @@ public class Artwork
     /// <param name="geno">Genotype for this artwrok to use</param>
     public Artwork(TWEANNGenotype geno)
     {
+        ag = ArtGallery.GetArtGallery();
         needsRedraw = false;
         processingCPPN = false;
         this.geno = geno; 
@@ -55,10 +58,16 @@ public class Artwork
         return needsRedraw;
     }
 
+    public Texture2D GetImage()
+    {
+        return img;
+    }
+
     public void ApplyImageProcess()
     {
         img.SetPixels(pixels);
         img.Apply();
+        ag.SaveImage(this);
         needsRedraw = false;
     }
 

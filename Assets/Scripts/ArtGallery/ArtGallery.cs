@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 /// <summary>
@@ -8,6 +9,8 @@ using UnityEngine;
 /// </summary>
 public class ArtGallery : MonoBehaviour {
 
+    public static ArtGallery artgallery = null;
+
     public enum DEBUG { NONE = 0, POLITE = 1, VERBOSE = 2 };
     public static DEBUG DEBUG_LEVEL = DEBUG.NONE;
     public const int STARTING_NUM_ARTWORKS = 4;
@@ -15,6 +18,7 @@ public class ArtGallery : MonoBehaviour {
     [HideInInspector] public Room gameRoom; // Reference to the in-game room that the player is currently in (set by the script)
     public GameObject FPC; // Reference to the first person contoller ( set in the editor)
     public Player player;
+    string[] args = System.Environment.GetCommandLineArgs();
 
     //private SortedList<int, RoomConfiguration> history;
     private RoomConfiguration lobby; // Root of the room tree
@@ -23,11 +27,29 @@ public class ArtGallery : MonoBehaviour {
 
     //Game state information
     int seed;
+    List<List<Artwork>> generatedImages;
+    int generatedImagesCounter = 0;
+    int generatedImagesSelectedID = -1;
+    List<List<GameObject[,,]>> generatedScultures;
+    //FIXME PROTOTYPE SAVING AND COMMANDLINE DATA
     
     // active functions
     List<FTYPE> activeFunctions;
     // collectedFunctions
     List<FTYPE> availableFunctions;
+
+    public static ArtGallery GetArtGallery()
+    {
+        if(artgallery != null)
+        {
+            return artgallery;
+        }
+        else
+        {
+            throw new System.Exception("ag is null!");
+        }
+    }
+
 
     private void Awake()
     {
@@ -38,6 +60,8 @@ public class ArtGallery : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
+        artgallery = this;
+        args[0] = "0001"; //HACK PROTOTYPE hardcoded tester ID
         //FIXME PROTOTYPE set a random seed value here instead and save that value for a play session
         seed = 1234567;
         Random.InitState(seed);
@@ -65,7 +89,46 @@ public class ArtGallery : MonoBehaviour {
         lobby = new RoomConfiguration(STARTING_NUM_ARTWORKS);
         room = lobby;
         gameRoom.InitializeRoom(GetImagesFromArtworks(room.GetArtworks()));
+
+        List<Artwork> artToSave = new List<Artwork>();
+
+
         lobby.SetSculptures(gameRoom.GetSculptures());
+
+    }
+
+    public void SaveImage(Artwork artwork)
+    {
+        if(generatedImages == null)
+        {
+            generatedImages = new List<List<Artwork>>();
+        }
+        if(generatedImages.Count <= generatedImagesCounter)
+        {
+            generatedImages.Add(new List<Artwork>());
+        }
+        else if(generatedImages[generatedImagesCounter].Count >= 4)
+        {
+            generatedImages.Add(new List<Artwork>());
+            generatedImagesCounter++;
+        }
+        generatedImages[generatedImagesCounter].Add(artwork);
+        SavePNG(artwork.GetImage(), generatedImagesCounter, (generatedImages[generatedImagesCounter].Count), generatedImagesSelectedID, args[0]);
+    }
+
+    public void SavePNG(Texture2D tex, int seqID, int artworkID, int selectedArt, string testerID)
+    {
+        // Encode texture into PNG
+        byte[] bytes = tex.EncodeToPNG();
+        //Destroy(tex);
+
+        // For testing purposes, also write to a file in the project folder
+        if(!Directory.Exists(Application.dataPath + "/../" + testerID + "/" + generatedImagesCounter))
+        {
+            Directory.CreateDirectory(Application.dataPath + "/../" + testerID + "/" + generatedImagesCounter);
+        }
+        File.WriteAllBytes(Application.dataPath + "/../" + testerID + "/" + generatedImagesCounter + "/artwork_" + artworkID + "_" + ((artworkID == selectedArt) ? "selected" : "not_selected") + ".png", bytes);
+        //File.WriteAllBytes(Application.dataPath + "/../" + testerID + "/artwork_" + artworkID + "_" + ((artworkID == selectedArt) ? "selected" : "not_selected") + ".png", bytes);
 
     }
 
@@ -108,6 +171,7 @@ public class ArtGallery : MonoBehaviour {
 
     public void ChangeRoom(int portalID, int destinationID)
     {
+        generatedImagesSelectedID = portalID;
         // is the desitnation a new room or a return?
         if (room.GetRoomByPortalID(portalID) == null)
         {
@@ -115,12 +179,11 @@ public class ArtGallery : MonoBehaviour {
         }
         room = room.GetRoomByPortalID(portalID);
 
-        gameRoom.ConfigureRoom(room.GetParentID(), GetImagesFromArtworks(room.GetArtworks()));
+        gameRoom.ConfigureRoom(room.GetParentID(), GetImagesFromArtworks(room.GetArtworks()), room.sculptures);
         gameRoom.RedrawRoom();
 
         gameRoom.ClearReturnPortalDecorations();
         if (room.GetParentID() > -1) gameRoom.SetReturnPortalDecoration(room.GetParentID());
-
     }
 
     public static long NextRoomID()

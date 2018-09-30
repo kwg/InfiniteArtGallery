@@ -58,7 +58,7 @@ public class Room : MonoBehaviour
     /// Initialize a room with given artworks and parent ID (loading a room)
     /// </summary>
     /// <param name="artworks">SortedList of artwork to be hung on the walls</param>
-    public void ConfigureRoom(int rewindPortalID, Texture2D[] images)
+    public void ConfigureRoom(int rewindPortalID, Texture2D[] images, Sculpture[] sculptures)
     {
         foreach(FunctionPickup fp in FindObjectsOfType<FunctionPickup>())
         {
@@ -67,6 +67,7 @@ public class Room : MonoBehaviour
         this.rewindPortalID = rewindPortalID;
         /* Create art */
         this.images = images;
+        this.sculptures = sculptures;
         isPopulated = true;
         SpawnPickups();
     }
@@ -97,6 +98,10 @@ public class Room : MonoBehaviour
         foreach (KeyValuePair<int, Portal> p in portals)
         {
             p.Value.PaintDoor(images[p.Key]);
+        }
+        foreach(Sculpture scultpure in sculptures)
+        {
+            scultpure.DrawSculpture();
         }
     }
 

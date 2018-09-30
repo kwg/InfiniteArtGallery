@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using UnityEngine;
 
 /// <summary>
@@ -19,6 +20,7 @@ public class ArtGallery : MonoBehaviour {
     public GameObject FPC; // Reference to the first person contoller ( set in the editor)
     public Player player;
     string[] args = System.Environment.GetCommandLineArgs();
+    string testerID = "0001";
 
     //private SortedList<int, RoomConfiguration> history;
     private RoomConfiguration lobby; // Root of the room tree
@@ -30,9 +32,11 @@ public class ArtGallery : MonoBehaviour {
     List<List<Artwork>> generatedImages;
     int generatedImagesCounter = 0;
     int generatedImagesSelectedID = -1;
-    List<List<GameObject[,,]>> generatedScultures;
+    List<List<Color[,,]>> generatedSculptures;
+    int generatedSculpturesCounter = 0;
+    int generatedSculpturesSelectedID = -1;
     //FIXME PROTOTYPE SAVING AND COMMANDLINE DATA
-    
+
     // active functions
     List<FTYPE> activeFunctions;
     // collectedFunctions
@@ -61,7 +65,17 @@ public class ArtGallery : MonoBehaviour {
     void Start()
     {
         artgallery = this;
-        args[0] = "0001"; //HACK PROTOTYPE hardcoded tester ID
+        if (args[0] != null)
+        {
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (args[i] == "-testerID")
+                {
+                    testerID = args[i + 1];
+                }
+            }
+        }
+        
         //FIXME PROTOTYPE set a random seed value here instead and save that value for a play session
         seed = 1234567;
         Random.InitState(seed);
@@ -99,24 +113,24 @@ public class ArtGallery : MonoBehaviour {
 
     public void SaveImage(Artwork artwork)
     {
-        if(generatedImages == null)
+        if (generatedImages == null)
         {
             generatedImages = new List<List<Artwork>>();
         }
-        if(generatedImages.Count <= generatedImagesCounter)
+        if (generatedImages.Count <= generatedImagesCounter)
         {
             generatedImages.Add(new List<Artwork>());
         }
-        else if(generatedImages[generatedImagesCounter].Count >= 4)
+        else if (generatedImages[generatedImagesCounter].Count >= 4)
         {
             generatedImages.Add(new List<Artwork>());
-            generatedImagesCounter++;
+            //generatedImagesCounter++;
         }
         generatedImages[generatedImagesCounter].Add(artwork);
-        SavePNG(artwork.GetImage(), generatedImagesCounter, (generatedImages[generatedImagesCounter].Count), generatedImagesSelectedID, args[0]);
+        SavePNG(artwork.GetImage(), generatedImagesCounter, (generatedImages[generatedImagesCounter].Count), generatedImagesSelectedID);
     }
 
-    public void SavePNG(Texture2D tex, int seqID, int artworkID, int selectedArt, string testerID)
+    public void SavePNG(Texture2D tex, int seqID, int artworkID, int selectedArt)
     {
         // Encode texture into PNG
         byte[] bytes = tex.EncodeToPNG();
@@ -128,7 +142,52 @@ public class ArtGallery : MonoBehaviour {
             Directory.CreateDirectory(Application.dataPath + "/../" + testerID + "/" + generatedImagesCounter);
         }
         File.WriteAllBytes(Application.dataPath + "/../" + testerID + "/" + generatedImagesCounter + "/artwork_" + artworkID + "_" + ((artworkID == selectedArt) ? "selected" : "not_selected") + ".png", bytes);
-        //File.WriteAllBytes(Application.dataPath + "/../" + testerID + "/artwork_" + artworkID + "_" + ((artworkID == selectedArt) ? "selected" : "not_selected") + ".png", bytes);
+    }
+
+    public void SaveVox(Color[,,] voxArray)
+    {
+        if (generatedSculptures == null)
+        {
+            generatedSculptures = new List<List<Color[,,]>>();
+        }
+        if (generatedSculptures.Count <= generatedSculpturesCounter)
+        {
+            generatedSculptures.Add(new List<Color[,,]>());
+        }
+        else if (generatedSculptures[generatedSculpturesCounter].Count >= 4)
+        {
+            generatedSculptures.Add(new List<Color[,,]>());
+            //generatedSculpturesCounter++;
+        }
+        generatedSculptures[generatedSculpturesCounter].Add(voxArray);
+        SaveCSV(voxArray, generatedSculpturesCounter, (generatedSculptures[generatedSculpturesCounter].Count));
+    }
+
+    public void SaveCSV(Color[,,] voxArray, int seqID, int sculptureID)
+    {
+        string voxCSV = "";
+        
+        for(int x = 0; x < voxArray.GetLength(0); x++)
+        {
+            for(int z = 0; z < voxArray.GetLength(1); z++)
+            {
+                for(int y = 0; y < voxArray.GetLength(2); y++)
+                {
+                    voxCSV += x + ", " + z + ", " + y + ", ";
+                    voxCSV += voxArray[x, z, y].r.ToString() + ", ";
+                    voxCSV += voxArray[x, z, y].g.ToString() + ", ";
+                    voxCSV += voxArray[x, z, y].b.ToString() + ", ";
+                    voxCSV += voxArray[x, z, y].a.ToString() + "\n";
+                }
+            }
+        }
+
+        byte[] bytes = Encoding.UTF8.GetBytes(voxCSV); 
+        if (!Directory.Exists(Application.dataPath + "/../" + testerID + "/" + generatedSculpturesCounter))
+        {
+            Directory.CreateDirectory(Application.dataPath + "/../" + testerID + "/" + generatedSculpturesCounter);
+        }
+        File.WriteAllBytes(Application.dataPath + "/../" + testerID + "/" + generatedSculpturesCounter + "/sculpture_" + sculptureID + "_" + ".csv", bytes);
 
     }
 
@@ -172,6 +231,8 @@ public class ArtGallery : MonoBehaviour {
     public void ChangeRoom(int portalID, int destinationID)
     {
         generatedImagesSelectedID = portalID;
+        generatedImagesCounter++;
+        generatedSculpturesCounter++;
         // is the desitnation a new room or a return?
         if (room.GetRoomByPortalID(portalID) == null)
         {

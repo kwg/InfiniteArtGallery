@@ -150,6 +150,8 @@ public class Sculpture : MonoBehaviour {
     {
         float halfVoxelSize = voxelSize / 2;
         cppn = new TWEANN(geno);
+
+        Color[,,] voxArray = new Color[SCULP_X, SCULP_Z, SCULP_Y];
         for (int x = 0; x < SCULP_X; x++)
         {
             for (int z = 0; z < SCULP_Z; z++)
@@ -188,17 +190,22 @@ public class Sculpture : MonoBehaviour {
                         //float alpha = -1.0f;
                         Color color = new Color(colorHSV.r, colorHSV.g, colorHSV.b, alpha);
                         rend.material.SetColor("_Color", color);
+                        voxArray[x, z, y] = color;
                     }
                     else
                     {
                         // This option will make the voxel turn off (requires matching  = true statement above)
                         rend.enabled = false;
+                        voxArray[x, z, y] = new Color(0f, 0f, 0f, 0f);
                         // This option will enable the "glass block" effect
                         //rend.material.SetColor("_Color", new Color(0f, 0f, 0f, 0f));
                     }
                 }
             }
         }
+
+        ArtGallery ag = ArtGallery.GetArtGallery();
+        ag.SaveVox(voxArray);
     }
 
     /// <summary>

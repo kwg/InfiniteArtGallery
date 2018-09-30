@@ -238,7 +238,7 @@ MonoBehaviour:
   m_GravityMultiplier: 2
   m_MouseLook:
     XSensitivity: 2
-    YSensitivity: -2
+    YSensitivity: 2
     clampVerticalRotation: 1
     MinimumX: -90
     MaximumX: 90

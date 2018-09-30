@@ -134,13 +134,10 @@ public class Inventory : MonoBehaviour {
                 {
                     Sculpture s = hit.collider.gameObject.GetComponent<Sculpture>();
 
-                    Debug.Log("sculp click pass");
-
                     sculptureGeno = s.GetComponent<Sculpture>().GetGenotype();
 
-                    Debug.Log("sculp saved");
-
-                    s.GetComponent<Sculpture>().SetSelected(!s.GetComponent<Sculpture>().GetSelected());
+                    ag.SelectSculpture(s);
+                    //s.GetComponent<Sculpture>().SetSelected(!s.GetComponent<Sculpture>().GetSelected());
 
                 }
             }

@@ -46,19 +46,19 @@ public class Functions : MonoBehaviour {
         testFunction0.GenerateThumbnail();
         AddFunction(testFunction0);
         //CycleActiveSlot(1);
-        SavedFunction testFunction1 = new SavedFunction
-        {
-            fTYPE = FTYPE.GAUSS,
-        };
-        testFunction1.GenerateThumbnail();
-        AddFunction(testFunction1);
+        //SavedFunction testFunction1 = new SavedFunction
+        //{
+        //    fTYPE = FTYPE.GAUSS,
+        //};
+        //testFunction1.GenerateThumbnail();
+        //AddFunction(testFunction1);
         //CycleActiveSlot(1);
-        SavedFunction testFunction2 = new SavedFunction
-        {
-            fTYPE = FTYPE.SINE,
-        };
-        testFunction2.GenerateThumbnail();
-        AddFunction(testFunction2);
+        //SavedFunction testFunction2 = new SavedFunction
+        //{
+        //    fTYPE = FTYPE.SINE,
+        //};
+        //testFunction2.GenerateThumbnail();
+        //AddFunction(testFunction2);
         //CycleActiveSlot(1);
         //SavedFunction testFunction3 = new SavedFunction
         //{
@@ -95,12 +95,15 @@ public class Functions : MonoBehaviour {
         {
             functions[ActiveSlot] = function;
             hud.UpdateFunctionThumbnail(ActiveSlot, function.Image);
+            ag.ActivateFunction(functions[ActiveSlot].fTYPE);
             CycleActiveSlot(1);
         }
         else // Overwrite inventory slot
         {
+            ag.DeactivateFunction(functions[ActiveSlot].fTYPE);
             functions[ActiveSlot] = function;
             hud.UpdateFunctionThumbnail(ActiveSlot, function.Image);
+            ag.ActivateFunction(functions[ActiveSlot].fTYPE);
         }
     }
 

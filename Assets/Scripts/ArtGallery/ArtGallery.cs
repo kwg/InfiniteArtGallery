@@ -27,7 +27,7 @@ public class ArtGallery : MonoBehaviour {
     // active functions
     List<FTYPE> activeFunctions;
     // collectedFunctions
-    List<FTYPE> collectedFunctions;
+    List<FTYPE> availableFunctions;
 
     private void Awake()
     {
@@ -38,6 +38,7 @@ public class ArtGallery : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
+        //FIXME PROTOTYPE set a random seed value here instead and save that value for a play session
         seed = 1234567;
         Random.InitState(seed);
         EvolutionaryHistory.InitializeEvolutionaryHistory();
@@ -48,8 +49,12 @@ public class ArtGallery : MonoBehaviour {
         gameRoom.SetArtGallery(this);
 
         // starting functions
-        collectedFunctions = new List<FTYPE> { FTYPE.ID, FTYPE.TANH, FTYPE.SQUAREWAVE, FTYPE.GAUSS, FTYPE.SINE };
-        activeFunctions = new List<FTYPE> { FTYPE.ID, FTYPE.GAUSS, FTYPE.SINE };
+        availableFunctions = new List<FTYPE> { FTYPE.ID, FTYPE.TANH, FTYPE.SQUAREWAVE, FTYPE.GAUSS, FTYPE.SINE };
+        if (activeFunctions == null)
+        {
+            activeFunctions = new List<FTYPE>();
+        }
+
 
         //activate functions
         // Testing: activating all functions
@@ -71,16 +76,30 @@ public class ArtGallery : MonoBehaviour {
 
     public FTYPE GetRandomCollectedFunction()
     {
-        return collectedFunctions[Random.Range(0, activeFunctions.Count)];
+        return availableFunctions[Random.Range(0, availableFunctions.Count)];
     }
 
     public void ActivateFunction(FTYPE fTYPE)
     {
+        if(activeFunctions == null)
+        {
+            activeFunctions = new List<FTYPE>();
+        }
         if (!activeFunctions.Contains(fTYPE))
         {
             activeFunctions.Add(fTYPE);
         }
     }
+
+    public void DeactivateFunction(FTYPE fTYPE)
+    {
+        if (activeFunctions.Contains(fTYPE))
+        {
+            activeFunctions.Remove(fTYPE);
+        }
+    }
+
+    //FIXME PROTOTYPE need to be able to deactivate functions... wait is this even in use anymore?
 
     public Artwork GetArtwork(int portalID)
     {
@@ -130,5 +149,20 @@ public class ArtGallery : MonoBehaviour {
             images[a] = artworks[a].GetArtwork();
         }
         return images;
+    }
+
+    public void SelectSculpture(Sculpture sculpture)
+    {
+        foreach(Sculpture s in room.sculptures)
+        {
+            if (s.Equals(sculpture))
+            {
+                s.SetSelected(!s.GetSelected());
+            }
+            else if (s.GetSelected())
+            {
+                s.SetSelected(false);
+            }
+        }
     }
 }

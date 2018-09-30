@@ -116,7 +116,8 @@ public class Sculpture : MonoBehaviour {
     /// <param name="geno">TWEANNGenotype</param>
     public void NewSculpture(TWEANNGenotype geno)
     {
-        GenerateCPPN();
+        this.geno = geno;
+        // GenerateCPPN();
         DrawSculpture();
     }
 

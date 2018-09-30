@@ -67,12 +67,11 @@ public class RoomConfiguration {
             if (sculptures[s].GetSelected())
             {
                 sculptureGeno = new TWEANNGenotype(sculptures[s].GetGenotype().Copy());
-                Debug.Log("found selected sculpture");
+                sculptures[s].SetSelected(false);
             }
             else
             {
                 toMutate[s] = sculptures[s];
-                Debug.Log("sculpture added to mutate list");
             }
         }
 
@@ -83,7 +82,7 @@ public class RoomConfiguration {
                 Sculpture ms = toMutate[m];
                 if(ms != null)
                 {
-                    Debug.Log("mutating sculpture");
+                    sculptureGeno.Mutate();
                     ms.NewSculpture(sculptureGeno);
 
                 }
@@ -107,11 +106,13 @@ public class RoomConfiguration {
         parentRoom = null;
         rooms = new RoomConfiguration[numArtworks];
         artworks = new Artwork[numArtworks];
-        sculptures = new Sculpture[4];
+        sculptures = new Sculpture[4]; // HACK PROTOTYPE hardcoded var. fix later
         for (int i = 0; i < numArtworks; i++)
         {
             artworks[i] = new Artwork(ArtArchetypeIndex);
         }
+
+        //SetSculptures HAS to be called right after this constructor is called and initialized to create the lobby! this will change later
     }
 
     public void SetSculptures(Sculpture[] sculptures)

@@ -114,7 +114,7 @@ public class Room : MonoBehaviour
             sculpture.AddComponent<Sculpture>();
             sculpture.GetComponent<Sculpture>().VoxelObject = VoxelObject;
             sculpture.GetComponent<Sculpture>().SculturePlatformObject = SculpturePlatformObject;
-            if(UnityEngine.Random.Range(0,1) < .5f)
+            if(UnityEngine.Random.Range(0,1) < .5f) //HACK hardcoded transparency chance
             {
                 sculpture.GetComponent<Sculpture>().ToggleTransparency();
             }
@@ -125,7 +125,7 @@ public class Room : MonoBehaviour
 
     private void SpawnPickups()
     {
-        if(UnityEngine.Random.Range(0f, 1f) < 0.9f)
+        if(UnityEngine.Random.Range(0f, 1f) < 0.9f) //HACK PROTOTYPE hardcoded chance for item spawn
         {
             GameObject functionPickup = Instantiate(functionPickupObject) as GameObject;
             FunctionPickup fp = functionPickup.GetComponent<FunctionPickup>();

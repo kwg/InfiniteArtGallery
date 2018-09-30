@@ -236,7 +236,7 @@ public class ArtGallery : MonoBehaviour {
         // is the desitnation a new room or a return?
         if (room.GetRoomByPortalID(portalID) == null)
         {
-            room.AddRoom(portalID, new RoomConfiguration(room, destinationID, portalID, room.GetArtworks()[portalID], room.sculptures));
+            room.AddRoom(portalID, new RoomConfiguration(room, destinationID, portalID, room.GetArtworks(), room.sculptures));
         }
         room = room.GetRoomByPortalID(portalID);
 

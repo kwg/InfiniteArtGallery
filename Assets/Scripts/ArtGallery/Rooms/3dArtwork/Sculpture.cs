@@ -6,6 +6,7 @@ public class Sculpture : MonoBehaviour {
     public GameObject VoxelObject;
     public GameObject SculturePlatformObject;
     TWEANNGenotype geno;
+    TWEANNGenotype backupGeno;
     TWEANN cppn;
     Vector3 sculptureDimensions;
     float voxelSize;
@@ -116,7 +117,13 @@ public class Sculpture : MonoBehaviour {
     /// <param name="geno">TWEANNGenotype</param>
     public void NewSculpture(TWEANNGenotype geno)
     {
+        backupGeno = geno;
         this.geno = geno;
+        cppn = new TWEANN(geno);
+        if(cppn.Running)
+        {
+            geno = backupGeno;
+        }
         // GenerateCPPN();
         DrawSculpture();
     }

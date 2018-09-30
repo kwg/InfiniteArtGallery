@@ -12,6 +12,7 @@ public class TWEANN : INetwork
     int numInputs;
     int numOutputs;
     public int ArchetypeIndex { get; set; }
+    public bool Running { get; set; }
 
     List<TWEANNNode> nodes;
 
@@ -60,6 +61,7 @@ public class TWEANN : INetwork
 
     public TWEANN(TWEANNGenotype g)
     {
+        Running = true;
         ArchetypeIndex = g.GetArchetypeIndex();
         nodes = new List<TWEANNNode>(g.Nodes.Count);
         int countIn = 0, countOut = 0;
@@ -91,7 +93,7 @@ public class TWEANN : INetwork
             source.Connect(target, link.GetWeight(), link.Innovation, false, false);
         }
         if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("TWEANN build from TWEANNGenotype completed");
-
+        Running = false;
     }
 
 

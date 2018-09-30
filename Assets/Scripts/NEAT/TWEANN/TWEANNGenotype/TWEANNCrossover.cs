@@ -7,6 +7,7 @@ public class TWEANNCrossover
 {
 
     private bool includeExcess;
+    public bool Sucessful { get; set; }
 
     public TWEANNCrossover(bool includeExcess)
     {
@@ -32,6 +33,7 @@ public class TWEANNCrossover
         toReturn.Nodes = crossedNodes[1];
         toReturn.Links = crossedLinks[1];
 
+        Sucessful = true;
         return toReturn;
     }
 

@@ -18,23 +18,23 @@ public class RoomConfiguration {
     // mutation
     private int MUTATION_CYCLES = 5; // maximum mutations per evolution
 
-    public RoomConfiguration(RoomConfiguration parentRoom, int returnPortalID, int championPortalID, Artwork champion, int numArtworks, int numSculptures, Sculpture[] sculptures)
+    public RoomConfiguration(RoomConfiguration parentRoom, int returnPortalID, int championPortalID, Artwork[] artworks, Sculpture[] sculptures)
     {
+        ArtGallery ag = ArtGallery.GetArtGallery();
+        Artwork champion = artworks[championPortalID];
 
-
-
-        if (ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE) Debug.Log("Creating a new room with " + numArtworks + " artworks");
+        if (ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE) Debug.Log("Creating a new room with " + artworks.Length + " artworks");
         this.parentRoom = parentRoom;
 
-        rooms = new RoomConfiguration[numArtworks];
+        rooms = new RoomConfiguration[artworks.Length];
         if (ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE) Debug.Log("Clearing artworks and sculptures...");
-        artworks = new Artwork[numArtworks];
+        this.artworks = artworks;
         this.sculptures = sculptures;
         if (ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE) Debug.Log("Created new artworks: " + artworks.Length);
         rooms[returnPortalID] = parentRoom;
-                
+        
         // clone champion to each artwork and mutate
-        for (int i = 0; i < numArtworks; i++)
+        for (int i = 0; i < artworks.Length; i++)
         {
             TWEANNGenotype geno = new TWEANNGenotype(champion.GetGenotype().Copy());
             // champion art
@@ -52,7 +52,17 @@ public class RoomConfiguration {
             {
                 // all other art
                 int mutations = System.Math.Abs(championPortalID - i) + 1;
-                for(int m = 0; m < MUTATION_CYCLES - mutations; m++)
+                TWEANNCrossover cross = new TWEANNCrossover(false)
+                {
+                    Sucessful = false
+                }; //HACK PROTOTYPE hardcoded value
+                TWEANNGenotype crossedGeno = cross.Crossover(geno, artworks[i].GetGenotype());
+                if (cross.Sucessful)
+                {
+                    geno = crossedGeno;
+                    Debug.Log("artwork crossed!");
+                }
+                for (int m = 0; m < MUTATION_CYCLES - mutations; m++)
                 {
                     geno.Mutate();
                 }
@@ -80,10 +90,8 @@ public class RoomConfiguration {
             for(int m = 0; m < sculptures.Length; m++)
             {
                 Sculpture ms = toMutate[m];
-                if(ms != null)
+                if (ms != null)
                 {
-                    TWEANNGenotype mgeno = ms.GetGenotype().Copy();
-
                     for(int mr = 0; mr < Random.Range(1,5); mr++)
                     {
                         sculptureGeno.Mutate();
@@ -97,8 +105,6 @@ public class RoomConfiguration {
         }
 
     }
-
-    public RoomConfiguration(RoomConfiguration parentRoom, int returnPortalID, int championPortalID, Artwork champion, Sculpture[] sculptures) : this(parentRoom, returnPortalID, championPortalID, champion, parentRoom.artworks.Length, parentRoom.sculptures.Length, sculptures) { }
 
     /// <summary>
     /// Constructor for the initial room. invoked once per game

@@ -36,6 +36,11 @@ public class Sculpture : MonoBehaviour {
         needsUpdated = true;
     }
 
+    public void SetGeno(TWEANNGenotype geno)
+    {
+        this.geno = geno;
+    }
+
 
     private void Start()
     {
@@ -47,10 +52,10 @@ public class Sculpture : MonoBehaviour {
         platform.transform.position = new Vector3(transform.position.x, transform.position.y - 1.25f, transform.position.z);
 
         voxelSize = 0.5f;
-        ActivationFunctions.ActivateAllFunctions(); // FIXME all functions active
-        PregenSculpture();
+        // ActivationFunctions.ActivateAllFunctions(); // FIXME all functions active
+        BuildSculpture();
         GenerateCPPN();
-        CreateSculture();
+        DrawSculpture();
     }
 
     private void Update()
@@ -72,7 +77,7 @@ public class Sculpture : MonoBehaviour {
     /// <summary>
     /// Fill the sculpture space with voxels
     /// </summary>
-    private void PregenSculpture()
+    private void BuildSculpture()
     {
         float halfVoxelSize = voxelSize / 2;
 
@@ -98,13 +103,21 @@ public class Sculpture : MonoBehaviour {
     }
 
     /// <summary>
-    /// Reset the sculpture
+    /// Create a new sculpture with a new geno
     /// </summary>
     public void NewSculpture()
     {
-        geno = new TWEANNGenotype(8, 4, 0);
+        NewSculpture(new TWEANNGenotype(8, 4, 0));
+    }
+
+    /// <summary>
+    /// Create a new sculpture from a geno
+    /// </summary>
+    /// <param name="geno">TWEANNGenotype</param>
+    public void NewSculpture(TWEANNGenotype geno)
+    {
         GenerateCPPN();
-        CreateSculture();
+        DrawSculpture();
     }
 
     public void SculptureSize(int x, int z, int y)
@@ -132,7 +145,7 @@ public class Sculpture : MonoBehaviour {
     /// <summary>
     /// Change voxels in sculpture based on CPPN outputs
     /// </summary>
-    public void CreateSculture ()
+    public void DrawSculpture()
     {
         float halfVoxelSize = voxelSize / 2;
         cppn = new TWEANN(geno);
@@ -153,6 +166,8 @@ public class Sculpture : MonoBehaviour {
                     float distfromCenterZY = GetDistFromCenterZY(actualX, actualZ);
                     //float[] outputs = cppn.Process(new float[] { actualX, actualY, actualZ, distFromCenter, BIAS});
                     float[] outputs = cppn.Process(new float[] { actualX, actualY, actualZ, distFromCenter, distFromCenterXZ, distfromCenterYZ, distfromCenterZY, BIAS });
+                    //TODO move all of the CPPN render out of the draw function
+
                     if (outputs[THREE_DIMENSIONAL_BRIGHTNESS_INDEX] > PRESENCE_THRESHOLD) {
                         float initialHue = ActivationFunctions.Activation(FTYPE.PIECEWISE, outputs[THREE_DIMENSIONAL_VOXEL_INDEX]);
                         float finalHue = initialHue < 0 ? initialHue + 1 : initialHue;

@@ -60,6 +60,7 @@ public class ArtGallery : MonoBehaviour {
         lobby = new RoomConfiguration(STARTING_NUM_ARTWORKS);
         room = lobby;
         gameRoom.InitializeRoom(GetImagesFromArtworks(room.GetArtworks()));
+        lobby.SetSculptures(gameRoom.GetSculptures());
 
     }
 
@@ -91,7 +92,7 @@ public class ArtGallery : MonoBehaviour {
         // is the desitnation a new room or a return?
         if (room.GetRoomByPortalID(portalID) == null)
         {
-            room.AddRoom(portalID, new RoomConfiguration(room, destinationID, portalID, room.GetArtworks()[portalID]));
+            room.AddRoom(portalID, new RoomConfiguration(room, destinationID, portalID, room.GetArtworks()[portalID], room.sculptures));
         }
         room = room.GetRoomByPortalID(portalID);
 

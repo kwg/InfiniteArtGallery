@@ -9,23 +9,27 @@ public class RoomConfiguration {
 
     public RoomConfiguration parentRoom { get; set; }
 
-    //KNC these might be in the wrong place. let's talk about these and see if we should move them... or maybe we're just thinking about this class incorrectly
+    //FIXME PROTOTYPE these might be in the wrong place. let's talk about these and see if we should move them... or maybe we're just thinking about this class incorrectly
     public Artwork[] artworks { get; set; }
-    public Sculpture[] scultures { get; set; }
+    public Sculpture[] sculptures { get; set; }
 
     public RoomConfiguration[] rooms { get; set; }
 
     // mutation
     private int MUTATION_CYCLES = 5; // maximum mutations per evolution
 
-    public RoomConfiguration(RoomConfiguration parentRoom, int returnPortalID, int championPortalID, Artwork champion, int numArtworks)
+    public RoomConfiguration(RoomConfiguration parentRoom, int returnPortalID, int championPortalID, Artwork champion, int numArtworks, int numSculptures, Sculpture[] sculptures)
     {
-        if(ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE) Debug.Log("Creating a new room with " + numArtworks + " artworks");
+
+
+
+        if (ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE) Debug.Log("Creating a new room with " + numArtworks + " artworks");
         this.parentRoom = parentRoom;
 
         rooms = new RoomConfiguration[numArtworks];
-        if (ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE) Debug.Log("Clearing artworks...");
+        if (ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE) Debug.Log("Clearing artworks and sculptures...");
         artworks = new Artwork[numArtworks];
+        this.sculptures = sculptures;
         if (ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE) Debug.Log("Created new artworks: " + artworks.Length);
         rooms[returnPortalID] = parentRoom;
                 
@@ -56,15 +60,40 @@ public class RoomConfiguration {
             artworks[i] = new Artwork(geno);
         }
 
-        //FIXME This does nothing yet. Sculptures need added to the room config
-        // Mutate Sculptures
-        foreach(Sculpture sculpture in ArtGallery.FindObjectOfType<Room>().GetComponents<Sculpture>())
+        Sculpture[] toMutate = new Sculpture[sculptures.Length];
+        TWEANNGenotype sculptureGeno = null;
+        for (int s = 0; s < sculptures.Length; s++)
         {
-            sculpture.Mutate();
+            if (sculptures[s].GetSelected())
+            {
+                sculptureGeno = new TWEANNGenotype(sculptures[s].GetGenotype().Copy());
+                Debug.Log("found selected sculpture");
+            }
+            else
+            {
+                toMutate[s] = sculptures[s];
+                Debug.Log("sculpture added to mutate list");
+            }
         }
+
+        if(sculptureGeno != null)
+        {
+            for(int m = 0; m < sculptures.Length; m++)
+            {
+                Sculpture ms = toMutate[m];
+                if(ms != null)
+                {
+                    Debug.Log("mutating sculpture");
+                    ms.NewSculpture(sculptureGeno);
+
+                }
+            }
+
+        }
+
     }
 
-    public RoomConfiguration(RoomConfiguration parentRoom, int returnPortalID, int championPortalID, Artwork champion) : this(parentRoom, returnPortalID, championPortalID, champion, parentRoom.GetArtworks().Length) { }
+    public RoomConfiguration(RoomConfiguration parentRoom, int returnPortalID, int championPortalID, Artwork champion, Sculpture[] sculptures) : this(parentRoom, returnPortalID, championPortalID, champion, parentRoom.artworks.Length, parentRoom.sculptures.Length, sculptures) { }
 
     /// <summary>
     /// Constructor for the initial room. invoked once per game
@@ -78,9 +107,20 @@ public class RoomConfiguration {
         parentRoom = null;
         rooms = new RoomConfiguration[numArtworks];
         artworks = new Artwork[numArtworks];
+        sculptures = new Sculpture[4];
         for (int i = 0; i < numArtworks; i++)
         {
             artworks[i] = new Artwork(ArtArchetypeIndex);
+        }
+    }
+
+    public void SetSculptures(Sculpture[] sculptures)
+    {
+        this.sculptures = sculptures;
+        List<Sculpture> toMutate = new List<Sculpture>();
+        foreach (Sculpture sculpture in sculptures)
+        {
+            //sculpture.DrawSculpture();
         }
     }
 

@@ -19,7 +19,6 @@ public class Room : MonoBehaviour
     public GameObject VoxelObject;
     public GameObject SculpturePlatformObject;
     SortedList<int, Portal> portals; // Portal index is door index
-    List<Sculpture> sculpturesCollection;
 
     int PortalCount = 0; // TODO not in use - decide what to do with it
     int NUM_WALLS = 4;
@@ -33,6 +32,13 @@ public class Room : MonoBehaviour
     private Texture2D[] images;
     private ArtGallery artGallery;
 
+    private Sculpture[] sculptures;
+
+    public Sculpture[] GetSculptures()
+    {
+        return sculptures;
+    }
+
     /// <summary>
     /// Initial creation of the room
     /// </summary>
@@ -42,6 +48,7 @@ public class Room : MonoBehaviour
         this.images = images;
         rewindPortalID = -1;
         portals = new SortedList<int, Portal>();
+        sculptures = new Sculpture[4]; //HACK hardcoded values
         CreatePortals();
         CreateSculptures();
         isPopulated = true;
@@ -93,7 +100,8 @@ public class Room : MonoBehaviour
         }
     }
 
-    //just one sculpture for now
+    //create sculptures and position them
+    //HACK hardcoded values and number of sculptures
     private void CreateSculptures()
     {
         Vector3[] sculps = new Vector3[] { new Vector3(-7.5f, 1.25f, -7.5f), new Vector3(7.5f, 1.25f, -7.5f), new Vector3(7.5f, 1.25f, 7.5f), new Vector3(-7.5f, 1.25f, 7.5f) };
@@ -110,6 +118,7 @@ public class Room : MonoBehaviour
             {
                 sculpture.GetComponent<Sculpture>().ToggleTransparency();
             }
+            sculptures[i] = sculpture.GetComponent<Sculpture>();
         }
 
     }

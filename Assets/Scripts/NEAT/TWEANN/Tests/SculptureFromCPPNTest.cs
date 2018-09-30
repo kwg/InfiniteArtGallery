@@ -50,7 +50,7 @@ public class SculptureFromCPPNTest : MonoBehaviour {
             sculptureProp.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
             DeleteOldVoxels();
             sculpture.Mutate();
-            sculpture.CreateSculture();
+            sculpture.DrawSculpture();
             sculptureProp.transform.Rotate(rotSave);          
         }
 

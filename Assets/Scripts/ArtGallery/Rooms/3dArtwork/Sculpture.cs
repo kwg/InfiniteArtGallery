@@ -117,7 +117,7 @@ public class Sculpture : MonoBehaviour {
     /// <param name="geno">TWEANNGenotype</param>
     public void NewSculpture(TWEANNGenotype geno)
     {
-        backupGeno = geno;
+        backupGeno = geno.Copy();
         this.geno = geno;
         cppn = new TWEANN(geno);
         if(cppn.Running)
@@ -212,6 +212,7 @@ public class Sculpture : MonoBehaviour {
         }
 
         ArtGallery ag = ArtGallery.GetArtGallery();
+        //FIXME PROTOTYPE disabling to build new method
         ag.SaveVox(voxArray);
     }
 

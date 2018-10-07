@@ -6,7 +6,7 @@ using UnityEngine;
 [System.Serializable]
 public class Artwork
 {
-    private bool debug = ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE;
+    private bool debug = ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE;
 
     ArtGallery ag;
 
@@ -67,6 +67,7 @@ public class Artwork
     {
         img.SetPixels(pixels);
         img.Apply();
+        //FIXME PROTOTYPE disabling to build new method
         ag.SaveImage(this);
         needsRedraw = false;
     }

@@ -18,23 +18,23 @@ public class RoomConfiguration {
     // mutation
     private int MUTATION_CYCLES = 5; // maximum mutations per evolution
 
-    public RoomConfiguration(RoomConfiguration parentRoom, int returnPortalID, int championPortalID, Artwork[] artworks, Sculpture[] sculptures)
+    public RoomConfiguration(RoomConfiguration parentRoom, int returnPortalID, int championPortalID, Artwork[] artworksPassed, Sculpture[] sculptures)
     {
         ArtGallery ag = ArtGallery.GetArtGallery();
-        Artwork champion = artworks[championPortalID];
+        Artwork champion = artworksPassed[championPortalID];
 
-        if (ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE) Debug.Log("Creating a new room with " + artworks.Length + " artworks");
+        if (ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE) Debug.Log("Creating a new room with " + artworksPassed.Length + " artworks");
         this.parentRoom = parentRoom;
 
-        rooms = new RoomConfiguration[artworks.Length];
+        rooms = new RoomConfiguration[artworksPassed.Length];
         if (ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE) Debug.Log("Clearing artworks and sculptures...");
-        this.artworks = artworks;
+        artworks = new Artwork[artworksPassed.Length];
         this.sculptures = sculptures;
-        if (ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE) Debug.Log("Created new artworks: " + artworks.Length);
+        if (ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE) Debug.Log("Created new artworks: " + artworksPassed.Length);
         rooms[returnPortalID] = parentRoom;
         
         // clone champion to each artwork and mutate
-        for (int i = 0; i < artworks.Length; i++)
+        for (int i = 0; i < artworksPassed.Length; i++)
         {
             TWEANNGenotype geno = new TWEANNGenotype(champion.GetGenotype().Copy());
             // champion art

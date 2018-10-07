@@ -13,7 +13,7 @@ public class ArtGallery : MonoBehaviour {
     public static ArtGallery artgallery = null;
 
     public enum DEBUG { NONE = 0, POLITE = 1, VERBOSE = 2 };
-    public static DEBUG DEBUG_LEVEL = DEBUG.NONE;
+    public static DEBUG DEBUG_LEVEL = DEBUG.POLITE;
     public const int STARTING_NUM_ARTWORKS = 4;
     public GameObject roomObject; // RoomObject for room to load (set in the editor)
     [HideInInspector] public Room gameRoom; // Reference to the in-game room that the player is currently in (set by the script)
@@ -108,6 +108,11 @@ public class ArtGallery : MonoBehaviour {
 
 
         lobby.SetSculptures(gameRoom.GetSculptures());
+
+    }
+
+    private void SaveRoom()
+    {
 
     }
 
@@ -230,12 +235,15 @@ public class ArtGallery : MonoBehaviour {
 
     public void ChangeRoom(int portalID, int destinationID)
     {
+        // HACK PROTOTYPE manual manipulation of saving vars 
         generatedImagesSelectedID = portalID;
         generatedImagesCounter++;
         generatedSculpturesCounter++;
+
         // is the desitnation a new room or a return?
         if (room.GetRoomByPortalID(portalID) == null)
         {
+            Debug.Log("Making new room...");
             room.AddRoom(portalID, new RoomConfiguration(room, destinationID, portalID, room.GetArtworks(), room.sculptures));
         }
         room = room.GetRoomByPortalID(portalID);
@@ -245,6 +253,9 @@ public class ArtGallery : MonoBehaviour {
 
         gameRoom.ClearReturnPortalDecorations();
         if (room.GetParentID() > -1) gameRoom.SetReturnPortalDecoration(room.GetParentID());
+
+
+        SaveRoom();
     }
 
     public static long NextRoomID()

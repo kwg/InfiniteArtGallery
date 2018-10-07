@@ -276,6 +276,7 @@ public class ArtGallery : MonoBehaviour {
         }
     }
 
+
     private Texture2D[] GetImagesFromArtworks(Artwork[] artworks)
     {
         Texture2D[] images = new Texture2D[artworks.Length];

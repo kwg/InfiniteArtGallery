@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class Sculpture : MonoBehaviour {
@@ -26,6 +27,22 @@ public class Sculpture : MonoBehaviour {
     private bool selected;
     bool needsUpdated = false;
 
+    //Thread
+    Thread cppnProcess;
+    bool processingCPPN;  
+    bool needsRedraw;
+    Color[,,] voxArray;
+
+    public bool NeedsRedraw()
+    {
+        return needsRedraw;
+    }
+
+    public bool ProcessingCPPN()
+    {
+        return processingCPPN;
+    }
+
     public bool GetSelected()
     {
         return selected;
@@ -45,6 +62,8 @@ public class Sculpture : MonoBehaviour {
 
     private void Start()
     {
+        cppnProcess = new Thread(new ThreadStart(DrawSculpture));
+
         //inputs: (x,y,z) outputs: r,g,b and presence
         geno = new TWEANNGenotype(8, 4, 0); // Use archetype 0 for test chamber
         vox = new GameObject[SCULP_X, SCULP_Z, SCULP_Y];
@@ -56,7 +75,8 @@ public class Sculpture : MonoBehaviour {
         // ActivationFunctions.ActivateAllFunctions(); // FIXME all functions active
         BuildSculpture();
         GenerateCPPN();
-        DrawSculpture();
+        //DrawSculpture();
+        cppnProcess.Start();
     }
 
     private void Update()
@@ -72,6 +92,11 @@ public class Sculpture : MonoBehaviour {
             platform.GetComponent<sculpturePlatform>().SetColor(Color.white);
 
             needsUpdated = false;
+        }
+
+        if(needsRedraw && !processingCPPN)
+        {
+            RedrawSculpture();
         }
     }
 
@@ -155,18 +180,19 @@ public class Sculpture : MonoBehaviour {
     /// </summary>
     public void DrawSculpture()
     {
+        processingCPPN = true;
+
         float halfVoxelSize = voxelSize / 2;
         cppn = new TWEANN(geno);
 
-        Color[,,] voxArray = new Color[SCULP_X, SCULP_Z, SCULP_Y];
+        voxArray = new Color[SCULP_X, SCULP_Z, SCULP_Y];
         for (int x = 0; x < SCULP_X; x++)
         {
             for (int z = 0; z < SCULP_Z; z++)
             {
                 for (int y = 0; y < SCULP_Y; y++)
                 {
-                    GameObject voxelProp = vox[x, z, y];
-                    Renderer rend = voxelProp.gameObject.GetComponent<Renderer>();
+
                     float actualX = -(halfVoxelSize * SCULP_X / 2.0f) + halfVoxelSize + x * halfVoxelSize;
                     float actualZ = -(halfVoxelSize * SCULP_Z / 2.0f) + halfVoxelSize + z * halfVoxelSize;
                     float actualY = -(halfVoxelSize * SCULP_Y / 2.0f) + halfVoxelSize + y * halfVoxelSize;
@@ -187,7 +213,6 @@ public class Sculpture : MonoBehaviour {
                             Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, outputs[THREE_DIMENSIONAL_SATURATION_INDEX])),
                             true
                             );
-                        rend.enabled = true;
                         float alpha = 1f;
                         if (transparent)
                         {
@@ -196,13 +221,11 @@ public class Sculpture : MonoBehaviour {
 
                         //float alpha = -1.0f;
                         Color color = new Color(colorHSV.r, colorHSV.g, colorHSV.b, alpha);
-                        rend.material.SetColor("_Color", color);
                         voxArray[x, z, y] = color;
                     }
                     else
                     {
                         // This option will make the voxel turn off (requires matching  = true statement above)
-                        rend.enabled = false;
                         voxArray[x, z, y] = new Color(0f, 0f, 0f, 0f);
                         // This option will enable the "glass block" effect
                         //rend.material.SetColor("_Color", new Color(0f, 0f, 0f, 0f));
@@ -211,9 +234,42 @@ public class Sculpture : MonoBehaviour {
             }
         }
 
+        processingCPPN = false;
+        needsRedraw = true;
+
+
+    }
+
+    private void RedrawSculpture()
+    {
+        for (int x = 0; x < SCULP_X; x++)
+        {
+            for (int z = 0; z < SCULP_Z; z++)
+            {
+                for (int y = 0; y < SCULP_Y; y++)
+                {
+                    GameObject voxelProp = vox[x, z, y];
+                    Renderer rend = voxelProp.gameObject.GetComponent<Renderer>();
+
+                    if(voxArray[x, z, y] == new Color(0f, 0f, 0f, 0f))
+                    {
+                        rend.enabled = false;
+                    }
+                    else
+                    {
+                        rend.material.color = voxArray[x, z, y];
+                        rend.enabled = true;
+                    }
+                }
+            }
+        }
+
+        needsRedraw = false;
+
         ArtGallery ag = ArtGallery.GetArtGallery();
         //FIXME PROTOTYPE disabling to build new method
         ag.SaveVox(voxArray);
+
     }
 
     /// <summary>

@@ -96,6 +96,13 @@ public class RoomConfiguration {
 
     }
 
+
+    public void UpdateArtwork(Artwork art)
+    {
+
+    }
+
+
     /// <summary>
     /// Constructor for the initial room. invoked once per game
     /// </summary>

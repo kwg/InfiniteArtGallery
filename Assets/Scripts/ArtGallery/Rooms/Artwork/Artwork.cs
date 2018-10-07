@@ -23,8 +23,8 @@ public class Artwork
     public static int TWO_DIMENSIONAL_BRIGHTNESS_INDEX = 2;
 
     //FIXME PROTOTYPE width, height - These are static for testing but we may want to make them change
-    int width = 256;
-    int height = 256;
+    int width = 128;
+    int height = 128;
 
     /// <summary>
     /// Default empty constructor
@@ -65,11 +65,11 @@ public class Artwork
 
     public void ApplyImageProcess()
     {
+        needsRedraw = false;
         img.SetPixels(pixels);
         img.Apply();
         //FIXME PROTOTYPE disabling to build new method
         ag.SaveImage(this);
-        needsRedraw = false;
     }
 
     public void Refresh()
@@ -79,7 +79,7 @@ public class Artwork
 
     }
 
-    public void GenerateImageFromCPPN()
+    private void GenerateImageFromCPPN()
     {
         processingCPPN = true;
         if (debug) Debug.Log("CPPN Imgage generation started...");

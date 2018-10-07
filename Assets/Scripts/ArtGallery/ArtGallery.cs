@@ -272,6 +272,7 @@ public class ArtGallery : MonoBehaviour {
             if (art[a].NeedsRedraw())
             {
                 art[a].ApplyImageProcess();
+                gameRoom.Locked = false;
             }
         }
     }

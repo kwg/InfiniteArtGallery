@@ -14,4 +14,9 @@ public class Voxel : MonoBehaviour
         this.positionInSculture = positionInSculture;
     }
 
+    public void SetColor(Color newColor)
+    {
+        color = newColor;
+    }
+
 }

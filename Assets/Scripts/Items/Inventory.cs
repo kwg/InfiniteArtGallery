@@ -156,7 +156,7 @@ public class Inventory : MonoBehaviour {
                     if(GetActiveSlotItem() != null)
                     {
                         ag.GetArtwork(p.GetPortalID()).SetGenotype(GetActiveSlotItem().Geno.Copy()); // FIXME Null ref possible here - add checks
-                        ag.GetArtwork(p.GetPortalID()).GenerateImageFromCPPN();
+                        ag.GetArtwork(p.GetPortalID()).Refresh();
                         ag.GetArtwork(p.GetPortalID()).ApplyImageProcess();
                         items[ActiveSlot] = null;
                         hud.UpdateInventoryThumbnail(ActiveSlot, null);

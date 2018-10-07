@@ -71,12 +71,19 @@ public class Sculpture : MonoBehaviour {
         platform = Instantiate(SculturePlatformObject) as GameObject;
         platform.transform.position = new Vector3(transform.position.x, transform.position.y - 1.25f, transform.position.z);
 
-        voxelSize = 0.5f;
+        voxelSize = 5 * 0.5f/SCULP_X;
         // ActivationFunctions.ActivateAllFunctions(); // FIXME all functions active
         BuildSculpture();
         GenerateCPPN();
         //DrawSculpture();
         cppnProcess.Start();
+    }
+
+    public void Refresh()
+    {
+        cppnProcess = new Thread(new ThreadStart(DrawSculpture));
+        cppnProcess.Start();
+
     }
 
     private void Update()
@@ -178,7 +185,7 @@ public class Sculpture : MonoBehaviour {
     /// <summary>
     /// Change voxels in sculpture based on CPPN outputs
     /// </summary>
-    public void DrawSculpture()
+    private void DrawSculpture()
     {
         processingCPPN = true;
 
@@ -242,6 +249,9 @@ public class Sculpture : MonoBehaviour {
 
     private void RedrawSculpture()
     {
+        needsRedraw = false;
+
+
         for (int x = 0; x < SCULP_X; x++)
         {
             for (int z = 0; z < SCULP_Z; z++)
@@ -264,7 +274,6 @@ public class Sculpture : MonoBehaviour {
             }
         }
 
-        needsRedraw = false;
 
         ArtGallery ag = ArtGallery.GetArtGallery();
         //FIXME PROTOTYPE disabling to build new method

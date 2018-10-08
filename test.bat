@@ -1,0 +1,1 @@
+echo "it worked" >> check.txt

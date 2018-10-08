@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UnityEngine;
+using System.Diagnostics;
+
 
 /// <summary>
 /// Primary controller. Handles rooms and portals (physical) of the scene and links them to the doors in the 
@@ -54,6 +56,21 @@ public class ArtGallery : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Executes external batch file or bash script
+    /// </summary>
+    /// <param name="script">script to execute</param>
+    /// <param name="args">arguments to pass to the script</param>
+    public void RunExternalScript(string script, string args)
+    {
+
+        ProcessStartInfo startInfo = new ProcessStartInfo
+        {
+            FileName = script,
+            Arguments = args
+        };
+        Process.Start(startInfo);
+    }
 
     private void Awake()
     {
@@ -81,6 +98,8 @@ public class ArtGallery : MonoBehaviour {
         seed = 1234567;
         Random.InitState(seed);
         EvolutionaryHistory.InitializeEvolutionaryHistory();
+
+        RunExternalScript("test.bat", "");
 
         // Build the game room
         GameObject roomProp = Instantiate(roomObject) as GameObject;
@@ -250,7 +269,7 @@ public class ArtGallery : MonoBehaviour {
         // is the desitnation a new room or a return?
         if (room.GetRoomByPortalID(portalID) == null)
         {
-            Debug.Log("Making new room...");
+            UnityEngine.Debug.Log("Making new room...");
             room.AddRoom(portalID, new RoomConfiguration(room, destinationID, portalID, room.GetArtworks(), room.sculptures));
         }
         room = room.GetRoomByPortalID(portalID);

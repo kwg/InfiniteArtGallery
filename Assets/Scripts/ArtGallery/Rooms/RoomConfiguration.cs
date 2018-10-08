@@ -134,6 +134,11 @@ public class RoomConfiguration {
         rooms[artworkID] = newRoom;
     }
 
+    public void RemoveRoom(int portalID)
+    {
+        rooms[portalID] = null;
+    }
+
     public RoomConfiguration GetParent()
     {
         return parentRoom;

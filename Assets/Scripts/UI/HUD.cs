@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,8 +18,9 @@ public class HUD : MonoBehaviour
     public GameObject inventorySlotObject;
     public GameObject functionTray;
     public GameObject inventoryTray;
+    public TextMeshProUGUI testerIDObject;
 
-
+    private string testerID;
 
     int selectedInventorySlot;
     int selectedFunctionSlot;
@@ -39,7 +41,14 @@ public class HUD : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        ArtGallery ag = FindObjectOfType<ArtGallery>();
+        testerID = ag.GetTesterID();
+        testerIDObject.GetComponent<TesterIDTextBox>().SetTesterID(testerID);
+    }
 
+    public void UpdateTesterID(string testerID)
+    {
+        this.testerID = testerID;
     }
 
     public void AddSlots(TRAYS tray, int count)
@@ -163,7 +172,6 @@ public class HUD : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
 
     }
 }

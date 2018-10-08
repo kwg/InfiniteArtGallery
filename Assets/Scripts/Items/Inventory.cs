@@ -153,11 +153,14 @@ public class Inventory : MonoBehaviour {
                 if (hit.collider.tag == "portal")
                 {
                     Portal p = hit.collider.gameObject.GetComponent<Portal>();
+                    int portalID = p.GetPortalID();
+                    Artwork art = ag.GetArtwork(portalID);
                     if(GetActiveSlotItem() != null)
                     {
-                        ag.GetArtwork(p.GetPortalID()).SetGenotype(GetActiveSlotItem().Geno.Copy()); // FIXME Null ref possible here - add checks
-                        ag.GetArtwork(p.GetPortalID()).Refresh();
-                        ag.GetArtwork(p.GetPortalID()).ApplyImageProcess();
+                        ag.RemoveRoom(portalID);
+                        art.SetGenotype(GetActiveSlotItem().Geno.Copy()); // FIXME Null ref possible here - add checks
+                        art.Refresh();
+                        art.ApplyImageProcess();
                         items[ActiveSlot] = null;
                         hud.UpdateInventoryThumbnail(ActiveSlot, null);
                     }

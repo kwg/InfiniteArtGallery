@@ -75,6 +75,7 @@ public class ArtGallery : MonoBehaviour {
                 }
             }
         }
+
         
         //FIXME PROTOTYPE set a random seed value here instead and save that value for a play session
         seed = 1234567;
@@ -110,6 +111,12 @@ public class ArtGallery : MonoBehaviour {
         lobby.SetSculptures(gameRoom.GetSculptures());
 
     }
+
+    public string GetTesterID()
+    {
+        return testerID;
+    }
+
 
     private void SaveRoom()
     {
@@ -256,6 +263,14 @@ public class ArtGallery : MonoBehaviour {
 
 
         SaveRoom();
+    }
+
+    public void RemoveRoom(int portalID)
+    {
+        if(room.GetRoomByPortalID(portalID) != null)
+        {
+            room.RemoveRoom(portalID);
+        }
     }
 
     public static long NextRoomID()

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using UnityEngine;
 
 public class TWEANNCrossover
@@ -8,6 +10,9 @@ public class TWEANNCrossover
 
     private bool includeExcess;
     public bool Sucessful { get; set; }
+
+    private string outputCSV;
+    private static int counter = 0;
 
     public TWEANNCrossover(bool includeExcess)
     {
@@ -33,6 +38,25 @@ public class TWEANNCrossover
         return output;
     }
 
+    public string[] DebugLinks(List<LinkGene> links)
+    {
+        string[] output = new string[links.Count];
+        int c = 0;
+        foreach (LinkGene l in links)
+        {
+            if (links[c] != null)
+            {
+                output[c] = "id: " + l.Innovation;
+            }
+            else
+            {
+                output[c] = "NULL";
+            }
+            c++;
+        }
+        return output;
+    }
+
     public void OneLineOutput(string msg, string[] output)
     {
         string o = msg;
@@ -44,10 +68,35 @@ public class TWEANNCrossover
         Debug.Log(o);
     }
 
+    private void AddToCSV(string msg, string[] output)
+    {
+        outputCSV += msg;
+
+        for (int i = 0; i < output.Length; i++)
+        {
+            outputCSV += ", " + output[i];
+        }
+
+        outputCSV += "\n";
+    }
+
+    public void SaveCSV()
+    { 
+        byte[] bytes = Encoding.UTF8.GetBytes(outputCSV);
+        if (!Directory.Exists(Application.dataPath + "/../" + "DEBUG_LOGS"))
+        {
+            Directory.CreateDirectory(Application.dataPath + "/../" + "DEBUG_LOGS");
+        }
+        File.WriteAllBytes(Application.dataPath + "/../" + "DEBUG_LOGS" + "/" + "crossover_log_" + counter + ".csv", bytes);
+        counter++;
+    }
+
     public TWEANNGenotype Crossover(TWEANNGenotype toModify, TWEANNGenotype toReturn)
     {
-        OneLineOutput("toModify pre", DebugNodes(toModify.Nodes));
-        OneLineOutput("toReturn pre", DebugNodes(toReturn.Nodes));
+        AddToCSV("toModify pre", DebugNodes(toModify.Nodes));
+        AddToCSV("toReturn pre", DebugNodes(toReturn.Nodes));
+        AddToCSV("toModify links pre", DebugLinks(toModify.Links));
+        AddToCSV("toReturn links pre", DebugLinks(toReturn.Links));
 
         List<List<NodeGene>> alignedNodes = new List<List<NodeGene>>(2)
         {
@@ -55,17 +104,23 @@ public class TWEANNCrossover
             AlignNodesToArchetype(toReturn.Nodes, toReturn.GetArchetypeIndex())
         };
 
-        OneLineOutput("toModify aligned", DebugNodes(alignedNodes[0]));
-        OneLineOutput("toReturn aligned", DebugNodes(alignedNodes[1]));
+        AddToCSV("toModify aligned", DebugNodes(alignedNodes[0]));
+        AddToCSV("toReturn aligned", DebugNodes(alignedNodes[1]));
 
         List<List<NodeGene>> crossedNodes = CrossNodes(alignedNodes[0], alignedNodes[1]);
 
-        OneLineOutput("toModify crossed", DebugNodes(crossedNodes[0]));
-        OneLineOutput("toReturn crossed", DebugNodes(crossedNodes[1]));
+        AddToCSV("toModify crossed", DebugNodes(crossedNodes[0]));
+        AddToCSV("toReturn crossed", DebugNodes(crossedNodes[1]));
 
 
         List<List<LinkGene>> alignedLinks = AlignLinkGenes(toModify.Links, toReturn.Links);
+        AddToCSV("toModify aligned links", DebugLinks(alignedLinks[0]));
+        AddToCSV("toReturn aligned links", DebugLinks(alignedLinks[1]));
+
         List<List<LinkGene>> crossedLinks = CrossLinks(alignedLinks[0], alignedLinks[1]);
+
+        AddToCSV("toModify crossed links", DebugLinks(crossedLinks[0]));
+        AddToCSV("toReturn crossed links", DebugLinks(crossedLinks[1]));
 
         toModify.Nodes = crossedNodes[0];
         toModify.Links = crossedLinks[0];
@@ -73,7 +128,7 @@ public class TWEANNCrossover
         toReturn.Links = crossedLinks[1];
 
         Sucessful = true;
-        Debug.Log("Crossover completed");
+        //SaveCSV();
         return toReturn;
     }
 

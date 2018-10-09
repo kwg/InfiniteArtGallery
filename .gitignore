@@ -4,6 +4,7 @@
 [Bb]uild/
 [Bb]uilds/
 0001/
+DEBUG_LOGS/
 Assets/AssetStoreTools*
 
 # Visual Studio cache directory

@@ -94,8 +94,8 @@ public class CrossoverTest : MonoBehaviour
 
         if (!PauseMenu.isPaused && Input.GetButtonDown("Fire1"))
         {
-            leftGeno = leftArt.GetGenotype().Copy();
-            rightGeno = rightArt.GetGenotype().Copy();
+            leftGeno = new TWEANNGenotype(leftArt.GetGenotype().Copy());
+            rightGeno = new TWEANNGenotype(rightArt.GetGenotype().Copy());
 
 
             TWEANNCrossover cr = new TWEANNCrossover(false);

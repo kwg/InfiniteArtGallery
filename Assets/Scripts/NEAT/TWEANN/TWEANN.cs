@@ -87,8 +87,8 @@ public class TWEANN : INetwork
             TWEANNNode source = GetNodeByInnovationID(link.GetSourceInnovation());
             TWEANNNode target = GetNodeByInnovationID(link.GetTargetInnovation());
 
-            //if (source == null) throw new System.Exception("Source not found with innovation " + link.GetSourceInnovation() + " : " + ToString());
-            //if (target == null) throw new System.Exception("Target not found with innovation " + link.GetTargetInnovation() + " : " + ToString());
+            if (source == null) throw new System.Exception("Source not found with innovation " + link.GetSourceInnovation() + " : " + ToString());
+            if (target == null) throw new System.Exception("Target not found with innovation " + link.GetTargetInnovation() + " : " + ToString());
 
             source.Connect(target, link.GetWeight(), link.Innovation, false, false);
         }

@@ -212,7 +212,7 @@ public class Sculpture : MonoBehaviour {
                     //TODO move all of the CPPN render out of the draw function
 
                     if (outputs[THREE_DIMENSIONAL_BRIGHTNESS_INDEX] > PRESENCE_THRESHOLD) {
-                        float initialHue = ActivationFunctions.Activation(FTYPE.PIECEWISE, outputs[THREE_DIMENSIONAL_VOXEL_INDEX]);
+                        float initialHue = ActivationFunctions.Activation(FTYPE.PIECEWISE, outputs[THREE_DIMENSIONAL_BRIGHTNESS_INDEX]);
                         float finalHue = initialHue < 0 ? initialHue + 1 : initialHue;
                         Color colorHSV = Color.HSVToRGB(
                             finalHue,
@@ -223,7 +223,7 @@ public class Sculpture : MonoBehaviour {
                         float alpha = 1f;
                         if (transparent)
                         {
-                            alpha = ActivationFunctions.Activation(FTYPE.HLPIECEWISE, outputs[THREE_DIMENSIONAL_BRIGHTNESS_INDEX]);
+                            alpha = ActivationFunctions.Activation(FTYPE.HLPIECEWISE, outputs[THREE_DIMENSIONAL_VOXEL_INDEX]);
                         }
 
                         //float alpha = -1.0f;

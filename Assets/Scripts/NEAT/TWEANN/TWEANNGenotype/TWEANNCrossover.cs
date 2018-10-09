@@ -34,6 +34,7 @@ public class TWEANNCrossover
         toReturn.Links = crossedLinks[1];
 
         Sucessful = true;
+        Debug.Log("Crossover completed");
         return toReturn;
     }
 

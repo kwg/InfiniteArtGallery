@@ -15,7 +15,7 @@ public class ArtGallery : MonoBehaviour {
     public static ArtGallery artgallery = null;
 
     public enum DEBUG { NONE = 0, POLITE = 1, VERBOSE = 2 };
-    public static DEBUG DEBUG_LEVEL = DEBUG.POLITE;
+    public static DEBUG DEBUG_LEVEL = DEBUG.NONE;
     public const int STARTING_NUM_ARTWORKS = 4;
     public GameObject roomObject; // RoomObject for room to load (set in the editor)
     [HideInInspector] public Room gameRoom; // Reference to the in-game room that the player is currently in (set by the script)

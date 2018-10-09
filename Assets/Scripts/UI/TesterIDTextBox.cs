@@ -1,19 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TesterIDTextBox : MonoBehaviour {
 
     public GameObject HUD;
 
-    private TextMeshProUGUI mText;
+    private Text mText;
     private string testerID;
 
 
 	// Use this for initialization
 	void Start () {
-        mText = gameObject.GetComponent<TextMeshProUGUI>();
+        mText = gameObject.GetComponent<Text>();
 	}
 	
 	// Update is called once per frame

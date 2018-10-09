@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class OutputText : MonoBehaviour {
 
-    public TMPro.TextMeshProUGUI onScreenText;
+    public TextMesh onScreenText;
 
 	// Use this for initialization
 	void Start () {

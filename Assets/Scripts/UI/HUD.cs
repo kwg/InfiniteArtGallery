@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,7 +17,7 @@ public class HUD : MonoBehaviour
     public GameObject inventorySlotObject;
     public GameObject functionTray;
     public GameObject inventoryTray;
-    public TextMeshProUGUI testerIDObject;
+    public GameObject testerIDObject;
 
     private string testerID;
 

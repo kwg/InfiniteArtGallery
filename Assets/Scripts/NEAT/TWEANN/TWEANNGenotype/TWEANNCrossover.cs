@@ -14,8 +14,40 @@ public class TWEANNCrossover
         this.includeExcess = includeExcess;
     }
 
+    public string[] DebugNodes(List<NodeGene> nodes)
+    {
+        string[] output = new string[nodes.Count];
+        int c = 0;
+        foreach (NodeGene n in nodes)
+        {
+            if(nodes[c] != null)
+            {
+                output[c] = "id: " + n.Innovation;
+            }
+            else
+            {
+                output[c] = "NULL";
+            }
+            c++;
+        }
+        return output;
+    }
+
+    public void OneLineOutput(string msg, string[] output)
+    {
+        string o = msg;
+        for(int i = 0; i < output.Length; i++)
+        {
+            o += " :: " + output[i];
+        }
+
+        Debug.Log(o);
+    }
+
     public TWEANNGenotype Crossover(TWEANNGenotype toModify, TWEANNGenotype toReturn)
     {
+        OneLineOutput("toModify pre", DebugNodes(toModify.Nodes));
+        OneLineOutput("toReturn pre", DebugNodes(toReturn.Nodes));
 
         List<List<NodeGene>> alignedNodes = new List<List<NodeGene>>(2)
         {
@@ -23,7 +55,14 @@ public class TWEANNCrossover
             AlignNodesToArchetype(toReturn.Nodes, toReturn.GetArchetypeIndex())
         };
 
+        OneLineOutput("toModify aligned", DebugNodes(alignedNodes[0]));
+        OneLineOutput("toReturn aligned", DebugNodes(alignedNodes[1]));
+
         List<List<NodeGene>> crossedNodes = CrossNodes(alignedNodes[0], alignedNodes[1]);
+
+        OneLineOutput("toModify crossed", DebugNodes(crossedNodes[0]));
+        OneLineOutput("toReturn crossed", DebugNodes(crossedNodes[1]));
+
 
         List<List<LinkGene>> alignedLinks = AlignLinkGenes(toModify.Links, toReturn.Links);
         List<List<LinkGene>> crossedLinks = CrossLinks(alignedLinks[0], alignedLinks[1]);
@@ -262,6 +301,7 @@ public class TWEANNCrossover
 
     private List<NodeGene> AlignNodesToArchetype(List<NodeGene> nodes, int archetypeIndex)
     {
+        //Debug.Log("starting AlignNodesToArchetype...");
         List<NodeGene> archetype = EvolutionaryHistory.archetypes[archetypeIndex];
         List<NodeGene> aligned = new List<NodeGene>(archetype.Count);
 
@@ -289,6 +329,8 @@ public class TWEANNCrossover
             archetypePos++;
         }
 
+        //Debug.Log("ending AlignNodesToArchetype...");
+        //OneLineOutput("AlignedNodesToArchtype ouput", DebugNodes(aligned));
         return aligned;
     }
 

@@ -56,7 +56,7 @@ public class RoomConfiguration {
                 {
                     Sucessful = false
                 }; //HACK PROTOTYPE hardcoded value
-                TWEANNGenotype crossedGeno = cross.Crossover(new TWEANNGenotype(geno.Copy()), new TWEANNGenotype(champion.GetGenotype().Copy()));
+                //TWEANNGenotype crossedGeno = cross.Crossover(new TWEANNGenotype(geno.Copy()), new TWEANNGenotype(champion.GetGenotype().Copy()));
                 //geno = crossedGeno;
 
                 for (int m = 0; m < MUTATION_CYCLES - mutations; m++)
@@ -96,7 +96,7 @@ public class RoomConfiguration {
                     {
                         Sucessful = false
                     }; // HACK PROTOTYPE hardcoded value
-                    TWEANNGenotype crossedmgeno = cross.Crossover(new TWEANNGenotype(sculptureChampion.Copy()), new TWEANNGenotype(ms.GetGenotype().Copy()));
+                    //TWEANNGenotype crossedmgeno = cross.Crossover(new TWEANNGenotype(sculptureChampion.Copy()), new TWEANNGenotype(ms.GetGenotype().Copy()));
                     //crossedGeno = crossedmgeno;
                     
                     for (int mr = 0; mr < Random.Range(1, 5); mr++)

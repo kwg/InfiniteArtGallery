@@ -236,7 +236,7 @@ public class Room : MonoBehaviour
 
     public void DoTeleport(Player player, int portalID)
     {
-        if (!Locked)
+        if (!Locked || Locked) //HACK PROTOTYPE - disabled lockout to prevent players getting stuck
         {
             if (debug) Debug.Log("starting teleport form portal " + portalID + " = " + portals[portalID].GetPortalID());
             Vector3 destination = new Vector3(0, 20, 0);
@@ -278,7 +278,12 @@ public class Room : MonoBehaviour
             FindObjectOfType<ArtGallery>().ChangeRoom(portalID, portals[portalID].GetDestinationID());
 
         }
-    }
+        else
+        {
+            Locked = false;
+        }
+
+}
 
     public void SetReturnPortalDecoration(int portalID)
     {

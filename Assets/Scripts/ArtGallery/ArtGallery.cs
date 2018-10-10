@@ -15,7 +15,7 @@ public class ArtGallery : MonoBehaviour {
     public static ArtGallery artgallery = null;
 
     public enum DEBUG { NONE = 0, POLITE = 1, VERBOSE = 2 };
-    public static DEBUG DEBUG_LEVEL = DEBUG.NONE;
+    public static DEBUG DEBUG_LEVEL = DEBUG.VERBOSE;
     public const int STARTING_NUM_ARTWORKS = 4;
     public GameObject roomObject; // RoomObject for room to load (set in the editor)
     [HideInInspector] public Room gameRoom; // Reference to the in-game room that the player is currently in (set by the script)
@@ -95,11 +95,12 @@ public class ArtGallery : MonoBehaviour {
 
         
         //FIXME PROTOTYPE set a random seed value here instead and save that value for a play session
-        seed = 1234567;
+        //seed = 1234567;
+        seed = Random.Range(0, 9999999);
         Random.InitState(seed);
         EvolutionaryHistory.InitializeEvolutionaryHistory();
 
-        RunExternalScript("test.bat", "");
+        //RunExternalScript("test.bat", "");
 
         // Build the game room
         GameObject roomProp = Instantiate(roomObject) as GameObject;
@@ -107,10 +108,11 @@ public class ArtGallery : MonoBehaviour {
         gameRoom.SetArtGallery(this);
 
         // starting functions
-        availableFunctions = new List<FTYPE> { FTYPE.ID, FTYPE.TANH, FTYPE.SQUAREWAVE, FTYPE.GAUSS, FTYPE.SINE };
+        availableFunctions = new List<FTYPE> { FTYPE.ID, FTYPE.TANH, FTYPE.SQUAREWAVE, FTYPE.GAUSS, FTYPE.SINE, FTYPE.SAWTOOTH, FTYPE.ABSVAL };
         if (activeFunctions == null)
         {
             activeFunctions = new List<FTYPE>();
+            ActivateFunction(FTYPE.ID);
         }
 
 
@@ -222,6 +224,17 @@ public class ArtGallery : MonoBehaviour {
 
     }
 
+    public void SaveSeed(int seed)
+    {
+        byte[] bytes = Encoding.UTF8.GetBytes(seed.ToString());
+        if (!Directory.Exists(Application.dataPath + "/../" + testerID))
+        {
+            Directory.CreateDirectory(Application.dataPath + "/../" + testerID);
+        }
+        File.WriteAllBytes(Application.dataPath + "/../" + testerID + "/seed.txt", bytes);
+
+    }
+
     public RoomConfiguration GetLobby()
     {
         return lobby;
@@ -242,6 +255,8 @@ public class ArtGallery : MonoBehaviour {
         {
             activeFunctions.Add(fTYPE);
         }
+
+        ActivationFunctions.ActivateFunction(activeFunctions);
     }
 
     public void DeactivateFunction(FTYPE fTYPE)

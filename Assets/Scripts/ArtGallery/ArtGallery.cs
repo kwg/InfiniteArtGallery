@@ -95,8 +95,8 @@ public class ArtGallery : MonoBehaviour {
 
         
         //FIXME PROTOTYPE set a random seed value here instead and save that value for a play session
-        //seed = 1234567;
-        seed = UnityEngine.Random.Range(0, 9999999);
+        seed = ConvertToInt(testerID); //testerID
+        //seed = UnityEngine.Random.Range(0, 9999999);
         UnityEngine.Random.InitState(seed);
         EvolutionaryHistory.InitializeEvolutionaryHistory();
 
@@ -131,6 +131,16 @@ public class ArtGallery : MonoBehaviour {
 
         lobby.SetSculptures(gameRoom.GetSculptures());
 
+    }
+
+    private int ConvertToInt(String intString)
+    {
+        int i = 0;
+        if (!Int32.TryParse(intString, out i))
+        {
+            i = -1;
+        }
+        return i;
     }
 
     public string GetTesterID()

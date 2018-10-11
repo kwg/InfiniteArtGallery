@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using UnityEngine;
 using System.Diagnostics;
-
+using System;
 
 /// <summary>
 /// Primary controller. Handles rooms and portals (physical) of the scene and links them to the doors in the 
@@ -96,8 +96,8 @@ public class ArtGallery : MonoBehaviour {
         
         //FIXME PROTOTYPE set a random seed value here instead and save that value for a play session
         //seed = 1234567;
-        seed = Random.Range(0, 9999999);
-        Random.InitState(seed);
+        seed = UnityEngine.Random.Range(0, 9999999);
+        UnityEngine.Random.InitState(seed);
         EvolutionaryHistory.InitializeEvolutionaryHistory();
 
         //RunExternalScript("test.bat", "");
@@ -196,6 +196,11 @@ public class ArtGallery : MonoBehaviour {
         SaveCSV(voxArray, generatedSculpturesCounter, (generatedSculptures[generatedSculpturesCounter].Count));
     }
 
+    public void ResetSculpture(Sculpture s)
+    {
+        s.NewSculpture();
+    }
+
     public void SaveCSV(Color[,,] voxArray, int seqID, int sculptureID)
     {
         string voxCSV = "";
@@ -242,7 +247,7 @@ public class ArtGallery : MonoBehaviour {
 
     public FTYPE GetRandomCollectedFunction()
     {
-        return availableFunctions[Random.Range(0, availableFunctions.Count)];
+        return availableFunctions[UnityEngine.Random.Range(0, availableFunctions.Count)];
     }
 
     public void ActivateFunction(FTYPE fTYPE)

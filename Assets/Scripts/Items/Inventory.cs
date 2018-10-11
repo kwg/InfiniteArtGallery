@@ -170,6 +170,17 @@ public class Inventory : MonoBehaviour {
                         // do nothing for now
                     }
                 }
+
+                if (hit.collider.tag == "sculpture")
+                {
+                    Sculpture s = hit.collider.gameObject.GetComponent<Sculpture>();
+
+                    sculptureGeno = s.GetComponent<Sculpture>().GetGenotype();
+
+                    ag.ResetSculpture(s);
+                    //s.GetComponent<Sculpture>().SetSelected(!s.GetComponent<Sculpture>().GetSelected());
+
+                }
             }
         }
 

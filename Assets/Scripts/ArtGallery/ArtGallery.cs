@@ -170,11 +170,11 @@ public class ArtGallery : MonoBehaviour {
         //Destroy(tex);
 
         // For testing purposes, also write to a file in the project folder
-        if(!Directory.Exists(Application.dataPath + "/../" + testerID + "/" + generatedImagesCounter))
+        if(!Directory.Exists(Application.dataPath + "/../Subject-" + testerID + "/" + generatedImagesCounter))
         {
-            Directory.CreateDirectory(Application.dataPath + "/../" + testerID + "/" + generatedImagesCounter);
+            Directory.CreateDirectory(Application.dataPath + "/../Subject-" + testerID + "/" + generatedImagesCounter);
         }
-        File.WriteAllBytes(Application.dataPath + "/../" + testerID + "/" + generatedImagesCounter + "/artwork_" + artworkID + "_" + ((artworkID == selectedArt) ? "selected" : "not_selected") + ".png", bytes);
+        File.WriteAllBytes(Application.dataPath + "/../Subject-" + testerID + "/" + generatedImagesCounter + "/artwork_" + artworkID + "_" + ((artworkID == selectedArt) ? "selected" : "not_selected") + ".png", bytes);
     }
 
     public void SaveVox(Color[,,] voxArray)
@@ -221,22 +221,22 @@ public class ArtGallery : MonoBehaviour {
         }
 
         byte[] bytes = Encoding.UTF8.GetBytes(voxCSV); 
-        if (!Directory.Exists(Application.dataPath + "/../" + testerID + "/" + generatedSculpturesCounter))
+        if (!Directory.Exists(Application.dataPath + "/../Subject-" + testerID + "/" + generatedSculpturesCounter))
         {
-            Directory.CreateDirectory(Application.dataPath + "/../" + testerID + "/" + generatedSculpturesCounter);
+            Directory.CreateDirectory(Application.dataPath + "/../Subject-" + testerID + "/" + generatedSculpturesCounter);
         }
-        File.WriteAllBytes(Application.dataPath + "/../" + testerID + "/" + generatedSculpturesCounter + "/sculpture_" + sculptureID + "_" + ".csv", bytes);
+        File.WriteAllBytes(Application.dataPath + "/../Subject-" + testerID + "/" + generatedSculpturesCounter + "/sculpture_" + sculptureID + "_" + ".csv", bytes);
 
     }
 
     public void SaveSeed(int seed)
     {
         byte[] bytes = Encoding.UTF8.GetBytes(seed.ToString());
-        if (!Directory.Exists(Application.dataPath + "/../" + testerID))
+        if (!Directory.Exists(Application.dataPath + "/../Subject-" + testerID))
         {
-            Directory.CreateDirectory(Application.dataPath + "/../" + testerID);
+            Directory.CreateDirectory(Application.dataPath + "/../Subject-" + testerID);
         }
-        File.WriteAllBytes(Application.dataPath + "/../" + testerID + "/seed.txt", bytes);
+        File.WriteAllBytes(Application.dataPath + "/../Subject-" + testerID + "/seed.txt", bytes);
 
     }
 

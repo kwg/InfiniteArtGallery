@@ -22,6 +22,9 @@ public class Artwork
     public static int TWO_DIMENSIONAL_SATURATION_INDEX = 1;
     public static int TWO_DIMENSIONAL_BRIGHTNESS_INDEX = 2;
 
+    float MaxValue = float.NegativeInfinity;
+    float MinValue = float.PositiveInfinity;
+
     //FIXME PROTOTYPE width, height - These are static for testing but we may want to make them change
     int width = 128;
     int height = 128;
@@ -88,33 +91,70 @@ public class Artwork
         cppn = new TWEANN(geno);
         if (debug) Debug.Log("NETWORK OUTPUT : AFTER CPPN  : Building TWEANN from geno " + geno.ToString());
 
+        Vector3[] hsvArr = new Vector3[width * height];
+
         for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < width; x++)
             {
                 float scaledX = Scale(x, width);
                 float scaledY = Scale(y, height);
+
                 float distCenter = GetDistFromCenter(scaledX, scaledY);
-                float[] hsv = ProcessCPPNInput(scaledX, scaledY, GetDistFromCenter(scaledX, scaledY), BIAS);
+                float[] hsv = ProcessCPPNInput(scaledX, scaledY, distCenter, BIAS);
                 // This initial hue is in the range [-1,1] as in the MM-NEAT code
-                float initialHue = ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[TWO_DIMENSIONAL_HUE_INDEX]);
                 // However, C Sharp's Colors do not automatically map negative numbers to the proper hue range as in Java, so an additional step is needed
-                float finalHue = initialHue < 0 ? initialHue + 1 : initialHue;
                 Color colorHSV = Color.HSVToRGB(
-                    finalHue,
-                    ActivationFunctions.Activation(FTYPE.HLPIECEWISE, hsv[TWO_DIMENSIONAL_SATURATION_INDEX]),
+                    hsv[TWO_DIMENSIONAL_HUE_INDEX],
+                    hsv[TWO_DIMENSIONAL_SATURATION_INDEX],
+                    hsv[TWO_DIMENSIONAL_BRIGHTNESS_INDEX],
+                    false);
+                //Debug.Log(hsv[0] + ", " + hsv[1] + ", " + hsv[2]);
+                /*Color colorHSV = Color.HSVToRGB(
+                    Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[TWO_DIMENSIONAL_HUE_INDEX])),
+                    Mathf.Abs(ActivationFunctions.Activation(FTYPE.HLPIECEWISE, hsv[TWO_DIMENSIONAL_SATURATION_INDEX])),
                     Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[TWO_DIMENSIONAL_BRIGHTNESS_INDEX])),
                     true
                     );
-                pixels[x + y * width] = colorHSV;
+                */
+                for (int i = 0; i < 3; i++)
+                {
+                    MaxValue = Mathf.Max(MaxValue, hsv[i]);
+                    MinValue = Mathf.Min(MinValue, hsv[i]);
+                }
+
+                //Debug.Log(finalColor[0] + ", " + finalColor[1] + ", " + finalColor[2]);
+
+                //pixels[x + y * width] = colorHSV;
+                hsvArr[x + y * width] = new Vector3(hsv[0], hsv[1], hsv[2]);
             }
         }
+        for (int i = 0; i < hsvArr.Length; i++)
+        {
+            float[] v = FormatHSV(new float[] { hsvArr[i][0], hsvArr[i][1], hsvArr[i][2] });
+            pixels[i] = Color.HSVToRGB(v[0], v[1], v[2], true);
+        }
+        //Debug.Log("MaxValue: " + MaxValue + ", MinValue: " + MinValue);
+
         processingCPPN = false;
         needsRedraw = true;
         //img.SetPixels(pixels);
         //img.Apply();
-
         if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("CPPN Imgage generation complete");
+    }
+
+    private float[] FormatHSV(float[] hsv)
+    {
+        float[] result = new float[hsv.Length];
+        float range = MaxValue - MinValue;
+        for(int h = 0; h < hsv.Length; h++)
+        {
+            result[0] = ((hsv[0] - MinValue) / range);
+            //result[0] = ((hsv[0] - MinValue));
+            result[1] = ActivationFunctions.Activation(FTYPE.HLPIECEWISE, hsv[1]);
+            result[2] = Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[2]));
+        }
+        return result;
     }
 
     private float[] ProcessCPPNInput(float scaledX, float scaledY, float distCenter, float bias)
@@ -126,7 +166,7 @@ public class Artwork
     {
         float result;
 
-        result = ((toScale * 1.0f / (maxDimension - 1)) * 2) - 1;
+        result = ((toScale * 1f / (maxDimension)) * 2) - 1;
 
         return result;
     }

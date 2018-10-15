@@ -168,6 +168,18 @@ public class HUD : MonoBehaviour
         }
     }
 
+    internal void UpdateFunctionThumbnail(int functionSlot)
+    {
+        if (functionSlot < 0 || functionSlot > functionSlots.Count)
+        {
+            throw new System.Exception("Selected function slot does not exist in the HUD: " + functionSlot);
+        }
+        else
+        {
+            functionSlots[functionSlot].GetComponent<FunctionSlot>().SetThumbnail();
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {

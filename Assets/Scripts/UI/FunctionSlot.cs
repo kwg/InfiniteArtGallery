@@ -28,6 +28,11 @@ public class FunctionSlot : MonoBehaviour {
         thumbnailSlot.GetComponent<Image>().sprite = sprite;
     }
 
+    public void SetThumbnail()
+    {
+        thumbnailSlot.GetComponent<Image>().sprite = defaultThumbnail;
+    }
+
     // Use this for initialization
     void Start () {
 		

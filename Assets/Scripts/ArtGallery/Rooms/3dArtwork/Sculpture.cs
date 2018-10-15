@@ -27,6 +27,9 @@ public class Sculpture : MonoBehaviour {
     private bool selected;
     bool needsUpdated = false;
 
+    float MaxValue = float.NegativeInfinity;
+    float MinValue = float.PositiveInfinity;
+
     //Thread
     Thread cppnProcess;
     bool processingCPPN;  
@@ -192,6 +195,8 @@ public class Sculpture : MonoBehaviour {
         float halfVoxelSize = voxelSize / 2;
         cppn = new TWEANN(geno);
 
+        Vector4[] outArr = new Vector4[SCULP_X * SCULP_Z * SCULP_Y];
+
         voxArray = new Color[SCULP_X, SCULP_Z, SCULP_Y];
         for (int x = 0; x < SCULP_X; x++)
         {
@@ -210,20 +215,41 @@ public class Sculpture : MonoBehaviour {
                     //float[] outputs = cppn.Process(new float[] { actualX, actualY, actualZ, distFromCenter, BIAS});
                     float[] outputs = cppn.Process(new float[] { actualX, actualY, actualZ, distFromCenter, distFromCenterXZ, distfromCenterYZ, distfromCenterZY, BIAS });
                     //TODO move all of the CPPN render out of the draw function
+                    if(MaxValue < outputs[THREE_DIMENSIONAL_HUE_INDEX])
+                    {
+                        MaxValue = outputs[THREE_DIMENSIONAL_HUE_INDEX];
+                    }
+                    if(MinValue > outputs[THREE_DIMENSIONAL_HUE_INDEX])
+                    {
+                        MinValue = outputs[THREE_DIMENSIONAL_HUE_INDEX];
+                    }
 
-                    if (outputs[THREE_DIMENSIONAL_BRIGHTNESS_INDEX] > PRESENCE_THRESHOLD) {
-                        float initialHue = ActivationFunctions.Activation(FTYPE.PIECEWISE, outputs[THREE_DIMENSIONAL_BRIGHTNESS_INDEX]);
-                        float finalHue = initialHue < 0 ? initialHue + 1 : initialHue;
+                    outArr[x * z * y] = new Vector4(outputs[THREE_DIMENSIONAL_HUE_INDEX], outputs[THREE_DIMENSIONAL_SATURATION_INDEX], outputs[THREE_DIMENSIONAL_BRIGHTNESS_INDEX], outputs[THREE_DIMENSIONAL_VOXEL_INDEX]);
+                }
+            }
+        }
+
+        for (int x = 0; x < SCULP_X; x++)
+        {
+            for (int z = 0; z < SCULP_Z; z++)
+            {
+                for (int y = 0; y < SCULP_Y; y++)
+                {
+
+                    float[] o = FixHue(outArr[x*z*y]);
+
+                    if (o[THREE_DIMENSIONAL_BRIGHTNESS_INDEX] > PRESENCE_THRESHOLD)
+                    {
                         Color colorHSV = Color.HSVToRGB(
-                            finalHue,
-                            ActivationFunctions.Activation(FTYPE.HLPIECEWISE, outputs[THREE_DIMENSIONAL_HUE_INDEX]),
-                            Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, outputs[THREE_DIMENSIONAL_SATURATION_INDEX])),
+                            o[THREE_DIMENSIONAL_HUE_INDEX],
+                            o[THREE_DIMENSIONAL_SATURATION_INDEX],
+                            o[THREE_DIMENSIONAL_BRIGHTNESS_INDEX],
                             true
                             );
                         float alpha = 1f;
                         if (transparent)
                         {
-                            alpha = ActivationFunctions.Activation(FTYPE.HLPIECEWISE, outputs[THREE_DIMENSIONAL_VOXEL_INDEX]);
+                            alpha = ActivationFunctions.Activation(FTYPE.HLPIECEWISE, o[THREE_DIMENSIONAL_VOXEL_INDEX]);
                         }
 
                         //float alpha = -1.0f;
@@ -245,6 +271,21 @@ public class Sculpture : MonoBehaviour {
         needsRedraw = true;
 
 
+    }
+
+    private float[] FixHue(Vector4 outputFromCPPN)
+    {
+        float[] result = new float[4];
+        float range = MaxValue - MinValue;
+
+        result[THREE_DIMENSIONAL_HUE_INDEX] = ((outputFromCPPN[THREE_DIMENSIONAL_HUE_INDEX] - MinValue) / range);
+        //result[TWO_DIMENSIONAL_HUE_INDEX] = Mathf.Abs((ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[TWO_DIMENSIONAL_HUE_INDEX])));
+
+        result[THREE_DIMENSIONAL_SATURATION_INDEX] = ActivationFunctions.Activation(FTYPE.HLPIECEWISE, outputFromCPPN[THREE_DIMENSIONAL_SATURATION_INDEX]);
+        result[THREE_DIMENSIONAL_BRIGHTNESS_INDEX] = Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, outputFromCPPN[THREE_DIMENSIONAL_BRIGHTNESS_INDEX]));
+
+        result[THREE_DIMENSIONAL_VOXEL_INDEX] = outputFromCPPN[THREE_DIMENSIONAL_VOXEL_INDEX];
+        return result;
     }
 
     private void RedrawSculpture()

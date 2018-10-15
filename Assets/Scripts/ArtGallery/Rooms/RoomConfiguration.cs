@@ -16,7 +16,7 @@ public class RoomConfiguration {
     public RoomConfiguration[] rooms { get; set; }
 
     // mutation
-    private int MUTATION_CYCLES = 5; // maximum mutations per evolution
+    private int MUTATION_CYCLES = 12; // maximum mutations per evolution
 
     public RoomConfiguration(RoomConfiguration parentRoom, int returnPortalID, int championPortalID, Artwork[] artworksPassed, Sculpture[] sculptures)
     {
@@ -76,6 +76,7 @@ public class RoomConfiguration {
             {
                 sculptureChampion = new TWEANNGenotype(sculptures[s].GetGenotype().Copy());
                 sculptures[s].SetSelected(false);
+                toMutate[s] = sculptures[s];
             }
             else
             {
@@ -99,7 +100,7 @@ public class RoomConfiguration {
                     //TWEANNGenotype crossedmgeno = cross.Crossover(new TWEANNGenotype(sculptureChampion.Copy()), new TWEANNGenotype(ms.GetGenotype().Copy()));
                     //crossedGeno = crossedmgeno;
                     
-                    for (int mr = 0; mr < Random.Range(1, 5); mr++)
+                    for (int mr = 0; mr < Random.Range(1, 12); mr++) //HACK PROTOTYPE hardcoded value for mutation rate
                     {
                         crossedGeno.Mutate();
                     }

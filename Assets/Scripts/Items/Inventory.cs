@@ -184,11 +184,11 @@ public class Inventory : MonoBehaviour {
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Keypad4) || Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.Keypad4))
         {
             CycleActiveSlot(-1);
         }
-        if (Input.GetKeyDown(KeyCode.Keypad6) || Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.Keypad6))
         {
             CycleActiveSlot(1);
         }
@@ -206,6 +206,9 @@ public class Inventory : MonoBehaviour {
             CycleActiveSlot(1);
 
         }
+
+
+
     }
 }
 

@@ -87,6 +87,21 @@ public class Functions : MonoBehaviour {
         {
             CycleActiveSlot(1);
         }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            DropFunction();
+        }
+    }
+
+    public void DropFunction()
+    {
+        if(functions[ActiveSlot] != null)
+        {
+            ag.DeactivateFunction(functions[ActiveSlot].fTYPE);
+            functions[ActiveSlot] = null;
+            hud.UpdateFunctionThumbnail(ActiveSlot);
+        }
     }
 
     public void AddFunction(IFunctionItem function)

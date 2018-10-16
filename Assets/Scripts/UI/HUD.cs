@@ -18,6 +18,7 @@ public class HUD : MonoBehaviour
     public GameObject functionTray;
     public GameObject inventoryTray;
     public GameObject testerIDObject;
+    public GameObject countdownObject;
 
     private string testerID;
 
@@ -183,6 +184,46 @@ public class HUD : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        UpdateTimer();
+    }
 
+    void UpdateTimer()
+    {
+        ArtGallery ag = ArtGallery.GetArtGallery();
+        CountdownTextBox ctb = countdownObject.GetComponent<CountdownTextBox>();
+
+
+        float timer = Mathf.Abs(ag.gameTimer);
+        int timerMin = (int)timer / 60;
+        int timerSec = (int)timer % 60;
+        string timeOutMin = timerMin.ToString() + ":";
+        string timeOutSec = "";
+
+        if(timer > 60)
+        {
+            ctb.SetCounterTextColor(Color.white);
+        }
+        else
+        {
+            ctb.SetCounterTextColor(Color.red);
+        }
+
+
+        if (timerSec == 0)
+        {
+            timeOutSec = "00";
+        }
+        else if (timerSec < 10)
+        {
+            timeOutSec = "0" + timerSec.ToString();
+        }
+        else
+        {
+            timeOutSec = timerSec.ToString();
+        }
+
+        string timeOutFinal = timeOutMin + timeOutSec;
+
+        ctb.SetCounterText(timeOutFinal);
     }
 }

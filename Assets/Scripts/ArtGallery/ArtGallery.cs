@@ -23,6 +23,8 @@ public class ArtGallery : MonoBehaviour {
     public Player player;
     string[] args = System.Environment.GetCommandLineArgs();
     string testerID = "0001";
+    public float gameTimer { get; private set; }
+    const float MAX_GAME_TIME = 64f;
 
     //private SortedList<int, RoomConfiguration> history;
     private RoomConfiguration lobby; // Root of the room tree
@@ -92,6 +94,8 @@ public class ArtGallery : MonoBehaviour {
                 }
             }
         }
+
+        gameTimer = MAX_GAME_TIME;
 
         
         //FIXME PROTOTYPE set a random seed value here instead and save that value for a play session
@@ -292,8 +296,6 @@ public class ArtGallery : MonoBehaviour {
         }
     }
 
-    //FIXME PROTOTYPE need to be able to deactivate functions... wait is this even in use anymore?
-
     public Artwork GetArtwork(int portalID)
     {
         return room.GetArtworks()[portalID];
@@ -340,6 +342,12 @@ public class ArtGallery : MonoBehaviour {
     // Update is called once per frame
     void Update ()
     {
+        gameTimer -= Time.deltaTime;
+        if(gameTimer <= 0)
+        {
+            GameOver();
+        }
+
         Artwork[] art = room.GetArtworks(); // FIXME This is not a very functional way of dealing with the threads. However removing threads is not an option.
         for (int a = 0; a < art.Length; a++)
         {
@@ -351,6 +359,11 @@ public class ArtGallery : MonoBehaviour {
         }
     }
 
+    void GameOver()
+    {
+        UnityEngine.Debug.Log("Quitting game due to timeout...");
+        Application.Quit();
+    }
 
     private Texture2D[] GetImagesFromArtworks(Artwork[] artworks)
     {

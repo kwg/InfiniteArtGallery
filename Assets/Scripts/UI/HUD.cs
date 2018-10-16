@@ -196,8 +196,8 @@ public class HUD : MonoBehaviour
         float timer = Mathf.Abs(ag.gameTimer);
         int timerMin = (int)timer / 60;
         int timerSec = (int)timer % 60;
-        string timeOutMin = timerMin.ToString() + ":";
-        string timeOutSec = "";
+        string timerOutMin = timerMin.ToString() + ":";
+        string timerOutSec = "";
 
         if(timer > 60)
         {
@@ -211,14 +211,14 @@ public class HUD : MonoBehaviour
 
         if (timerSec < 10)
         {
-            timeOutSec = "0" + timerSec.ToString();
+            timerOutSec = "0" + timerSec.ToString();
         }
         else
         {
-            timeOutSec = timerSec.ToString();
+            timerOutSec = timerSec.ToString();
         }
 
-        string timeOutFinal = timeOutMin + timeOutSec;
+        string timeOutFinal = timerOutMin + timerOutSec;
 
         ctb.SetCounterText(timeOutFinal);
     }

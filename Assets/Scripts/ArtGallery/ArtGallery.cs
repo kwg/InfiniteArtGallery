@@ -260,6 +260,11 @@ public class ArtGallery : MonoBehaviour {
         return availableFunctions[UnityEngine.Random.Range(0, availableFunctions.Count)];
     }
 
+    public bool ActivateFunctionsEmpty()
+    {
+        return activeFunctions.Count == 0;
+    }
+
     public bool FunctionIsActive(FTYPE fTYPE)
     {
         return activeFunctions.Contains(fTYPE);

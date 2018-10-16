@@ -209,11 +209,7 @@ public class HUD : MonoBehaviour
         }
 
 
-        if (timerSec == 0)
-        {
-            timeOutSec = "00";
-        }
-        else if (timerSec < 10)
+        if (timerSec < 10)
         {
             timeOutSec = "0" + timerSec.ToString();
         }

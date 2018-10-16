@@ -24,7 +24,7 @@ public class ArtGallery : MonoBehaviour {
     string[] args = System.Environment.GetCommandLineArgs();
     string testerID = "0001";
     public float gameTimer { get; private set; }
-    const float MAX_GAME_TIME = 64f;
+    const float MAX_GAME_TIME = 1200f;
 
     //private SortedList<int, RoomConfiguration> history;
     private RoomConfiguration lobby; // Root of the room tree

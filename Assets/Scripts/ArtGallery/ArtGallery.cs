@@ -78,12 +78,6 @@ public class ArtGallery : MonoBehaviour {
     {
         player = FindObjectOfType<Player>();
 
-    }
-
-    // Use this for initialization
-    void Start()
-    {
-        artgallery = this;
         if (args[0] != null)
         {
             for (int i = 0; i < args.Length; i++)
@@ -94,6 +88,12 @@ public class ArtGallery : MonoBehaviour {
                 }
             }
         }
+    }
+
+    // Use this for initialization
+    void Start()
+    {
+        artgallery = this;
 
         gameTimer = MAX_GAME_TIME;
 

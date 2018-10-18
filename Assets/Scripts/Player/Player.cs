@@ -22,19 +22,19 @@ public class Player : MonoBehaviour {
         ag.player = this;
 
         //FPC = gameObject;
-        //isInverted = OptionsMenu.isInverted;
-        //float yAxis = FPC.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.YSensitivity;
-        //if (!isInverted && Mathf.Sign(yAxis) < 0)
-       // {
-        //    yAxis = yAxis * -1;
-         //   FPC.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.YSensitivity = yAxis;
+        isInverted = ag.invertY;
+        float yAxis = FPC.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.YSensitivity;
+        if (!isInverted && Mathf.Sign(yAxis) < 0)
+        {
+            yAxis = yAxis * -1;
+            FPC.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.YSensitivity = yAxis;
 
-//        }
-  //      else if (isInverted && Mathf.Sign(yAxis) > 0)
-    //    {
-      //      yAxis = yAxis * -1;
-      //      FPC.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.YSensitivity = yAxis;
-      //  }
+        }
+        else if (isInverted && Mathf.Sign(yAxis) > 0)
+        {
+            yAxis = yAxis * -1;
+            FPC.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.YSensitivity = yAxis;
+        }
 
     }
     

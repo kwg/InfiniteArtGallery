@@ -51,7 +51,6 @@ public class RoomConfiguration {
             else
             {
                 // all other art
-                int mutations = System.Math.Abs(championPortalID - i) + 1;
                 TWEANNCrossover cross = new TWEANNCrossover(false)
                 {
                     Sucessful = false
@@ -59,7 +58,7 @@ public class RoomConfiguration {
                 //TWEANNGenotype crossedGeno = cross.Crossover(new TWEANNGenotype(geno.Copy()), new TWEANNGenotype(champion.GetGenotype().Copy()));
                 //geno = crossedGeno;
 
-                for (int m = 0; m < MUTATION_CYCLES - mutations; m++)
+                for (int m = 0; m < Random.Range(2, ag.artworkMutationChances); m++)
                 {
                     geno.Mutate();
                 }
@@ -67,50 +66,7 @@ public class RoomConfiguration {
             artworks[i] = new Artwork(geno);
         }
 
-        //Sort Sculptures
-        Sculpture[] toMutate = new Sculpture[sculptures.Length];
-        TWEANNGenotype sculptureChampion = null;
-        for (int s = 0; s < sculptures.Length; s++)
-        {
-            if (sculptures[s].GetSelected())
-            {
-                sculptureChampion = new TWEANNGenotype(sculptures[s].GetGenotype().Copy());
-                sculptures[s].SetSelected(false);
-                toMutate[s] = sculptures[s];
-            }
-            else
-            {
-                toMutate[s] = sculptures[s];
-            }
-        }
-
-        //Select sculpture champion and crossover / mutate
-        if (sculptureChampion != null)
-        {
-            for (int m = 0; m < sculptures.Length; m++)
-            {
-                Sculpture ms = toMutate[m];
-                if (ms != null)
-                {
-                    TWEANNGenotype crossedGeno = new TWEANNGenotype(sculptureChampion.Copy());
-                    TWEANNCrossover cross = new TWEANNCrossover(false)
-                    {
-                        Sucessful = false
-                    }; // HACK PROTOTYPE hardcoded value
-                    //TWEANNGenotype crossedmgeno = cross.Crossover(new TWEANNGenotype(sculptureChampion.Copy()), new TWEANNGenotype(ms.GetGenotype().Copy()));
-                    //crossedGeno = crossedmgeno;
-                    
-                    for (int mr = 0; mr < Random.Range(1, 12); mr++) //HACK PROTOTYPE hardcoded value for mutation rate
-                    {
-                        crossedGeno.Mutate();
-                    }
-
-                    ms.NewSculpture(new TWEANNGenotype(crossedGeno));
-
-                }
-            }
-
-        }
+        MutateSculptures();
 
     }
 
@@ -145,6 +101,55 @@ public class RoomConfiguration {
     public void SetSculptures(Sculpture[] sculptures)
     {
         this.sculptures = sculptures;
+    }
+
+    public void MutateSculptures()
+    {
+        ArtGallery ag = ArtGallery.GetArtGallery();
+        //Sort Sculptures
+        Sculpture[] toMutate = new Sculpture[sculptures.Length];
+        TWEANNGenotype sculptureChampion = null;
+        for (int s = 0; s < sculptures.Length; s++)
+        {
+            if (sculptures[s].GetSelected())
+            {
+                sculptureChampion = new TWEANNGenotype(sculptures[s].GetGenotype().Copy());
+                sculptures[s].SetSelected(false);
+                toMutate[s] = sculptures[s];
+            }
+            else
+            {
+                toMutate[s] = sculptures[s];
+            }
+        }
+
+        //Select sculpture champion and crossover / mutate
+        if (sculptureChampion != null)
+        {
+            for (int m = 0; m < sculptures.Length; m++)
+            {
+                Sculpture ms = toMutate[m];
+                if (ms != null)
+                {
+                    TWEANNGenotype crossedGeno = new TWEANNGenotype(sculptureChampion.Copy());
+                    TWEANNCrossover cross = new TWEANNCrossover(false)
+                    {
+                        Sucessful = false
+                    }; // HACK PROTOTYPE hardcoded value
+                       //TWEANNGenotype crossedmgeno = cross.Crossover(new TWEANNGenotype(sculptureChampion.Copy()), new TWEANNGenotype(ms.GetGenotype().Copy()));
+                       //crossedGeno = crossedmgeno;
+
+                    for (int mr = 0; mr < Random.Range(2, ag.sculptureMutationChances); mr++) //HACK PROTOTYPE hardcoded value for mutation rate
+                    {
+                        crossedGeno.Mutate();
+                    }
+
+                    ms.NewSculpture(new TWEANNGenotype(crossedGeno));
+
+                }
+            }
+
+        }
     }
 
     public void AddRoom(int artworkID, RoomConfiguration newRoom)

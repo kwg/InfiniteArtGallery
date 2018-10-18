@@ -79,6 +79,8 @@ public class Artwork
     {
         cppnProcess = new Thread(new ThreadStart(GenerateImageFromCPPN));
         cppnProcess.Start();
+        MaxValue = float.NegativeInfinity;
+        MinValue = float.PositiveInfinity;
 
     }
 

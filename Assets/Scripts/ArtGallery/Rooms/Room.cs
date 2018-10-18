@@ -33,7 +33,7 @@ public class Room : MonoBehaviour
     private int rewindPortalID; // Parent of this room
     private bool isPopulated = false;  // is this room initialized?
     private Texture2D[] images;
-    private ArtGallery artGallery;
+    private ArtGallery ag;
 
     private Sculpture[] sculptures;
 
@@ -79,7 +79,7 @@ public class Room : MonoBehaviour
     /* Public methods */
     public void SetArtGallery(ArtGallery artGallery)
     {
-        this.artGallery = artGallery;
+        this.ag = artGallery;
     }
 
     public void SetParentID(int rewindPortalID)
@@ -134,10 +134,10 @@ public class Room : MonoBehaviour
 
     private void SpawnPickups()
     {
-        FTYPE fTYPE = artGallery.GetRandomCollectedFunction();
+        FTYPE fTYPE = ag.GetRandomCollectedFunction();
 
-        if ((UnityEngine.Random.Range(0f, 1f) < 0.10f
-            && !artGallery.FunctionIsActive(fTYPE)) || artGallery.ActivateFunctionsEmpty()) //HACK PROTOTYPE hardcoded chance for item spawn
+        if ((UnityEngine.Random.Range(0f, 1f) < ag.functionSpawnRate 
+            && !ag.FunctionIsActive(fTYPE)) || ag.ActivateFunctionsEmpty()) 
         {
             GameObject functionPickup = Instantiate(functionPickupObject) as GameObject;
             FunctionPickup fp = functionPickup.GetComponent<FunctionPickup>();

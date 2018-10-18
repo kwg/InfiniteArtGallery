@@ -20,7 +20,7 @@ public class HUD : MonoBehaviour
     public GameObject testerIDObject;
     public GameObject countdownObject;
 
-    private string testerID;
+    private int testerID;
 
     int selectedInventorySlot;
     int selectedFunctionSlot;
@@ -42,11 +42,11 @@ public class HUD : MonoBehaviour
     void Start()
     {
         ArtGallery ag = FindObjectOfType<ArtGallery>();
-        testerID = ag.GetTesterID();
-        testerIDObject.GetComponent<TesterIDTextBox>().SetTesterID(testerID);
+        testerID = ag.testerID;
+        testerIDObject.GetComponent<TesterIDTextBox>().SetTesterID(testerID.ToString());
     }
 
-    public void UpdateTesterID(string testerID)
+    public void UpdateTesterID(int testerID)
     {
         this.testerID = testerID;
     }

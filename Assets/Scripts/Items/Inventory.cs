@@ -119,7 +119,7 @@ public class Inventory : MonoBehaviour {
                     Texture2D img = new Texture2D(p.GetImage().width, p.GetImage().height, TextureFormat.ARGB32, false);
                     Graphics.CopyTexture(p.GetImage(), img);
                     int portalID = p.GetPortalID();
-                    TWEANNGenotype geno = ag.GetArtwork(portalID).GetGenotype().Copy();
+                    TWEANNGenotype geno = new TWEANNGenotype(ag.GetArtwork(portalID).GetGenotype().Copy());
 
                     SavedArtwork newArtwork = new SavedArtwork
                     {
@@ -159,7 +159,7 @@ public class Inventory : MonoBehaviour {
                     if(GetActiveSlotItem() != null)
                     {
                         ag.RemoveRoom(portalID);
-                        art.SetGenotype(GetActiveSlotItem().Geno.Copy()); // FIXME Null ref possible here - add checks
+                        art.SetGenotype(GetActiveSlotItem().Geno); // FIXME Null ref possible here - add checks
                         art.Refresh();
                         art.ApplyImageProcess();
                         items[ActiveSlot] = null;

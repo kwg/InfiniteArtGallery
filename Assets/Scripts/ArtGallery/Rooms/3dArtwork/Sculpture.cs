@@ -238,7 +238,7 @@ public class Sculpture : MonoBehaviour {
 
                     float[] o = FixHue(outArr[x*z*y]);
 
-                    if (o[THREE_DIMENSIONAL_BRIGHTNESS_INDEX] > PRESENCE_THRESHOLD)
+                    if (o[THREE_DIMENSIONAL_VOXEL_INDEX] > PRESENCE_THRESHOLD)
                     {
                         Color colorHSV = Color.HSVToRGB(
                             o[THREE_DIMENSIONAL_HUE_INDEX],

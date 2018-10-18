@@ -21,10 +21,24 @@ public class ArtGallery : MonoBehaviour {
     [HideInInspector] public Room gameRoom; // Reference to the in-game room that the player is currently in (set by the script)
     public GameObject FPC; // Reference to the first person contoller ( set in the editor)
     public Player player;
+
+
+
+    //command line args and default values
     string[] args = System.Environment.GetCommandLineArgs();
-    string testerID = "0001";
+    public int testerID { get; private set; }
+    public bool invertY { get; private set; }
+    public float functionSpawnRate { get; private set; }
+    public int artworkMutationChances { get; private set; }
+    public int sculptureMutationChances { get; private set; }
     public float gameTimer { get; private set; }
+    const int DEFAULT_TESTERID = 9897;
+    const bool DEFAULT_INVERTY = false;
+    const float DEFAULT_FUNCTION_SPAWN_RATE = 1200f;
+    const int DEFAULT_ARTWORK_MUTATION_CHANCES = 5;
+    const int DEFAULT_SCULPTURE_MUTATION_CHANCES = 5;
     const float MAX_GAME_TIME = 1200f;
+
 
     //private SortedList<int, RoomConfiguration> history;
     private RoomConfiguration lobby; // Root of the room tree
@@ -74,17 +88,75 @@ public class ArtGallery : MonoBehaviour {
         Process.Start(startInfo);
     }
 
+    /// <summary>
+    /// This executes before any Start() methods 
+    /// </summary>
     private void Awake()
     {
+        //Init
+        EvolutionaryHistory.InitializeEvolutionaryHistory();
+        testerID = DEFAULT_TESTERID;
+        invertY = DEFAULT_INVERTY;
+        functionSpawnRate = DEFAULT_FUNCTION_SPAWN_RATE;
+        artworkMutationChances = DEFAULT_ARTWORK_MUTATION_CHANCES;
+        sculptureMutationChances = DEFAULT_SCULPTURE_MUTATION_CHANCES;
+        gameTimer = MAX_GAME_TIME;
+
+
+        //set reference to the player
         player = FindObjectOfType<Player>();
 
+        //parse command line args and set variables
         if (args[0] != null)
         {
             for (int i = 0; i < args.Length; i++)
             {
                 if (args[i] == "-testerID")
                 {
-                    testerID = args[i + 1];
+                    int result;
+                    if (int.TryParse(args[i + 1], out result))
+                    {
+                        testerID = result;
+                    }
+                }
+                else if (args[i] == "-invertY")
+                {
+                    invertY = true;
+                }
+                else if (args[i] == "-functionSpawnRate")
+                {
+                    float result;
+                    if(float.TryParse(args[i + 1], out result))
+                    {
+                        functionSpawnRate = result;
+                    }
+                }
+                else if (args[i] == "-artworkMutationChances")
+                {
+                    int result;
+                    if (int.TryParse(args[i + 1], out result))
+                    {
+                        artworkMutationChances = result;
+                    }
+                    
+                }
+                else if (args[i] == "-sculptureMutationChances")
+                {
+                    int result;
+                    if (int.TryParse(args[i + 1], out result))
+                    {
+                        sculptureMutationChances = result;
+                    }
+
+                }
+                else if (args[i] == "-gameTimer")
+                {
+                    float result;
+                    if (float.TryParse(args[i + 1], out result) && result <= MAX_GAME_TIME)
+                    {
+                        gameTimer = result;
+                    }
+
                 }
             }
         }
@@ -95,14 +167,12 @@ public class ArtGallery : MonoBehaviour {
     {
         artgallery = this;
 
-        gameTimer = MAX_GAME_TIME;
-
         
         //FIXME PROTOTYPE set a random seed value here instead and save that value for a play session
-        seed = ConvertToInt(testerID); //testerID
+        seed = testerID; //testerID
         //seed = UnityEngine.Random.Range(0, 9999999);
         UnityEngine.Random.InitState(seed);
-        EvolutionaryHistory.InitializeEvolutionaryHistory();
+
 
         //RunExternalScript("test.bat", "");
 
@@ -146,12 +216,6 @@ public class ArtGallery : MonoBehaviour {
         }
         return i;
     }
-
-    public string GetTesterID()
-    {
-        return testerID;
-    }
-
 
     private void SaveRoom()
     {
@@ -313,6 +377,10 @@ public class ArtGallery : MonoBehaviour {
         {
             UnityEngine.Debug.Log("Making new room...");
             room.AddRoom(portalID, new RoomConfiguration(room, destinationID, portalID, room.GetArtworks(), room.sculptures));
+        }
+        else
+        {
+            room.MutateSculptures();
         }
         room = room.GetRoomByPortalID(portalID);
 

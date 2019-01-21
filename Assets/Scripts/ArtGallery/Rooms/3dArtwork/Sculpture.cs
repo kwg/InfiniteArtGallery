@@ -224,7 +224,7 @@ public class Sculpture : MonoBehaviour {
                         MinValue = outputs[THREE_DIMENSIONAL_HUE_INDEX];
                     }
 
-                    outArr[x * z * y] = new Vector4(outputs[THREE_DIMENSIONAL_HUE_INDEX], outputs[THREE_DIMENSIONAL_SATURATION_INDEX], outputs[THREE_DIMENSIONAL_BRIGHTNESS_INDEX], outputs[THREE_DIMENSIONAL_VOXEL_INDEX]);
+                    outArr[x + (SCULP_Z * z) + (SCULP_Y * y)] = new Vector4(outputs[THREE_DIMENSIONAL_HUE_INDEX], outputs[THREE_DIMENSIONAL_SATURATION_INDEX], outputs[THREE_DIMENSIONAL_BRIGHTNESS_INDEX], outputs[THREE_DIMENSIONAL_VOXEL_INDEX]);
                 }
             }
         }
@@ -236,7 +236,7 @@ public class Sculpture : MonoBehaviour {
                 for (int y = 0; y < SCULP_Y; y++)
                 {
 
-                    float[] o = FixHue(outArr[x*z*y]);
+                    float[] o = FixHue(outArr[x + (SCULP_Z * z) + (SCULP_Y * y)]);
 
                     if (o[THREE_DIMENSIONAL_VOXEL_INDEX] > PRESENCE_THRESHOLD)
                     {

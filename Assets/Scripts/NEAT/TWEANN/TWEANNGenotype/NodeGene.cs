@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class NodeGene : Gene {
 
     public FTYPE fTYPE;
@@ -12,6 +13,7 @@ public class NodeGene : Gene {
     {
         this.fTYPE = fTYPE;
         this.nTYPE = nTYPE;
+        bias = 0.0f;
     }
 
     public float GetBias()
@@ -37,18 +39,18 @@ public class NodeGene : Gene {
     public bool IsEqualTo(System.Object o)
     {
         NodeGene other = (NodeGene) o;
-        return innovation == other.innovation;
+        return Innovation == other.Innovation;
     }
 
     public NodeGene Clone()
     {
-        return new NodeGene(nTYPE, fTYPE, innovation);
+        return new NodeGene(nTYPE, fTYPE, Innovation);
     }
 
     public override string ToString()
     {
         string result = "(";
-        result += "(inno=" + innovation;
+        result += "(inno=" + Innovation;
         result += ",ftype=" + ActivationFunctions.ActivationName(fTYPE);
         result += ",ntype=" + nTYPE;
         //result += ",frozen=" + IsFrozen();

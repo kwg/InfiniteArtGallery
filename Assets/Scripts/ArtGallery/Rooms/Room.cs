@@ -8,19 +8,39 @@ using UnityEngine;
 /// <summary>
 /// The only room in the Art Gallery.
 /// </summary>
-public class Room : MonoBehaviour {
+public class Room : MonoBehaviour
+{
 
     private bool debug = ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE;
 
     public GameObject portalObject;
     public GameObject sculptureObject;
+    public GameObject functionPickupObject;
+    public GameObject VoxelObject;
+    public GameObject SculpturePlatformObject;
     SortedList<int, Portal> portals; // Portal index is door index
-    List<Sculptures> sculpturesCollection;
+
     int PortalCount = 0; // TODO not in use - decide what to do with it
+    int NUM_WALLS = 4;
+    int NUM_PORTALS = 4;
+    float xSpacing = 9.9f;
+    float ySpacing = 2.5f;
+    float zSpacing = 9.9f;
+
+    // portal lockout
+    public bool Locked { get; set; }
 
     private int rewindPortalID; // Parent of this room
     private bool isPopulated = false;  // is this room initialized?
     private Texture2D[] images;
+    private ArtGallery ag;
+
+    private Sculpture[] sculptures;
+
+    public Sculpture[] GetSculptures()
+    {
+        return sculptures;
+    }
 
     /// <summary>
     /// Initial creation of the room
@@ -31,8 +51,9 @@ public class Room : MonoBehaviour {
         this.images = images;
         rewindPortalID = -1;
         portals = new SortedList<int, Portal>();
+        sculptures = new Sculpture[4]; //HACK hardcoded values
         CreatePortals();
-        //CreateSculptures();
+        CreateSculptures();
         isPopulated = true;
     }
 
@@ -40,16 +61,27 @@ public class Room : MonoBehaviour {
     /// Initialize a room with given artworks and parent ID (loading a room)
     /// </summary>
     /// <param name="artworks">SortedList of artwork to be hung on the walls</param>
-    public void ConfigureRoom(int rewindPortalID, Texture2D[] images)
+    public void ConfigureRoom(int rewindPortalID, Texture2D[] images, Sculpture[] sculptures)
     {
+        Locked = true;
+        foreach(FunctionPickup fp in FindObjectsOfType<FunctionPickup>())
+        {
+            Destroy(fp.GetPickup());
+        }
         this.rewindPortalID = rewindPortalID;
         /* Create art */
         this.images = images;
+        this.sculptures = sculptures;
         isPopulated = true;
-
+        SpawnPickups();
     }
 
     /* Public methods */
+    public void SetArtGallery(ArtGallery artGallery)
+    {
+        this.ag = artGallery;
+    }
+
     public void SetParentID(int rewindPortalID)
     {
         this.rewindPortalID = rewindPortalID;
@@ -67,113 +99,203 @@ public class Room : MonoBehaviour {
 
     public void RedrawRoom()
     {
-        foreach(KeyValuePair<int, Portal> p in portals)
+        foreach (KeyValuePair<int, Portal> p in portals)
         {
             p.Value.PaintDoor(images[p.Key]);
         }
+        foreach(Sculpture scultpure in sculptures)
+        {
+            scultpure.Refresh();
+        }
     }
 
-    //just one sculpture for now
+    //create sculptures and position them
+    //HACK hardcoded values and number of sculptures
     private void CreateSculptures()
     {
-        GameObject sculpture = Instantiate(sculptureObject) as GameObject;
-        sculpture.AddComponent<Sculptures>();
+        Vector3[] sculps = new Vector3[] { new Vector3(-7.5f, 1.25f, -7.5f), new Vector3(7.5f, 1.25f, -7.5f), new Vector3(7.5f, 1.25f, 7.5f), new Vector3(-7.5f, 1.25f, 7.5f) };
 
-        //p.transform.position = vecs[img.Key];
-        //p.transform.Rotate(new Vector3(0, (-90 * img.Key), 0)); // HACK Hardcoded - fix once rooms can change the number of portals
+        for(int i = 0; i < sculps.Length; i++)
+        {
+            GameObject sculpture = Instantiate(sculptureObject) as GameObject;
+            sculpture.transform.SetParent(transform);
+            sculpture.transform.position = sculps[i];
+            sculpture.AddComponent<Sculpture>();
+            sculpture.GetComponent<Sculpture>().VoxelObject = VoxelObject;
+            sculpture.GetComponent<Sculpture>().SculturePlatformObject = SculpturePlatformObject;
+            if(UnityEngine.Random.Range(0,1) < .5f) //HACK hardcoded transparency chance
+            {
+                sculpture.GetComponent<Sculpture>().ToggleTransparency();
+            }
+            sculptures[i] = sculpture.GetComponent<Sculpture>();
+        }
+
+    }
+
+    private void SpawnPickups()
+    {
+        FTYPE fTYPE = ag.GetRandomCollectedFunction();
+
+        if ((UnityEngine.Random.Range(0f, 1f) < ag.functionSpawnRate 
+            && !ag.FunctionIsActive(fTYPE)) || ag.ActivateFunctionsEmpty()) 
+        {
+            GameObject functionPickup = Instantiate(functionPickupObject) as GameObject;
+            FunctionPickup fp = functionPickup.GetComponent<FunctionPickup>();
+            SavedFunction sf = new SavedFunction
+            {
+                fTYPE = fTYPE
+            };
+            sf.GenerateThumbnail();
+            fp.Function = sf;
+        }
     }
 
     private void CreatePortals()
     {
-        for(int i = 0; i < images.Length; i++)
+        ArrayList walls = getWallObjects();
+        int numImagesPerWall = images.Length / NUM_WALLS;
+        //used for portal id
+        int idSet = 0;
+
+        for (int i = 0; i < NUM_WALLS; i++)
         {
-            Portal p = SpawnPortal(i);
-            if (debug) Debug.Log("received portal with ID " + p.GetPortalID());
+            for (int j = 1; j <= numImagesPerWall; j++)
+            {
+                Portal p = SpawnPortal(idSet);
+                idSet++;
+                if (true)//debug)
+                {
+                    //Debug.Log("received portal with ID " + p.GetPortalID());
+                    if (debug) Debug.Log("Wall " + ((GameObject)walls[i]).name);
+                }
 
-            // TODO make a method to do this correctly
-            float x_spacing = 9.9f;
-            float z_spacing = 9.9f;
-            float y_spacing = 2.5f;
 
-            Vector3[] vecs = {
-                new Vector3((0 + x_spacing), (0 + y_spacing), 0),
-                new Vector3(0, (0 + y_spacing), (0 + z_spacing)),
-                new Vector3((0 - x_spacing), (0 + y_spacing), 0),
-                new Vector3(0, (0 + y_spacing), (0 - z_spacing)),
-            };
+                float tempZ = ((GameObject)walls[i]).transform.position.z / j;
+                float tempY = ((GameObject)walls[i]).transform.position.y - 1.25f;
+                float tempX = ((GameObject)walls[i]).transform.position.x / j;
+                //Quaternion tempRot = ((GameObject)walls[i]).transform.rotation;
 
-            // put each portal on a wall
-            p.transform.position = vecs[i];
-            p.transform.Rotate(new Vector3(0, (-90 * i), 0)); // HACK Hardcoded - fix once rooms can change the number of portals
-            p.PaintDoor(images[i]);
+                if(debug) Debug.Log("Portal " + idSet + ":  X=" + tempX + "  Y=" + tempY +" Z=" + tempZ);
+
+                //correctly position portal on wall
+                Vector3 wallCenter = new Vector3(tempX, tempY, tempZ);
+                Vector3 origin = new Vector3(0, 0, 0); // Center of room
+                Vector3 fromWallTowardCenter = origin - wallCenter;
+                Vector3 slightlyAwayFromWall = wallCenter + 0.005f * fromWallTowardCenter; // So that portal is not inside of wall
+                // Places portal just in front of the wall
+                p.transform.position = slightlyAwayFromWall;
+
+
+                //correctly rotate portal on wall
+                Vector3 noon = new Vector3(0, 0, 1);
+                Vector3 other = new Vector3(slightlyAwayFromWall.x, 0, slightlyAwayFromWall.z);
+                float angle = Vector3.SignedAngle(noon, other, noon);
+
+                // BEWARE: Not sure if this special case is an ugly hack or a general solution.
+                // The problem is that SignedAngle will return the smaller of the two possible rotation amounts.
+                // So, in the case of a room with 4 walls, when the rotation should be 270, a result of 90 is computed (wrong direction).
+                // This check fixes this issue, but will it break for more than 4 walls? The actual solution is probably close to this,
+                // but we won't know until we test this with more walls.
+                if (other.x < 0)
+                {
+                    angle = 360 - angle;
+                }
+
+                float rotAmount = angle - (360/NUM_WALLS);
+                p.transform.Rotate(new Vector3(0, rotAmount, 0));
+
+                p.PaintDoor(images[i]);
+            }
         }
+    }
+
+    private ArrayList getWallObjects()
+    {
+        ArrayList walls = new ArrayList();
+        foreach (GameObject gameObj in FindObjectsOfType<GameObject>())
+        {
+            if (gameObj.tag == "wall")
+            {
+                walls.Add(gameObj);
+            }
+        }
+        return walls;
     }
 
     private Portal SpawnPortal(int portalID)
     {
         GameObject portalProp = Instantiate(portalObject) as GameObject;
-        portalProp.AddComponent<Portal>();
+        //portalProp.AddComponent<Portal>();
         Portal p = portalProp.GetComponent<Portal>();
         // give each portal an ID
         p.SetPortalID(portalID);
 
         // give each portal a destination ID
-        p.SetDestinationID((2 + p.GetPortalID()) % 4);
-        if(debug) Debug.Log("Portal created with ID " + p.GetPortalID() + " and DestinationId " + p.GetDestinationID());
+        p.SetDestinationID((2 + p.GetPortalID()) % NUM_PORTALS);
+        if (debug) Debug.Log("Portal created with ID " + p.GetPortalID() + " and DestinationId " + p.GetDestinationID());
         portals.Add(portalID, p);
         return p;
     }
 
     public void DoTeleport(Player player, int portalID)
     {
-        if (debug) Debug.Log("starting teleport form portal " + portalID + " = " + portals[portalID].GetPortalID());
-        Vector3 destination = new Vector3(0, 20, 0);
-        for (int i = 0; i < portals.Count; i++)
+        if (!Locked || Locked) //HACK PROTOTYPE - disabled lockout to prevent players getting stuck
         {
-            if (portals[i].GetPortalID() == portals[portalID].GetDestinationID())
+            if (debug) Debug.Log("starting teleport form portal " + portalID + " = " + portals[portalID].GetPortalID());
+            Vector3 destination = new Vector3(0, 20, 0);
+            for (int i = 0; i < portals.Count; i++)
             {
-                destination = portals[i].gameObject.transform.position; // set destination to exit portal position
+                if (portals[i].GetPortalID() == portals[portalID].GetDestinationID())
+                {
+                    destination = portals[i].gameObject.transform.position; // set destination to exit portal position
+                }
             }
-        }
-        // Bump player to just outside of the portal collision box based on the location of the portal relative to the center
-        if (destination.x < 0)
-        {
-            destination.x += 0.25f;
+            // Bump player to just outside of the portal collision box based on the location of the portal relative to the center
+            if (destination.x < 0)
+            {
+                destination.x += 0.25f;
+            }
+            else
+            {
+                destination.x -= 0.25f;
+            }
+
+            if (destination.z < 0)
+            {
+                destination.z += 0.25f;
+            }
+            else
+            {
+                destination.z -= 0.25f;
+            }
+
+            destination.y -= 1.6f; // Fix exit height for player (player is 1.8 tall, portal is 5, center of portal is 2.5, center of player is 0.9. 2.5 - 0.9 = 1.6)
+
+            player.transform.position = destination;
+
+            /* FIXME Now tell the population controller that the player has moved 
+             * by sending the portal (equiv to door) index to the population controller
+             * 
+             */
+
+            FindObjectOfType<ArtGallery>().ChangeRoom(portalID, portals[portalID].GetDestinationID());
+
         }
         else
         {
-            destination.x -= 0.25f;
+            Locked = false;
         }
 
-        if (destination.z < 0)
-        {
-            destination.z += 0.25f;
-        }
-        else
-        {
-            destination.z -= 0.25f;
-        }
-
-        destination.y -= 1.6f; // Fix exit height for player (player is 1.8 tall, portal is 5, center of portal is 2.5, center of player is 0.9. 2.5 - 0.9 = 1.6)
-
-        player.transform.position = destination;
-
-        /* FIXME Now tell the population controller that the player has moved 
-         * by sending the portal (equiv to door) index to the population controller
-         * 
-         */
-
-        FindObjectOfType<ArtGallery>().ChangeRoom(portalID, portals[portalID].GetDestinationID());
-    }
+}
 
     public void SetReturnPortalDecoration(int portalID)
     {
-        if(portalID > -1) portals[portalID].SetEmmisive(Color.white);
+        if (portalID > -1) portals[portalID].SetEmmisive(Color.white);
     }
 
     public void ClearReturnPortalDecorations()
     {
-        foreach(KeyValuePair<int, Portal> p in portals)
+        foreach (KeyValuePair<int, Portal> p in portals)
         {
             p.Value.SetEmmisive(new Color(0f, 0f, 0f, 0f));
 

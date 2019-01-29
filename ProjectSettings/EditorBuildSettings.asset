@@ -6,14 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/MainMenu.unity
-    guid: f7c81479a75b6d04ea64777d2a72aad3
-  - enabled: 1
-    path: Assets/Scenes/CPPNImageTest.unity
-    guid: a30a5a5ab50b7c844af143e3f330161f
-  - enabled: 1
-    path: Assets/Scenes/3DObjectTest.unity
-    guid: 8f44d0b9068729941838270de19fc3a0
+    path: Assets/Scenes/Splash.unity
+    guid: 0292180ed1cb78a49935a1af109abcae
   - enabled: 1
     path: Assets/Scenes/RoomTest_02.unity
     guid: b3375cf7872021e46b6c1568eda29826

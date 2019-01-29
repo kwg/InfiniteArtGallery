@@ -2,71 +2,164 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class RoomConfiguration {
 
-    private RoomConfiguration parentRoom;
-    private Artwork[] artworks; 
-    private RoomConfiguration[] rooms;
-    private int MUTATION_CYCLES = 5; // maximum mutations per evolution
+    public int ArtArchetypeIndex { get; set; }
 
-    public RoomConfiguration(RoomConfiguration parentRoom, int returnPortalID, int championPortalID, Artwork champion, int numArtworks)
+    public RoomConfiguration parentRoom { get; set; }
+
+    //FIXME PROTOTYPE these might be in the wrong place. let's talk about these and see if we should move them... or maybe we're just thinking about this class incorrectly
+    public Artwork[] artworks { get; set; }
+    public Sculpture[] sculptures { get; set; }
+
+    public RoomConfiguration[] rooms { get; set; }
+
+    // mutation
+    private int MUTATION_CYCLES = 12; // maximum mutations per evolution
+
+    public RoomConfiguration(RoomConfiguration parentRoom, int returnPortalID, int championPortalID, Artwork[] artworksPassed, Sculpture[] sculptures)
     {
-        Debug.Log("Creating a new room with " + numArtworks + " artworks");
+        ArtGallery ag = ArtGallery.GetArtGallery();
+        Artwork champion = artworksPassed[championPortalID];
+
+        if (ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE) Debug.Log("Creating a new room with " + artworksPassed.Length + " artworks");
         this.parentRoom = parentRoom;
 
-        rooms = new RoomConfiguration[numArtworks];
-        Debug.Log("Clearing artworks...");
-        artworks = new Artwork[numArtworks];
-        Debug.Log("Created new artworks: " + artworks.Length);
+        rooms = new RoomConfiguration[artworksPassed.Length];
+        if (ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE) Debug.Log("Clearing artworks and sculptures...");
+        artworks = new Artwork[artworksPassed.Length];
+        this.sculptures = sculptures;
+        if (ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE) Debug.Log("Created new artworks: " + artworksPassed.Length);
         rooms[returnPortalID] = parentRoom;
-                
+        
         // clone champion to each artwork and mutate
+        for (int i = 0; i < artworksPassed.Length; i++)
         {
-            for (int i = 0; i < numArtworks; i++)
+            TWEANNGenotype geno = new TWEANNGenotype(champion.GetGenotype().Copy());
+            // champion art
+            if(i == championPortalID)
             {
-                TWEANNGenotype geno = new TWEANNGenotype(champion.GetGenotype().Copy());
-                // champion art
-                if(i == championPortalID)
+                //do little
+                geno.Mutate();
+            }
+            // return art
+            else if(i == returnPortalID)
+            {
+                // do nothing - save some cpu
+            }
+            else
+            {
+                // all other art
+                TWEANNCrossover cross = new TWEANNCrossover(false)
                 {
-                    //do little
+                    Sucessful = false
+                }; //HACK PROTOTYPE hardcoded value
+                //TWEANNGenotype crossedGeno = cross.Crossover(new TWEANNGenotype(geno.Copy()), new TWEANNGenotype(champion.GetGenotype().Copy()));
+                //geno = crossedGeno;
+
+                for (int m = 0; m < Random.Range(2, ag.artworkMutationChances); m++)
+                {
                     geno.Mutate();
                 }
-                // return art
-                else if(i == returnPortalID)
-                {
-                    // do nothing - save some cpu
-                }
-                else
-                {
-                    // all other art
-                    int mutations = System.Math.Abs(championPortalID - i) + 1;
-                    for(int m = 0; m < MUTATION_CYCLES - mutations; m++)
-                    {
-                        geno.Mutate();
-                    }
-                }
-                artworks[i] = new Artwork(geno);
             }
+            artworks[i] = new Artwork(geno);
         }
+
+        MutateSculptures();
+
     }
 
-    public RoomConfiguration(RoomConfiguration parentRoom, int returnPortalID, int championPortalID, Artwork champion) : this(parentRoom, returnPortalID, championPortalID, champion, parentRoom.GetArtworks().Length) { }
 
+    public void UpdateArtwork(Artwork art)
+    {
+
+    }
+
+
+    /// <summary>
+    /// Constructor for the initial room. invoked once per game
+    /// </summary>
+    /// <param name="numArtworks"></param>
     public RoomConfiguration(int numArtworks)
     {
+        ArtArchetypeIndex = EvolutionaryHistory.NextPopulationIndex();
+        EvolutionaryHistory.archetypes[ArtArchetypeIndex] = new TWEANNGenotype(4, 3, ArtArchetypeIndex).Nodes;
+
         parentRoom = null;
         rooms = new RoomConfiguration[numArtworks];
         artworks = new Artwork[numArtworks];
+        sculptures = new Sculpture[4]; // HACK PROTOTYPE hardcoded var. fix later
         for (int i = 0; i < numArtworks; i++)
         {
-            artworks[i] = new Artwork();
+            artworks[i] = new Artwork(ArtArchetypeIndex);
         }
-        Debug.Log("Lobby created with " + artworks.Length + " artworks.");
+
+        //SetSculptures HAS to be called right after this constructor is called and initialized to create the lobby! this will change later
+    }
+
+    public void SetSculptures(Sculpture[] sculptures)
+    {
+        this.sculptures = sculptures;
+    }
+
+    public void MutateSculptures()
+    {
+        ArtGallery ag = ArtGallery.GetArtGallery();
+        //Sort Sculptures
+        Sculpture[] toMutate = new Sculpture[sculptures.Length];
+        TWEANNGenotype sculptureChampion = null;
+        for (int s = 0; s < sculptures.Length; s++)
+        {
+            if (sculptures[s].GetSelected())
+            {
+                sculptureChampion = new TWEANNGenotype(sculptures[s].GetGenotype().Copy());
+                sculptures[s].SetSelected(false);
+                toMutate[s] = sculptures[s];
+            }
+            else
+            {
+                toMutate[s] = sculptures[s];
+            }
+        }
+
+        //Select sculpture champion and crossover / mutate
+        if (sculptureChampion != null)
+        {
+            for (int m = 0; m < sculptures.Length; m++)
+            {
+                Sculpture ms = toMutate[m];
+                if (ms != null)
+                {
+                    TWEANNGenotype crossedGeno = new TWEANNGenotype(sculptureChampion.Copy());
+                    TWEANNCrossover cross = new TWEANNCrossover(false)
+                    {
+                        Sucessful = false
+                    }; // HACK PROTOTYPE hardcoded value
+                       //TWEANNGenotype crossedmgeno = cross.Crossover(new TWEANNGenotype(sculptureChampion.Copy()), new TWEANNGenotype(ms.GetGenotype().Copy()));
+                       //crossedGeno = crossedmgeno;
+
+                    for (int mr = 0; mr < Random.Range(2, ag.sculptureMutationChances); mr++) //HACK PROTOTYPE hardcoded value for mutation rate
+                    {
+                        crossedGeno.Mutate();
+                    }
+
+                    ms.NewSculpture(new TWEANNGenotype(crossedGeno));
+
+                }
+            }
+
+        }
     }
 
     public void AddRoom(int artworkID, RoomConfiguration newRoom)
     {
         rooms[artworkID] = newRoom;
+    }
+
+    public void RemoveRoom(int portalID)
+    {
+        rooms[portalID] = null;
     }
 
     public RoomConfiguration GetParent()

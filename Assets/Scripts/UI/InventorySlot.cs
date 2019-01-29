@@ -12,14 +12,24 @@ public class InventorySlot : MonoBehaviour {
     public Sprite borderSelected;
     public Sprite borderDeselected;
 
-    public void ChangeBorder(Sprite sprite)
+    public void SelectSlot()
     {
-        slotBorder.GetComponent<Image>().sprite = sprite;
+        slotBorder.GetComponent<Image>().sprite = borderSelected;
+    }
+
+    public void DeselectSlot()
+    {
+        slotBorder.GetComponent<Image>().sprite = borderDeselected;
     }
 
     public void ChangeThumbnail(Sprite sprite)
     {
         thumbnailSlot.GetComponent<Image>().sprite = sprite;
+    }
+
+    public void ResetThumbnail()
+    {
+        thumbnailSlot.GetComponent<Image>().sprite = defaultThumbnail;
     }
 
     // Use this for initialization

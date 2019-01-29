@@ -8,15 +8,10 @@ TagManager:
   - PrimaryRoom
   - wall
   - invSlot
+  - FunctionPickup
   - inv0
-  - inv1
-  - inv3
-  - inv4
-  - inv5
-  - inv6
-  - inv7
-  - inv8
-  - inv2
+  - sculpturePlatform
+  - sculpture
   layers:
   - Default
   - TransparentFX

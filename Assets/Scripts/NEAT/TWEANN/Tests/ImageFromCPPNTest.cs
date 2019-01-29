@@ -2,15 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+// FIXME Now reverse this test chamber to use the Artwork class instead of hard coding in here
+/// <summary>
+/// Class that was used as the development platform for Artwork
+/// </summary>
 public class ImageFromCPPNTest : MonoBehaviour
 {
 
     private static readonly int NUM_INPUTS = 4;
     private static readonly int NUM_OUTPUTS = 3;
 
-
+    OutputText textbox;
     TWEANNGenotype cppnTest;
     TWEANN cppn;
+    Artwork art;
     float[] inputs, outputs;//float x, y, distFromCenter, bias;
 
     int width, height;
@@ -20,36 +26,52 @@ public class ImageFromCPPNTest : MonoBehaviour
 
     bool running = true;
 
+    const float BIAS = 1f;
+    public static int TWO_DIMENSIONAL_HUE_INDEX = 0;
+    public static int TWO_DIMENSIONAL_SATURATION_INDEX = 1;
+    public static int TWO_DIMENSIONAL_BRIGHTNESS_INDEX = 2;
+
     void Start()
     {
-        width = height = 128;
-        renderer = GetComponent<Renderer>();
-        img = new Texture2D(width, height, TextureFormat.ARGB32, true);
+        EvolutionaryHistory.InitializeEvolutionaryHistory();
+        EvolutionaryHistory.archetypes[0] = new TWEANNGenotype(4, 3, 0).Nodes;
+        textbox = GetComponent<OutputText>();
+
+        art = new Artwork();
 
         ActivationFunctions.ActivateAllFunctions();
-
-        cppnTest = new TWEANNGenotype(NUM_INPUTS, NUM_OUTPUTS, 0);
-        GenerateCPPN();
-        DoImage();
-        renderer.material.mainTexture = img;
+        //ActivationFunctions.ActivateFunction(new List<FTYPE> { FTYPE.SAWTOOTH });
+        width = height = 256;
+        renderer = GetComponent<Renderer>();
+        img = new Texture2D(width, height, TextureFormat.ARGB32, true);
 
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(art != null && art.NeedsRedraw())
+        {
+            art.ApplyImageProcess();
+            img = art.GetArtwork();
+            renderer.material.mainTexture = img;
+            Debug.Log("Image applied");
+        }
+
         if (!PauseMenu.isPaused && Input.GetButtonDown("Fire2"))
         {
-            cppnTest = new TWEANNGenotype(NUM_INPUTS, NUM_OUTPUTS, 0);
-            GenerateCPPN();
-            DoImage();
-            renderer.material.mainTexture = img;
+            img = new Texture2D(width, height, TextureFormat.ARGB32, true);
+            art = new Artwork();
+            textbox.Text("New image and genome");
         }
 
         if (!PauseMenu.isPaused && Input.GetButtonDown("Fire1"))
         {
-            EvolveImage();
-            renderer.material.mainTexture = img;
+            TWEANNGenotype geno = art.GetGenotype();
+            geno.Mutate();
+            textbox.Text("Mutating...");
+            art = new Artwork(geno);
+            
         }
     }
 
@@ -99,7 +121,7 @@ public class ImageFromCPPNTest : MonoBehaviour
 
     void GenerateCPPN()
     {
-        foreach (NodeGene node in cppnTest.GetNodes())
+        foreach (NodeGene node in cppnTest.Nodes)
         {
             node.fTYPE = ActivationFunctions.RandomFTYPE();
         }
@@ -142,22 +164,31 @@ public class ImageFromCPPNTest : MonoBehaviour
             {
                 float scaledX = Scale(x, width);
                 float scaledY = Scale(y, height);
-                float[] hsv = cppn.Process(new float[] { scaledX, scaledY, GetDistFromCenter(scaledX, scaledY), 1 });
+                float distCenter = GetDistFromCenter(scaledX, scaledY);
+                float[] hsv = ProcessCPPNInput(scaledX, scaledY, GetDistFromCenter(scaledX, scaledY), BIAS);
+                // This initial hue is in the range [-1,1] as in the MM-NEAT code
+                float initialHue = ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[TWO_DIMENSIONAL_HUE_INDEX]);
+                // However, C Sharp's Colors do not automatically map negative numbers to the proper hue range as in Java, so an additional step is needed
+                float finalHue = initialHue < 0 ? initialHue + 1 : initialHue;
+                Color colorHSV = Color.HSVToRGB(
+                    finalHue,
+                    ActivationFunctions.Activation(FTYPE.HLPIECEWISE, hsv[TWO_DIMENSIONAL_SATURATION_INDEX]),
+                    Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[TWO_DIMENSIONAL_BRIGHTNESS_INDEX])),
+                    true
+                    );
 
-                // HSV value restrictions
 
-                hsv[0] = Mathf.Clamp(hsv[2], 0.0f, 1.0f);
-                hsv[1] = Mathf.Clamp(hsv[2], 0.0f, 1.0f);
-                hsv[2] = Mathf.Abs(Mathf.Clamp(hsv[2], 1.0f, 1.0f));
-
-                Color color = Color.HSVToRGB(hsv[0], hsv[1], hsv[2]);
-
-                img.SetPixel(x, y, color);
+                img.SetPixel(x, y, colorHSV);
             }
         }
 
         img.Apply();
         return img;
+    }
+
+    private float[] ProcessCPPNInput(float scaledX, float scaledY, float distCenter, float bias)
+    {
+        return cppn.Process(new float[] { scaledX, scaledY, distCenter, bias });
     }
 
     float Scale(int toScale, int maxDimension)

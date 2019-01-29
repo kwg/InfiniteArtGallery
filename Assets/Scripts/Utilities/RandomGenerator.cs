@@ -20,4 +20,9 @@ public class RandomGenerator {
         float result = v1 * s;
         return result ;
     }
+
+    public static bool NextBool()
+    {
+        return Random.Range(-1.0f, 1.0f) > 0;
+    }
 }

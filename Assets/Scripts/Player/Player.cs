@@ -4,15 +4,38 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 
-    public Inventory inventory; // reference to the game inventory
+    public Inventory inventory { get; set; } // reference to the game inventory
+    public Functions functions { get; set; }
+
     new Camera camera;
     ArtGallery ag;
+    public GameObject FPC;
+    private bool isInverted;
     float interactionDistance = 30f; // maximum distance to check for raycast collision
+
+
 
     public void Start()
     {
         camera = FindObjectOfType<Camera>();
         ag = FindObjectOfType<ArtGallery>();
+        ag.player = this;
+
+        //FPC = gameObject;
+        isInverted = ag.invertY;
+        float yAxis = FPC.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.YSensitivity;
+        if (!isInverted && Mathf.Sign(yAxis) < 0)
+        {
+            yAxis = yAxis * -1;
+            FPC.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.YSensitivity = yAxis;
+
+        }
+        else if (isInverted && Mathf.Sign(yAxis) > 0)
+        {
+            yAxis = yAxis * -1;
+            FPC.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.YSensitivity = yAxis;
+        }
+
     }
     
     /// <summary>
@@ -28,66 +51,28 @@ public class Player : MonoBehaviour {
             /* Tell portal controller to handle collision between specified portal and this player */
             FindObjectOfType<Room>().DoTeleport(this, collider.gameObject.GetComponent<Portal>().GetPortalID());
         }
+
+        /* TAG: Function Pickup */
+        if (collider.tag == "FunctionPickup")
+        {
+            FunctionPickup fp = collider.GetComponent<FunctionPickup>();
+            if (!functions.HasFunction(fp.Function))
+            {
+                functions.AddFunction(fp.Function);
+                //ag.ActivateFunction(fp.Function.fTYPE);
+                Destroy(fp.gameObject);
+            }
+            else
+            {
+                //Destroy(fp.gameObject);
+
+            }
+        }
     }
 
     public void Update()
     {
         // FIXME Move all of this to inventory. pass the collider to inventory and have it figure out what to do next. this is getting messy and hard to debug
-        if(Input.GetMouseButtonDown(0))
-        {
-            RaycastHit hit;
-            Ray ray = new Ray(camera.transform.position, camera.transform.forward * interactionDistance);
-            if (Physics.Raycast(ray, out hit))
-            {
-                Transform objectHit = hit.transform;
-                if(hit.collider.tag == "portal")
-                {
-                    Portal p = hit.collider.gameObject.GetComponent<Portal>();
-                    Texture2D img = new Texture2D(256, 256, TextureFormat.ARGB32, false); // HACK hardcoded width and height
-                    Graphics.CopyTexture(p.GetImage(), img);
-                    int portalID = p.GetPortalID();
-                    TWEANNGenotype geno = ag.GetArtwork(portalID).GetGenotype().Copy();
-
-                    SavedArtwork newArtwork = new SavedArtwork
-                    {
-                        Image = Sprite.Create(img, new Rect(0, 0, img.width, img.height), new Vector2(0.5f, 0.5f)) as Sprite,
-                        Geno = geno
-
-                    };
-                    inventory.AddItem(newArtwork);
-                }
-            }
-        }
-
-        if (Input.GetMouseButtonDown(1))
-        {
-            RaycastHit hit;
-            Ray ray = new Ray(camera.transform.position, camera.transform.forward * interactionDistance);
-            if (Physics.Raycast(ray, out hit))
-            {
-                Transform objectHit = hit.transform;
-                if (hit.collider.tag == "portal")
-                {
-                    Portal p = hit.collider.gameObject.GetComponent<Portal>();
-                    ag.GetArtwork(p.GetPortalID()).SetGenotypePortal(inventory.GetActiveSlotItem().Geno.Copy());
-                    ag.GetArtwork(p.GetPortalID()).GenerateImageFromCPPN();
-                    ag.GetArtwork(p.GetPortalID()).ApplyImageProcess();
-                }
-            }
-        }
-
-        float wheel = Input.GetAxis("Mouse ScrollWheel");
-        if(wheel < 0f )
-        {
-            //scroll down
-            inventory.CycleActiveSlot(-1);
-
-        }
-        else if(wheel > 0f)
-        {
-            //scroll up
-            inventory.CycleActiveSlot(1);
-
-        }
+        
     }
 }

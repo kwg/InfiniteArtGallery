@@ -5,6 +5,8 @@ The Infinite Art Gallery is an experimental project to generate various forms of
 
 This project includes code that was directly derived from MM-NEAT (c) 2014 The University of Texas and 2016 Southwestern University
 
+Infinite Art Gallery is open sourced under the GPL3 license (notices are being applied to all source files as time allows)
+
 ## Installation
 This repository holds a Unity project that should open directly in the Unity Editor. It was developed using version 2018.x and has only been tested in those environments. This can be imported into the editor and built from there for the target platform. Currenly, the alpha builds have been tested and known to work on PC (x64) and Mac.
 

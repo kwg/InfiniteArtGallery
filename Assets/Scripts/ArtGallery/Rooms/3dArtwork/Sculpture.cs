@@ -26,6 +26,7 @@ public class Sculpture : MonoBehaviour {
     GameObject platform;
     private bool selected;
     bool needsUpdated = false;
+    public float RotationSpeed = 50f;
 
     float MaxValue = float.NegativeInfinity;
     float MinValue = float.PositiveInfinity;
@@ -108,6 +109,8 @@ public class Sculpture : MonoBehaviour {
         {
             RedrawSculpture();
         }
+
+        transform.Rotate(Vector3.up * (RotationSpeed * Time.deltaTime));
     }
 
     /// <summary>

@@ -32,12 +32,12 @@ public class Artwork
     /// <summary>
     /// Default empty constructor
     /// </summary>
-    public Artwork() : this(new TWEANNGenotype(4, 3, 0)) { }
+    public Artwork() : this(new TWEANNGenotype(8, 4, 0)) { }
 
     /// <summary>
     /// Create a new artwork in a room with a new genotype. 
     /// </summary>
-    public Artwork(int archetypeIndex) : this(new TWEANNGenotype(4, 3, archetypeIndex)) { }
+    public Artwork(int archetypeIndex) : this(new TWEANNGenotype(8, 4, archetypeIndex)) { }
 
     /// <summary>
     /// Create a new artwork in a room with a given genotype
@@ -160,7 +160,8 @@ public class Artwork
 
     private float[] ProcessCPPNInput(float scaledX, float scaledY, float distCenter, float bias)
     {
-        return cppn.Process(new float[] { scaledX, scaledY, distCenter, bias });
+        //HACK FIXME scaledZ and sculpture distances hard coded to 0 - maybe combine all network processing to a utility function that figures all of that out
+        return cppn.Process(new float[] { scaledX, scaledY, 0, distCenter, 0, 0, 0, bias });
     }
 
     float Scale(int toScale, int maxDimension)

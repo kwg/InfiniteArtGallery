@@ -84,7 +84,7 @@ public class RoomConfiguration {
     public RoomConfiguration(int numArtworks)
     {
         ArtArchetypeIndex = EvolutionaryHistory.NextPopulationIndex();
-        EvolutionaryHistory.archetypes[ArtArchetypeIndex] = new TWEANNGenotype(4, 3, ArtArchetypeIndex).Nodes;
+        EvolutionaryHistory.archetypes[ArtArchetypeIndex] = new TWEANNGenotype(8, 4, ArtArchetypeIndex).Nodes;
 
         parentRoom = null;
         rooms = new RoomConfiguration[numArtworks];

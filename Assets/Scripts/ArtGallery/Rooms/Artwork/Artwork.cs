@@ -106,35 +106,36 @@ public class Artwork
                 float[] hsv = ProcessCPPNInput(scaledX, scaledY, distCenter, BIAS);
                 // This initial hue is in the range [-1,1] as in the MM-NEAT code
                 // However, C Sharp's Colors do not automatically map negative numbers to the proper hue range as in Java, so an additional step is needed
-                Color colorHSV = Color.HSVToRGB(
+                /*Color colorHSV = Color.HSVToRGB(
                     hsv[TWO_DIMENSIONAL_HUE_INDEX],
                     hsv[TWO_DIMENSIONAL_SATURATION_INDEX],
                     hsv[TWO_DIMENSIONAL_BRIGHTNESS_INDEX],
                     false);
+                */
                 //Debug.Log(hsv[0] + ", " + hsv[1] + ", " + hsv[2]);
-                /*Color colorHSV = Color.HSVToRGB(
-                    Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[TWO_DIMENSIONAL_HUE_INDEX])),
+                Color colorHSV = Color.HSVToRGB(
+                    Mathf.Abs(ActivationFunctions.Activation(FTYPE.HLPIECEWISE, ActivationFunctions.Activation(FTYPE.SINE, hsv[TWO_DIMENSIONAL_HUE_INDEX]))),
                     Mathf.Abs(ActivationFunctions.Activation(FTYPE.HLPIECEWISE, hsv[TWO_DIMENSIONAL_SATURATION_INDEX])),
                     Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[TWO_DIMENSIONAL_BRIGHTNESS_INDEX])),
                     true
                     );
-                */
+                
 
-                MaxValue = Mathf.Max(MaxValue, hsv[TWO_DIMENSIONAL_HUE_INDEX]);
-                MinValue = Mathf.Min(MinValue, hsv[TWO_DIMENSIONAL_HUE_INDEX]);
+                //MaxValue = Mathf.Max(MaxValue, hsv[TWO_DIMENSIONAL_HUE_INDEX]);
+                //MinValue = Mathf.Min(MinValue, hsv[TWO_DIMENSIONAL_HUE_INDEX]);
 
 
                 //Debug.Log(finalColor[0] + ", " + finalColor[1] + ", " + finalColor[2]);
 
-                //pixels[x + y * width] = colorHSV;
-                hsvArr[x + y * width] = new Vector3(hsv[TWO_DIMENSIONAL_HUE_INDEX], hsv[TWO_DIMENSIONAL_SATURATION_INDEX], hsv[TWO_DIMENSIONAL_BRIGHTNESS_INDEX]);
+                pixels[x + y * width] = new Color(hsv[0], hsv[1], hsv[2]);
+                //hsvArr[x + y * width] = new Vector3(hsv[TWO_DIMENSIONAL_HUE_INDEX], hsv[TWO_DIMENSIONAL_SATURATION_INDEX], hsv[TWO_DIMENSIONAL_BRIGHTNESS_INDEX]);
             }
         }
-        for (int i = 0; i < hsvArr.Length; i++)
-        {
-            float[] v = FormatHSV(new float[] { hsvArr[i][TWO_DIMENSIONAL_HUE_INDEX], hsvArr[i][TWO_DIMENSIONAL_SATURATION_INDEX], hsvArr[i][TWO_DIMENSIONAL_BRIGHTNESS_INDEX] });
-            pixels[i] = Color.HSVToRGB(v[TWO_DIMENSIONAL_HUE_INDEX], v[TWO_DIMENSIONAL_SATURATION_INDEX], v[TWO_DIMENSIONAL_BRIGHTNESS_INDEX], true);
-        }
+        //for (int i = 0; i < hsvArr.Length; i++)
+        //{
+        //    float[] v = FormatHSVMod(new float[] { hsvArr[i][TWO_DIMENSIONAL_HUE_INDEX], hsvArr[i][TWO_DIMENSIONAL_SATURATION_INDEX], hsvArr[i][TWO_DIMENSIONAL_BRIGHTNESS_INDEX] });
+        //    pixels[i] = Color.HSVToRGB(v[TWO_DIMENSIONAL_HUE_INDEX], v[TWO_DIMENSIONAL_SATURATION_INDEX], v[TWO_DIMENSIONAL_BRIGHTNESS_INDEX], true);
+       //}
         //Debug.Log("MaxValue: " + MaxValue + ", MinValue: " + MinValue);
 
         processingCPPN = false;
@@ -150,6 +151,20 @@ public class Artwork
         float range = MaxValue - MinValue;
 
         result[TWO_DIMENSIONAL_HUE_INDEX] = ((hsv[TWO_DIMENSIONAL_HUE_INDEX] - MinValue) / range);
+        //result[TWO_DIMENSIONAL_HUE_INDEX] = Mathf.Abs((ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[TWO_DIMENSIONAL_HUE_INDEX])));
+
+        result[TWO_DIMENSIONAL_SATURATION_INDEX] = ActivationFunctions.Activation(FTYPE.HLPIECEWISE, hsv[TWO_DIMENSIONAL_SATURATION_INDEX]);
+        result[TWO_DIMENSIONAL_BRIGHTNESS_INDEX] = Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[TWO_DIMENSIONAL_BRIGHTNESS_INDEX]));
+
+        return result;
+    }
+
+    private float[] FormatHSVMod(float[] hsv)
+    {
+        float[] result = new float[hsv.Length];
+        float range = MaxValue - MinValue;
+
+        result[TWO_DIMENSIONAL_HUE_INDEX] = ((hsv[TWO_DIMENSIONAL_HUE_INDEX] - MinValue) % 1);
         //result[TWO_DIMENSIONAL_HUE_INDEX] = Mathf.Abs((ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[TWO_DIMENSIONAL_HUE_INDEX])));
 
         result[TWO_DIMENSIONAL_SATURATION_INDEX] = ActivationFunctions.Activation(FTYPE.HLPIECEWISE, hsv[TWO_DIMENSIONAL_SATURATION_INDEX]);

@@ -35,8 +35,8 @@ public class ArtGallery : MonoBehaviour {
     const int DEFAULT_TESTERID = 9897;
     const bool DEFAULT_INVERTY = false;
     const float DEFAULT_FUNCTION_SPAWN_RATE = .1f;
-    const int DEFAULT_ARTWORK_MUTATION_CHANCES = 5;
-    const int DEFAULT_SCULPTURE_MUTATION_CHANCES = 5;
+    const int DEFAULT_ARTWORK_MUTATION_CHANCES = 15;
+    const int DEFAULT_SCULPTURE_MUTATION_CHANCES = 15;
     const float MAX_GAME_TIME = 1200f;
 
 

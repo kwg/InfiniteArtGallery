@@ -5,6 +5,7 @@ using UnityEngine;
 public class Inventory : MonoBehaviour {
 
     public GameObject HUD;
+    public Texture2D SculturePlaceholder;
 
     private const TRAYS tray = TRAYS.inventory;
     private int numberOfInventorySlots = 9;
@@ -133,11 +134,27 @@ public class Inventory : MonoBehaviour {
 
                 if (hit.collider.tag == "sculpture")
                 {
+                    //Portal p = hit.collider.gameObject.GetComponent<Portal>();
                     Sculpture s = hit.collider.gameObject.GetComponent<Sculpture>();
 
                     sculptureGeno = s.GetComponent<Sculpture>().GetGenotype();
 
-                    ag.SelectSculpture(s);
+                    //Texture2D img = new Texture2D(p.GetImage().width, p.GetImage().height, TextureFormat.ARGB32, false);
+                    //Graphics.CopyTexture(p.GetImage(), img);
+                    //int portalID = p.GetPortalID();
+                    TWEANNGenotype geno = new TWEANNGenotype(sculptureGeno.Copy());
+
+                    SavedArtwork newArtwork = new SavedArtwork
+                    {
+                        Image = Sprite.Create(SculturePlaceholder, new Rect(0, 0, SculturePlaceholder.width, SculturePlaceholder.height), new Vector2(0.5f, 0.5f)) as Sprite,
+                        Geno = geno
+
+                    };
+                    AddItem(newArtwork);
+                    FindNextEmptySlot();
+
+
+                    //ag.SelectSculpture(s);
                     //s.GetComponent<Sculpture>().SetSelected(!s.GetComponent<Sculpture>().GetSelected());
 
                 }
@@ -177,7 +194,21 @@ public class Inventory : MonoBehaviour {
 
                     sculptureGeno = s.GetComponent<Sculpture>().GetGenotype();
 
-                    ag.ResetSculpture(s);
+                    if (GetActiveSlotItem() != null)
+                    {
+                        //ag.RemoveRoom(portalID);
+                        s.SetGeno(GetActiveSlotItem().Geno); // FIXME Null ref possible here - add checks ALSO fix the names SetGeno vs SetGenotype
+                        s.Refresh();
+                        //s.ApplyImageProcess();
+                        items[ActiveSlot] = null;
+                        hud.UpdateInventoryThumbnail(ActiveSlot, null);
+                    }
+                    else
+                    {
+                        // do nothing for now
+                    }
+
+                    //ag.ResetSculpture(s);
                     //s.GetComponent<Sculpture>().SetSelected(!s.GetComponent<Sculpture>().GetSelected());
 
                 }

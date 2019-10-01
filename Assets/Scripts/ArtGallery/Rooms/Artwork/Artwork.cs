@@ -22,6 +22,7 @@ public class Artwork
     public static int TWO_DIMENSIONAL_SATURATION_INDEX = 1;
     public static int TWO_DIMENSIONAL_BRIGHTNESS_INDEX = 2;
 
+    float Zoom = 5;
     float MaxValue = float.NegativeInfinity;
     float MinValue = float.PositiveInfinity;
 
@@ -127,7 +128,7 @@ public class Artwork
 
                 //Debug.Log(finalColor[0] + ", " + finalColor[1] + ", " + finalColor[2]);
 
-                pixels[x + y * width] = new Color(hsv[0], hsv[1], hsv[2]);
+                pixels[x + y * width] = new Color(hsv[0], hsv[1], hsv[2]); // HACK switched to RGB for testing. This should be an option. Need to map a LOT of outputs for seperate effects
                 //hsvArr[x + y * width] = new Vector3(hsv[TWO_DIMENSIONAL_HUE_INDEX], hsv[TWO_DIMENSIONAL_SATURATION_INDEX], hsv[TWO_DIMENSIONAL_BRIGHTNESS_INDEX]);
             }
         }
@@ -183,7 +184,7 @@ public class Artwork
     {
         float result;
 
-        result = ((toScale * 1f / (maxDimension)) * 2) - 1;
+        result = (((toScale * 1f / (maxDimension)) * 2) - 1) * Zoom;
 
         return result;
     }

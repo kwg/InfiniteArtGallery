@@ -243,12 +243,15 @@ public class Sculpture : MonoBehaviour {
 
                     if (o[THREE_DIMENSIONAL_VOXEL_INDEX] > PRESENCE_THRESHOLD)
                     {
-                        Color colorHSV = Color.HSVToRGB(
-                            o[THREE_DIMENSIONAL_HUE_INDEX],
-                            o[THREE_DIMENSIONAL_SATURATION_INDEX],
-                            o[THREE_DIMENSIONAL_BRIGHTNESS_INDEX],
-                            true
-                            );
+                        /* 
+                           Color colorHSV = Color.HSVToRGB(
+                             o[THREE_DIMENSIONAL_HUE_INDEX],
+                             o[THREE_DIMENSIONAL_SATURATION_INDEX],
+                             o[THREE_DIMENSIONAL_BRIGHTNESS_INDEX],
+                             true
+                             );
+                        */
+                        Color colorHSV = new Color(o[THREE_DIMENSIONAL_HUE_INDEX], o[THREE_DIMENSIONAL_SATURATION_INDEX], o[THREE_DIMENSIONAL_BRIGHTNESS_INDEX]);
                         float alpha = 1f;
                         if (transparent)
                         {

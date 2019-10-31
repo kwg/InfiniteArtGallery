@@ -52,6 +52,14 @@ public class Player : MonoBehaviour {
             FindObjectOfType<Room>().DoTeleport(this, collider.gameObject.GetComponent<Portal>().GetPortalID());
         }
 
+        /* TAG: sculpturePlatform */
+        if (collider.gameObject.tag == "sculpture")
+        {
+            if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("player activating sculpture teleport ");
+            /* Tell portal controller to handle collision between specified portal and this player */
+            
+        }
+
         /* TAG: Function Pickup */
         if (collider.tag == "FunctionPickup")
         {
@@ -72,7 +80,6 @@ public class Player : MonoBehaviour {
 
     public void Update()
     {
-        // FIXME Move all of this to inventory. pass the collider to inventory and have it figure out what to do next. this is getting messy and hard to debug
         
     }
 }

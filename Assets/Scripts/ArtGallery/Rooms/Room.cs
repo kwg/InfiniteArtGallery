@@ -123,7 +123,8 @@ public class Room : MonoBehaviour
             sculpture.AddComponent<Sculpture>();
             sculpture.GetComponent<Sculpture>().VoxelObject = VoxelObject;
             sculpture.GetComponent<Sculpture>().SculturePlatformObject = SculpturePlatformObject;
-            if(UnityEngine.Random.Range(0,1) < .5f) //HACK hardcoded transparency chance
+
+            if (UnityEngine.Random.Range(0,1) < .5f) //HACK hardcoded transparency chance
             {
                 sculpture.GetComponent<Sculpture>().ToggleTransparency();
             }

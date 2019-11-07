@@ -19,6 +19,7 @@ public class HUD : MonoBehaviour
     public GameObject inventoryTray;
     public GameObject testerIDObject;
     public GameObject countdownObject;
+    public GameObject console;
 
     private int testerID;
 
@@ -184,6 +185,11 @@ public class HUD : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.BackQuote)) // open/close console
+        {
+            console.GetComponent<Console>().ToggleConsole();
+        }
+
         UpdateTimer();
     }
 

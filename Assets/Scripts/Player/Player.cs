@@ -80,6 +80,11 @@ public class Player : MonoBehaviour {
 
     public void Update()
     {
-        
+        //FIXME find a good place to map all the key/joy binds and ref that here
+        if (Input.GetKeyDown(KeyCode.I)) // invert mouse
+        {
+            FPC.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.YSensitivity = FPC.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.YSensitivity * -1;
+        }
+
     }
 }

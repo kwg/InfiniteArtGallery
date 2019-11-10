@@ -52,7 +52,7 @@ public class HUD : MonoBehaviour
         this.testerID = testerID;
     }
 
-    public void AddSlots(TRAYS tray, int count)
+    public List<GameObject> AddSlots(TRAYS tray, int count)
     {
         if (IsInitialized) // Avoid the NPEs
         {
@@ -65,7 +65,7 @@ public class HUD : MonoBehaviour
                         functionSlotProp.transform.SetParent(functionTray.transform, false);
                         functionSlots.Add(functionSlotProp);
                     }
-                    break;
+                    return functionSlots;
                 case TRAYS.inventory:
                     for (int i = 0; i < count; i++)
                     {
@@ -73,10 +73,14 @@ public class HUD : MonoBehaviour
                         inventorySlotProp.transform.SetParent(inventoryTray.transform, false);
                         inventorySlots.Add(inventorySlotProp);
                     }
-                    break;
+                    return inventorySlots;
                 default:
-                    break;
+                    return null;
             }
+        }
+        else
+        {
+            return null;
         }
     }
 
@@ -128,7 +132,9 @@ public class HUD : MonoBehaviour
                 // check for active function slot and change the decoration for it
                 foreach (GameObject functionSlotProp in functionSlots)
                 {
-                    functionSlotProp.GetComponent<FunctionSlot>().DeselectSlot();
+                    FunctionSlot slot = functionSlotProp.GetComponent<FunctionSlot>();
+                    slot.DeselectSlot();
+                    //slot.SetCount(slot.count);
                 }
 
                 functionSlots[selectedFunctionSlot].GetComponent<FunctionSlot>().SelectSlot();

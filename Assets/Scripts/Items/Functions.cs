@@ -3,77 +3,63 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+/// <summary>
+/// Handles the interaction between the player and the function bar
+/// </summary>
 public class Functions : MonoBehaviour {
 
     public GameObject HUD;
 
+
     private const TRAYS tray = TRAYS.functions;
-    private int numberOfFunctionSlots = 5;
     private HUD hud;
+    List<FTYPE> availableFunctions;
+    List<GameObject> functionSlots;
+    int numberOfFunctionSlots;
 
 
-    new Camera camera;
+    //new Camera camera;
     ArtGallery ag;
 
     float interactionDistance = 50f; // maximum distance to check for raycast collision
 
-    List<FunctionSlot> slots;
+    private FunctionSlot[] slots;
 
-    private IFunctionItem[] functions;
+    //private SavedFunction[] functions;
     private int ActiveSlot { get; set; }
 
 
     // Use this for initialization
     void Start() {
-        camera = FindObjectOfType<Camera>();
+        //camera = FindObjectOfType<Camera>();
         ag = FindObjectOfType<ArtGallery>();
-        slots = new List<FunctionSlot>();
+        availableFunctions = ag.GetAvailableActivationFunctions();
+        numberOfFunctionSlots = availableFunctions.Count;
 
         hud = HUD.GetComponent<HUD>();
-        hud.AddSlots(tray, numberOfFunctionSlots);
+        functionSlots = hud.AddSlots(tray, numberOfFunctionSlots);
         ActiveSlot = 0;
         hud.SelectSlot(tray, ActiveSlot);
-        functions = new IFunctionItem[numberOfFunctionSlots];
+        slots = new FunctionSlot[numberOfFunctionSlots];
+        //functions = new SavedFunction[numberOfFunctionSlots];
+
+        foreach(GameObject go in functionSlots)
+        {
+            slots[ActiveSlot] = go.GetComponent<FunctionSlot>();
+            CycleActiveSlot(1);
+        }
 
         ag.player.functions = this;
 
-        /*** TESTING SECTION 
-         * Adding functions to the hud ***/
-        SavedFunction testFunction0 = new SavedFunction
+        foreach(FTYPE f in availableFunctions)
         {
-            fTYPE = FTYPE.ID,
-        };
-        testFunction0.GenerateThumbnail();
-        AddFunction(testFunction0);
-        //CycleActiveSlot(1);
-        //SavedFunction testFunction1 = new SavedFunction
-        //{
-        //    fTYPE = FTYPE.GAUSS,
-        //};
-        //testFunction1.GenerateThumbnail();
-        //AddFunction(testFunction1);
-        //CycleActiveSlot(1);
-        //SavedFunction testFunction2 = new SavedFunction
-        //{
-        //    fTYPE = FTYPE.SINE,
-        //};
-        //testFunction2.GenerateThumbnail();
-        //AddFunction(testFunction2);
-        //CycleActiveSlot(1);
-        //SavedFunction testFunction3 = new SavedFunction
-        //{
-        //    fTYPE = FTYPE.SAWTOOTH,
-        //};
-        //testFunction3.GenerateThumbnail();
-        //AddFunction(testFunction3);
-        //CycleActiveSlot(1);
-        //SavedFunction testFunction4 = new SavedFunction
-        //{
-        //    fTYPE = FTYPE.SQUAREWAVE,
-        //};
-        //testFunction4.GenerateThumbnail();
-        //AddFunction(testFunction4);
-        //CycleActiveSlot(1);
+            SavedFunction sf = new SavedFunction
+            {
+                fTYPE = f
+            };
+            sf.GenerateThumbnail();
+            BuildFunctionTray(sf);
+        }
 
     }
 	
@@ -92,23 +78,49 @@ public class Functions : MonoBehaviour {
         {
             DropFunction();
         }
+
+        foreach(FunctionSlot slot in slots)
+        {
+
+        }
     }
 
     public void DropFunction()
     {
-        if(functions[ActiveSlot] != null)
+        if(slots[ActiveSlot].Count > 0)
         {
-            ag.DeactivateFunction(functions[ActiveSlot].fTYPE);
-            functions[ActiveSlot] = null;
-            hud.UpdateFunctionThumbnail(ActiveSlot);
+            ag.DeactivateFunction(slots[ActiveSlot].SavedFunction.fTYPE);
+            slots[ActiveSlot].Count -= 1;
+            //hud.UpdateFunctionThumbnail(ActiveSlot);
         }
+    }
+
+    void BuildFunctionTray(SavedFunction function)
+    {
+        slots[ActiveSlot].SavedFunction = function;
+        hud.UpdateFunctionThumbnail(ActiveSlot, function.Image);
+        //ag.ActivateFunction(slots[ActiveSlot].FType);
+        CycleActiveSlot(1);
     }
 
     public void AddFunction(IFunctionItem function)
     {
+        Debug.Log("Function picked up");
+        foreach(FunctionSlot slot in slots)
+        {
+
+            if (slot.SavedFunction.fTYPE == function.fTYPE)
+            {
+                Debug.Log("Found it");
+                slot.SetCount(slot.Count + 1);
+            }
+        }
+
+        /*
         if (functions[ActiveSlot] == null) // Only add an item to the active slot if the slot is empty
         {
             functions[ActiveSlot] = function;
+            
             hud.UpdateFunctionThumbnail(ActiveSlot, function.Image);
             ag.ActivateFunction(functions[ActiveSlot].fTYPE);
             CycleActiveSlot(1);
@@ -120,6 +132,7 @@ public class Functions : MonoBehaviour {
             hud.UpdateFunctionThumbnail(ActiveSlot, function.Image);
             ag.ActivateFunction(functions[ActiveSlot].fTYPE);
         }
+        */
     }
 
 
@@ -148,15 +161,15 @@ public class Functions : MonoBehaviour {
     {
         bool result = false;
 
-        foreach(SavedFunction sf in functions)
+        foreach(FunctionSlot fs in slots )
         {
-            if(sf != null && sf.fTYPE == comapre.fTYPE)
+            if(fs.SavedFunction != null && fs.SavedFunction.fTYPE == comapre.fTYPE)
             {
                 result = true;
                 break;
             }
         }
 
-        return result;
+        return false;
     }
 }

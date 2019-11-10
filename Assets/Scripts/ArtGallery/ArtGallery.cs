@@ -34,7 +34,7 @@ public class ArtGallery : MonoBehaviour {
     public float gameTimer { get; private set; }
     const int DEFAULT_TESTERID = 9897;
     const bool DEFAULT_INVERTY = false;
-    const float DEFAULT_FUNCTION_SPAWN_RATE = .1f;
+    const float DEFAULT_FUNCTION_SPAWN_RATE = 1f;
     const int DEFAULT_ARTWORK_MUTATION_CHANCES = 15;
     const int DEFAULT_SCULPTURE_MUTATION_CHANCES = 15;
     const float MAX_GAME_TIME = 1200f;
@@ -160,6 +160,14 @@ public class ArtGallery : MonoBehaviour {
                 }
             }
         }
+
+        // starting functions
+        availableFunctions = new List<FTYPE> { FTYPE.ID, FTYPE.TANH, FTYPE.SQUAREWAVE, FTYPE.GAUSS, FTYPE.SINE, FTYPE.SAWTOOTH, FTYPE.ABSVAL };
+        if (activeFunctions == null)
+        {
+            activeFunctions = new List<FTYPE>();
+            ActivateFunction(FTYPE.TANH);
+        }
     }
 
     // Use this for initialization
@@ -181,15 +189,6 @@ public class ArtGallery : MonoBehaviour {
         gameRoom = roomProp.GetComponent<Room>();
         gameRoom.SetArtGallery(this);
 
-        // starting functions
-        availableFunctions = new List<FTYPE> { FTYPE.ID, FTYPE.TANH, FTYPE.SQUAREWAVE, FTYPE.GAUSS, FTYPE.SINE, FTYPE.SAWTOOTH, FTYPE.ABSVAL };
-        if (activeFunctions == null)
-        {
-            activeFunctions = new List<FTYPE>();
-            ActivateFunction(FTYPE.ID);
-        }
-
-
         //activate functions
         // Testing: activating all functions
         //ActivationFunctions.ActivateAllFunctions();
@@ -205,6 +204,11 @@ public class ArtGallery : MonoBehaviour {
 
         lobby.SetSculptures(gameRoom.GetSculptures());
 
+    }
+
+    public List<FTYPE> GetAvailableActivationFunctions()
+    {
+        return availableFunctions;
     }
 
     private int ConvertToInt(String intString)

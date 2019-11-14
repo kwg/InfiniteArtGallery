@@ -212,11 +212,11 @@ public class Sculpture : MonoBehaviour {
                     float actualZ = -(halfVoxelSize * SCULP_Z / 2.0f) + halfVoxelSize + z * halfVoxelSize;
                     float actualY = -(halfVoxelSize * SCULP_Y / 2.0f) + halfVoxelSize + y * halfVoxelSize;
                     float distFromCenter = GetDistFromCenter(actualX, actualZ, actualY);
-                    float distFromCenterXZ = GetDistFromCenterXY(actualX, actualZ);
-                    float distfromCenterYZ = GetDistFromCenterZY(actualY, actualZ);
-                    float distfromCenterZY = GetDistFromCenterZY(actualX, actualZ);
+                    float distFromCenterXZ = GetDistFromCenterXZ(actualX, actualZ);
+                    float distfromCenterZY = GetDistFromCenterZY(actualZ, actualY);
+                    float distfromCenterXY = GetDistFromCenterXY(actualX, actualY);
                     //float[] outputs = cppn.Process(new float[] { actualX, actualY, actualZ, distFromCenter, BIAS});
-                    float[] outputs = cppn.Process(new float[] { actualX, actualY, actualZ, distFromCenter, distFromCenterXZ, distfromCenterYZ, distfromCenterZY, BIAS });
+                    float[] outputs = cppn.Process(new float[] { Scale(x, SCULP_X), Scale(y, SCULP_Y), 0, distfromCenterXY, 0, 0, 0, BIAS });
                     //TODO move all of the CPPN render out of the draw function
                     if(MaxValue < outputs[THREE_DIMENSIONAL_HUE_INDEX])
                     {
@@ -241,7 +241,8 @@ public class Sculpture : MonoBehaviour {
 
                     float[] o = FixHue(outArr[x + (SCULP_Z * z) + (SCULP_Y * y)]);
 
-                    if (o[THREE_DIMENSIONAL_VOXEL_INDEX] > PRESENCE_THRESHOLD)
+                    //if (o[THREE_DIMENSIONAL_VOXEL_INDEX] > PRESENCE_THRESHOLD)
+                    if(true)
                     {
                         /* 
                            Color colorHSV = Color.HSVToRGB(
@@ -253,7 +254,8 @@ public class Sculpture : MonoBehaviour {
                         */
                         Color colorHSV = new Color(o[THREE_DIMENSIONAL_HUE_INDEX], o[THREE_DIMENSIONAL_SATURATION_INDEX], o[THREE_DIMENSIONAL_BRIGHTNESS_INDEX]);
                         float alpha = 1f;
-                        if (transparent)
+                        //if (transparent)
+                        if(false)
                         {
                             alpha = ActivationFunctions.Activation(FTYPE.HLPIECEWISE, o[THREE_DIMENSIONAL_VOXEL_INDEX]);
                         }

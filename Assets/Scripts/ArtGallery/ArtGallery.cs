@@ -22,6 +22,7 @@ public class ArtGallery : MonoBehaviour {
     public GameObject FPC; // Reference to the first person contoller ( set in the editor)
     public Player player;
 
+    // this is a change
 
 
     //command line args and default values

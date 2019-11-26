@@ -12,16 +12,17 @@ public class Sculpture : MonoBehaviour {
     Vector3 sculptureDimensions;
     float voxelSize;
     const float PRESENCE_THRESHOLD = .1f;
-    int SCULP_X = 5;
-    int SCULP_Z = 5;
-    int SCULP_Y = 10;
+    const int multiplier = 5;
+    int SCULP_X = 1 * multiplier;
+    int SCULP_Z = 1 * multiplier;
+    int SCULP_Y = 2 * multiplier;
     const float BIAS = 1f;
     const float NUDGE = 0f;
     bool transparent;
-    public static int THREE_DIMENSIONAL_VOXEL_INDEX = 0;
-    public static int THREE_DIMENSIONAL_HUE_INDEX = 1;
-    public static int THREE_DIMENSIONAL_SATURATION_INDEX = 2;
-    public static int THREE_DIMENSIONAL_BRIGHTNESS_INDEX = 3;
+    public static int THREE_DIMENSIONAL_HUE_INDEX = 0;
+    public static int THREE_DIMENSIONAL_SATURATION_INDEX = 1;
+    public static int THREE_DIMENSIONAL_BRIGHTNESS_INDEX = 2;
+    public static int THREE_DIMENSIONAL_VOXEL_INDEX = 3;
     GameObject[,,] vox;
     GameObject platform;
     private bool selected;
@@ -155,12 +156,12 @@ public class Sculpture : MonoBehaviour {
     /// <param name="geno">TWEANNGenotype</param>
     public void NewSculpture(TWEANNGenotype geno)
     {
-        backupGeno = geno.Copy();
+        //backupGeno = geno.Copy();
         this.geno = geno;
         cppn = new TWEANN(geno);
         if(cppn.Running)
         {
-            geno = backupGeno;
+           // geno = backupGeno;
         }
         // GenerateCPPN();
         DrawSculpture();

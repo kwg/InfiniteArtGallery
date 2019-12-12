@@ -1,31 +1,30 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
 public class Sculpture : MonoBehaviour {
-    public GameObject VoxelObject;
+    
     public GameObject SculturePlatformObject;
+    public MeshFilter meshFilter;
+    
     TWEANNGenotype geno;
     TWEANNGenotype backupGeno;
     TWEANN cppn;
+    
     Vector3 sculptureDimensions;
-    float voxelSize;
+
     const float PRESENCE_THRESHOLD = .1f;
-    const int multiplier = 5;
-    int SCULP_X = 1 * multiplier;
-    int SCULP_Z = 1 * multiplier;
-    int SCULP_Y = 2 * multiplier;
+
     const float BIAS = 1f;
-    const float NUDGE = 0f;
     bool transparent;
     public static int THREE_DIMENSIONAL_HUE_INDEX = 0;
     public static int THREE_DIMENSIONAL_SATURATION_INDEX = 1;
     public static int THREE_DIMENSIONAL_BRIGHTNESS_INDEX = 2;
     public static int THREE_DIMENSIONAL_VOXEL_INDEX = 3;
-    GameObject[,,] vox;
+    
     GameObject platform;
-    private bool selected;
+    
     bool needsUpdated = false;
     public float RotationSpeed = 50f;
 
@@ -36,7 +35,15 @@ public class Sculpture : MonoBehaviour {
     Thread cppnProcess;
     bool processingCPPN;  
     bool needsRedraw;
-    Color[,,] voxArray;
+    Voxel[,,] voxelMap;
+    Vector4[] outArr;
+
+    //Mesh
+    private List<Vector3> verticies;
+    private List<int> triangles;
+    private List<Vector2> uvs;
+    private List<Color32> colors;
+    private int vertexIndex;
 
     public bool NeedsRedraw()
     {
@@ -50,12 +57,12 @@ public class Sculpture : MonoBehaviour {
 
     public bool GetSelected()
     {
-        return selected;
+        return false;
     }
 
     public void SetSelected(bool value)
     {
-        selected = value;
+        //selected = value;
         needsUpdated = true;
     }
 
@@ -67,44 +74,29 @@ public class Sculpture : MonoBehaviour {
 
     private void Start()
     {
-        cppnProcess = new Thread(new ThreadStart(DrawSculpture));
+        cppnProcess = new Thread(new ThreadStart(PopulateVoxelMapFromCPPN));
+        meshFilter = GetComponent<MeshFilter>();
 
         //inputs: (x,y,z) outputs: r,g,b and presence
         geno = new TWEANNGenotype(8, 4, 0); // Use archetype 0 for test chamber
-        vox = new GameObject[SCULP_X, SCULP_Z, SCULP_Y];
 
         platform = Instantiate(SculturePlatformObject) as GameObject;
         platform.transform.position = new Vector3(transform.position.x, transform.position.y - 1.25f, transform.position.z);
-
-        voxelSize = 5 * 0.5f/SCULP_X;
-        // ActivationFunctions.ActivateAllFunctions(); // FIXME all functions active
-        BuildSculpture();
         GenerateCPPN();
-        //DrawSculpture();
         cppnProcess.Start();
+        //TestPopulateVoxelMap();
+        //RedrawSculpture();
     }
 
     public void Refresh()
     {
-        cppnProcess = new Thread(new ThreadStart(DrawSculpture));
+        cppnProcess = new Thread(new ThreadStart(PopulateVoxelMapFromCPPN));
         cppnProcess.Start();
 
     }
 
     private void Update()
     {
-        if (GetSelected() && needsUpdated)
-        {
-            platform.GetComponent<sculpturePlatform>().SetColor(Color.green);
-            
-            needsUpdated = false;
-        }
-        else if(!GetSelected() && needsUpdated)
-        {
-            platform.GetComponent<sculpturePlatform>().SetColor(Color.white);
-
-            needsUpdated = false;
-        }
 
         if(needsRedraw && !processingCPPN)
         {
@@ -119,24 +111,15 @@ public class Sculpture : MonoBehaviour {
     /// </summary>
     private void BuildSculpture()
     {
-        float halfVoxelSize = voxelSize / 2;
+        voxelMap = new Voxel[VoxelData.SculptureWidth, VoxelData.SculptureWidth, VoxelData.SculptureHeight];
 
-        for (int x = 0; x < SCULP_X; x++)
+        for (int y = 0; y < VoxelData.SculptureHeight; y++)
         {
-            for(int z = 0; z < SCULP_Z; z++)
+            for(int x = 0; x < VoxelData.SculptureWidth; x++)
             {
-                for(int y = 0; y < SCULP_Y; y++)
+                for(int z = 0; z < VoxelData.SculptureWidth; z++)
                 {
-                    GameObject voxel = Instantiate(VoxelObject) as GameObject;
-                    // set this vox position
-                    float actualX = transform.position.x + (-(halfVoxelSize * SCULP_X / 2.0f) + halfVoxelSize + x * halfVoxelSize);
-                    float actualY = transform.position.z + (-(halfVoxelSize * SCULP_Z / 2.0f) + halfVoxelSize + z * halfVoxelSize);
-                    float actualZ = transform.position.y + (-(halfVoxelSize * SCULP_Y / 2.0f) + halfVoxelSize + y * halfVoxelSize);
-                    voxel.transform.SetParent(transform);
-                    voxel.transform.position = new Vector3(actualX, actualZ, actualY);
-                    voxel.transform.localScale = new Vector3(halfVoxelSize - NUDGE, halfVoxelSize - NUDGE, halfVoxelSize - NUDGE);
-
-                    vox[x, z, y] = voxel;
+                    voxelMap[x, z, y] = new Voxel();
                 }
             }
         }
@@ -163,15 +146,35 @@ public class Sculpture : MonoBehaviour {
         {
            // geno = backupGeno;
         }
-        // GenerateCPPN();
-        DrawSculpture();
+        GenerateCPPN();
+        //PopulateVoxelMapFromCPPN();
+        TestPopulateVoxelMap();
+    }
+
+    private void TestPopulateVoxelMap()
+    {
+        voxelMap = new Voxel[VoxelData.SculptureWidth, VoxelData.SculptureHeight, VoxelData.SculptureWidth];
+
+        for (int y = 0; y < VoxelData.SculptureHeight; y++)
+        {
+            for (int x = 0; x < VoxelData.SculptureWidth; x++)
+            {
+                for (int z = 0; z < VoxelData.SculptureWidth; z++)
+                {
+                    voxelMap[x, y, z] = new Voxel
+                    {
+                        Color = UnityEngine.Random.ColorHSV(),
+                        IsPresent = true,
+                        IsTransparent = false
+                    };
+                        
+                }
+            }
+        }
     }
 
     public void SculptureSize(int x, int z, int y)
     {
-        SCULP_X = x;
-        SCULP_Z = z;
-        SCULP_Y = y;
 
     }
 
@@ -179,7 +182,8 @@ public class Sculpture : MonoBehaviour {
     {
         foreach (NodeGene node in geno.Nodes)
         {
-            node.fTYPE = ActivationFunctions.RandomFTYPE();
+            //node.fTYPE = ActivationFunctions.RandomFTYPE();
+            node.fTYPE = ActivationFunctions.RandomFTYPE2();
         }
     }
 
@@ -192,59 +196,65 @@ public class Sculpture : MonoBehaviour {
     /// <summary>
     /// Change voxels in sculpture based on CPPN outputs
     /// </summary>
-    private void DrawSculpture()
+    private void PopulateVoxelMapFromCPPN()
     {
+
         processingCPPN = true;
 
-        float halfVoxelSize = voxelSize / 2;
         cppn = new TWEANN(geno);
 
-        Vector4[] outArr = new Vector4[SCULP_X * SCULP_Z * SCULP_Y];
+        outArr = new Vector4[VoxelData.SculptureWidth * VoxelData.SculptureHeight * VoxelData.SculptureWidth];
 
-        voxArray = new Color[SCULP_X, SCULP_Z, SCULP_Y];
-        for (int x = 0; x < SCULP_X; x++)
+        for (int y = 0; y < VoxelData.SculptureHeight; y++)
         {
-            for (int z = 0; z < SCULP_Z; z++)
+            for (int x = 0; x < VoxelData.SculptureWidth; x++)
             {
-                for (int y = 0; y < SCULP_Y; y++)
+                for (int z = 0; z < VoxelData.SculptureWidth; z++)
                 {
-
-                    float actualX = -(halfVoxelSize * SCULP_X / 2.0f) + halfVoxelSize + x * halfVoxelSize;
-                    float actualZ = -(halfVoxelSize * SCULP_Z / 2.0f) + halfVoxelSize + z * halfVoxelSize;
-                    float actualY = -(halfVoxelSize * SCULP_Y / 2.0f) + halfVoxelSize + y * halfVoxelSize;
+                    float actualX = -(0.5f * VoxelData.SculptureWidth / 2.0f) + 0.5f + x * 0.5f;
+                    float actualZ = -(0.5f * VoxelData.SculptureWidth / 2.0f) + 0.5f + z * 0.5f;
+                    float actualY = -(0.5f * VoxelData.SculptureHeight / 2.0f) + 0.5f + y * 0.5f;
                     float distFromCenter = GetDistFromCenter(actualX, actualZ, actualY);
                     float distFromCenterXZ = GetDistFromCenterXZ(actualX, actualZ);
-                    float distfromCenterZY = GetDistFromCenterZY(actualZ, actualY);
+                    float distfromCenterYZ = GetDistFromCenterYZ(actualZ, actualY);
                     float distfromCenterXY = GetDistFromCenterXY(actualX, actualY);
-                    //float[] outputs = cppn.Process(new float[] { actualX, actualY, actualZ, distFromCenter, BIAS});
-                    float[] outputs = cppn.Process(new float[] { Scale(x, SCULP_X), Scale(y, SCULP_Y), 0, distfromCenterXY, 0, 0, 0, BIAS });
-                    //TODO move all of the CPPN render out of the draw function
-                    if(MaxValue < outputs[THREE_DIMENSIONAL_HUE_INDEX])
-                    {
-                        MaxValue = outputs[THREE_DIMENSIONAL_HUE_INDEX];
-                    }
-                    if(MinValue > outputs[THREE_DIMENSIONAL_HUE_INDEX])
-                    {
-                        MinValue = outputs[THREE_DIMENSIONAL_HUE_INDEX];
-                    }
+                    float[] outputs = cppn.Process(new float[] { actualY, actualX, actualZ, distFromCenter, distFromCenterXZ, distfromCenterYZ, distfromCenterXY, BIAS });
 
-                    outArr[x + (SCULP_Z * z) + (SCULP_Y * y)] = new Vector4(outputs[THREE_DIMENSIONAL_HUE_INDEX], outputs[THREE_DIMENSIONAL_SATURATION_INDEX], outputs[THREE_DIMENSIONAL_BRIGHTNESS_INDEX], outputs[THREE_DIMENSIONAL_VOXEL_INDEX]);
+                    outArr[x + (VoxelData.SculptureWidth * z) + (VoxelData.SculptureWidth * VoxelData.SculptureWidth  * y)] = new Vector4(
+                        outputs[THREE_DIMENSIONAL_HUE_INDEX], 
+                        outputs[THREE_DIMENSIONAL_SATURATION_INDEX], 
+                        outputs[THREE_DIMENSIONAL_BRIGHTNESS_INDEX], 
+                        outputs[THREE_DIMENSIONAL_VOXEL_INDEX]);
                 }
             }
         }
 
-        for (int x = 0; x < SCULP_X; x++)
+        ColorSculpture(outArr);
+
+        processingCPPN = false;
+        needsRedraw = true;
+
+
+    }
+
+    private void ColorSculpture(Vector4[] outArr)
+    {
+        voxelMap = new Voxel[VoxelData.SculptureWidth, VoxelData.SculptureHeight, VoxelData.SculptureWidth];
+
+        for (int y = 0; y < VoxelData.SculptureHeight; y++)
         {
-            for (int z = 0; z < SCULP_Z; z++)
+            for (int x = 0; x < VoxelData.SculptureWidth; x++)
             {
-                for (int y = 0; y < SCULP_Y; y++)
+                for (int z = 0; z < VoxelData.SculptureWidth; z++)
                 {
+                    voxelMap[x, y, z] = new Voxel();
 
-                    float[] o = FixHue(outArr[x + (SCULP_Z * z) + (SCULP_Y * y)]);
+                    float[] o = FixHue(outArr[x + (VoxelData.SculptureWidth * z) + (VoxelData.SculptureWidth * VoxelData.SculptureWidth * y)]);
 
-                    //if (o[THREE_DIMENSIONAL_VOXEL_INDEX] > PRESENCE_THRESHOLD)
-                    if(true)
+                    if (o[THREE_DIMENSIONAL_VOXEL_INDEX] > PRESENCE_THRESHOLD)
+                    //if (true)
                     {
+                        voxelMap[x, y, z].IsPresent = true;
                         /* 
                            Color colorHSV = Color.HSVToRGB(
                              o[THREE_DIMENSIONAL_HUE_INDEX],
@@ -253,33 +263,29 @@ public class Sculpture : MonoBehaviour {
                              true
                              );
                         */
-                        Color colorHSV = new Color(o[THREE_DIMENSIONAL_HUE_INDEX], o[THREE_DIMENSIONAL_SATURATION_INDEX], o[THREE_DIMENSIONAL_BRIGHTNESS_INDEX]);
+                        Color32 colorHSV = new Color(o[THREE_DIMENSIONAL_HUE_INDEX], o[THREE_DIMENSIONAL_SATURATION_INDEX], o[THREE_DIMENSIONAL_BRIGHTNESS_INDEX]);
                         float alpha = 1f;
                         //if (transparent)
-                        if(false)
+                        if (false)
                         {
                             alpha = ActivationFunctions.Activation(FTYPE.HLPIECEWISE, o[THREE_DIMENSIONAL_VOXEL_INDEX]);
                         }
 
                         //float alpha = -1.0f;
-                        Color color = new Color(colorHSV.r, colorHSV.g, colorHSV.b, alpha);
-                        voxArray[x, z, y] = color;
+                        Color32 color = new Color(colorHSV.r, colorHSV.g, colorHSV.b, alpha);
+                        voxelMap[x, y, z].Color = colorHSV;
                     }
                     else
                     {
                         // This option will make the voxel turn off (requires matching  = true statement above)
-                        voxArray[x, z, y] = new Color(0f, 0f, 0f, 0f);
+                        //voxelMap[x, z, y].Color = new Color(0f, 0f, 0f, 0f);
+                        voxelMap[x, y, z].IsPresent = false;
                         // This option will enable the "glass block" effect
                         //rend.material.SetColor("_Color", new Color(0f, 0f, 0f, 0f));
                     }
                 }
             }
         }
-
-        processingCPPN = false;
-        needsRedraw = true;
-
-
     }
 
     private float[] FixHue(Vector4 outputFromCPPN)
@@ -301,34 +307,97 @@ public class Sculpture : MonoBehaviour {
     {
         needsRedraw = false;
 
+        CreateMeshData();
+        CreateMesh();
 
-        for (int x = 0; x < SCULP_X; x++)
+
+
+        //ArtGallery ag = ArtGallery.GetArtGallery();
+        //FIXME PROTOTYPE disabling to build new method
+        //ag.SaveVox(voxelMap);
+
+    }
+
+    private void CreateMeshData()
+    {
+
+        verticies = new List<Vector3>();
+        triangles = new List<int>();
+        uvs = new List<Vector2>();
+        colors = new List<Color32>();
+        vertexIndex = 0;
+
+        for (int y = 0; y < VoxelData.SculptureHeight; y++)
         {
-            for (int z = 0; z < SCULP_Z; z++)
+            for (int x = 0; x < VoxelData.SculptureWidth; x++)
             {
-                for (int y = 0; y < SCULP_Y; y++)
+                for (int z = 0; z < VoxelData.SculptureWidth; z++)
                 {
-                    GameObject voxelProp = vox[x, z, y];
-                    Renderer rend = voxelProp.gameObject.GetComponent<Renderer>();
-
-                    if(voxArray[x, z, y] == new Color(0f, 0f, 0f, 0f))
-                    {
-                        rend.enabled = false;
-                    }
-                    else
-                    {
-                        rend.material.color = voxArray[x, z, y];
-                        rend.enabled = true;
-                    }
+                    AddVoxelToSculpture(new Vector3(x, y, z));
                 }
             }
         }
+    }
+
+    private void AddVoxelToSculpture(Vector3 pos)
+    {
+        Color voxelColor = voxelMap[(int)pos.x, (int)pos.y, (int)pos.z].Color;
+        
+        for (int face = 0; face < 6; face++)
+        {
+            if (voxelMap[(int)pos.x, (int)pos.y, (int)pos.z].IsPresent && !CheckVoxel(pos + VoxelData.faceChecks[face]))
+            {
+                for (int c = 0; c < 4; c++)
+                {
+                    Vector3 scaledPos = new Vector3(
+                        Scale((int) (pos.x + VoxelData.voxelVerts[VoxelData.voxelTris[face, c]].x), VoxelData.SculptureWidth),
+                        Scale((int) (pos.y + VoxelData.voxelVerts[VoxelData.voxelTris[face, c]].y), VoxelData.SculptureWidth),
+                        Scale((int) (pos.z + VoxelData.voxelVerts[VoxelData.voxelTris[face, c]].z), VoxelData.SculptureWidth));
+                    verticies.Add(scaledPos);
+                    colors.Add(voxelColor);
+
+                }
 
 
-        ArtGallery ag = ArtGallery.GetArtGallery();
-        //FIXME PROTOTYPE disabling to build new method
-        ag.SaveVox(voxArray);
 
+                triangles.Add(vertexIndex);
+                triangles.Add(vertexIndex + 1);
+                triangles.Add(vertexIndex + 2);
+                triangles.Add(vertexIndex + 2);
+                triangles.Add(vertexIndex + 1);
+                triangles.Add(vertexIndex + 3);
+
+                vertexIndex += 4;
+            }
+        }
+    }
+
+    private bool CheckVoxel(Vector3 pos)
+    {
+        int x = Mathf.FloorToInt(pos.x);
+        int y = Mathf.FloorToInt(pos.y);
+        int z = Mathf.FloorToInt(pos.z);
+
+        if (x < 0 || x >= VoxelData.SculptureWidth || y < 0 || y >= VoxelData.SculptureHeight || z < 0 || z >= VoxelData.SculptureWidth)
+            return false;
+        else
+            return voxelMap[x, y, z].IsPresent;
+            //return true;
+    }
+
+    private void CreateMesh()
+    {
+        Mesh mesh = new Mesh
+        {
+            vertices = verticies.ToArray(),
+            triangles = triangles.ToArray(),
+            uv = uvs.ToArray(),
+            colors32 = colors.ToArray()
+        };
+
+        mesh.RecalculateNormals();
+
+        meshFilter.mesh = mesh;
     }
 
     /// <summary>
@@ -342,15 +411,6 @@ public class Sculpture : MonoBehaviour {
     public TWEANNGenotype GetGenotype()
     {
         return geno;
-    }
-
-    /// <summary>
-    /// Tell sculpture what object we are using as a voxel
-    /// </summary>
-    /// <param name="Voxel">Unity prefab we are using as a voxel</param>
-    public void LoadVoxel(GameObject Voxel)
-    {
-        VoxelObject = Voxel;
     }
 
     float GetDistFromCenter(float x, float z, float y)
@@ -371,7 +431,7 @@ public class Sculpture : MonoBehaviour {
         return result;
     }
 
-    float GetDistFromCenterZY(float z, float y)
+    float GetDistFromCenterYZ(float z, float y)
     {
         float result = float.NaN;
 

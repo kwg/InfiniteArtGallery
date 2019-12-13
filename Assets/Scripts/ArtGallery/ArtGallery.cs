@@ -32,7 +32,7 @@ public class ArtGallery : MonoBehaviour {
     public float functionSpawnRate { get; private set; }
     public int artworkMutationChances { get; private set; }
     public int sculptureMutationChances { get; private set; }
-    public float gameTimer { get; private set; }
+    //public float gameTimer { get; private set; }
     const int DEFAULT_TESTERID = 9897;
     const bool DEFAULT_INVERTY = false;
     const float DEFAULT_FUNCTION_SPAWN_RATE = 1f;
@@ -101,7 +101,7 @@ public class ArtGallery : MonoBehaviour {
         functionSpawnRate = DEFAULT_FUNCTION_SPAWN_RATE;
         artworkMutationChances = DEFAULT_ARTWORK_MUTATION_CHANCES;
         sculptureMutationChances = DEFAULT_SCULPTURE_MUTATION_CHANCES;
-        gameTimer = MAX_GAME_TIME;
+        //gameTimer = MAX_GAME_TIME;
 
 
         //set reference to the player
@@ -155,7 +155,7 @@ public class ArtGallery : MonoBehaviour {
                     float result;
                     if (float.TryParse(args[i + 1], out result) && result <= MAX_GAME_TIME)
                     {
-                        gameTimer = result;
+                        //gameTimer = result;
                     }
 
                 }
@@ -415,10 +415,10 @@ public class ArtGallery : MonoBehaviour {
     // Update is called once per frame
     void Update ()
     {
-        gameTimer -= Time.deltaTime;
-        if(gameTimer <= 0)
+        //gameTimer -= Time.deltaTime;
+        //if(gameTimer <= 0)
         {
-            GameOver();
+            //GameOver();
         }
 
         Artwork[] art = room.GetArtworks(); // FIXME This is not a very functional way of dealing with the threads. However removing threads is not an option.

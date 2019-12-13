@@ -43,13 +43,7 @@ public class HUD : MonoBehaviour
     void Start()
     {
         ArtGallery ag = FindObjectOfType<ArtGallery>();
-        testerID = ag.testerID;
-        testerIDObject.GetComponent<TesterIDTextBox>().SetTesterID(testerID.ToString());
-    }
 
-    public void UpdateTesterID(int testerID)
-    {
-        this.testerID = testerID;
     }
 
     public List<GameObject> AddSlots(TRAYS tray, int count)
@@ -196,42 +190,5 @@ public class HUD : MonoBehaviour
             console.GetComponent<Console>().ToggleConsole();
         }
 
-        UpdateTimer();
-    }
-
-    void UpdateTimer()
-    {
-        ArtGallery ag = ArtGallery.GetArtGallery();
-        CountdownTextBox ctb = countdownObject.GetComponent<CountdownTextBox>();
-
-
-        float timer = Mathf.Abs(ag.gameTimer);
-        int timerMin = (int)timer / 60;
-        int timerSec = (int)timer % 60;
-        string timerOutMin = timerMin.ToString() + ":";
-        string timerOutSec = "";
-
-        if(timer > 60)
-        {
-            ctb.SetCounterTextColor(Color.white);
-        }
-        else
-        {
-            ctb.SetCounterTextColor(Color.red);
-        }
-
-
-        if (timerSec < 10)
-        {
-            timerOutSec = "0" + timerSec.ToString();
-        }
-        else
-        {
-            timerOutSec = timerSec.ToString();
-        }
-
-        string timeOutFinal = timerOutMin + timerOutSec;
-
-        ctb.SetCounterText(timeOutFinal);
-    }
+    } 
 }

@@ -22,14 +22,25 @@ public class Sculpture : MonoBehaviour {
     public static int THREE_DIMENSIONAL_SATURATION_INDEX = 1;
     public static int THREE_DIMENSIONAL_BRIGHTNESS_INDEX = 2;
     public static int THREE_DIMENSIONAL_VOXEL_INDEX = 3;
-    
+
+    private const int STANDARD_RGB = 0; 
+    private const int STANDARD_HSV = 1;
+    private const int MINMAXED_RGB = 2;
+    private const int MINMAXED_HSV = 3;
+
+
+
     GameObject platform;
     
     bool needsUpdated = false;
     public float RotationSpeed = 50f;
 
-    float MaxValue = float.NegativeInfinity;
-    float MinValue = float.PositiveInfinity;
+    float MaxHueValue = float.NegativeInfinity;
+    float MinHueValue = float.PositiveInfinity;
+    float MaxSaturationValue = float.NegativeInfinity;
+    float MinSaturationValue = float.PositiveInfinity;
+    float MaxBrightnessValue = float.NegativeInfinity;
+    float MinBrightnessValue = float.PositiveInfinity;
 
     //Thread
     Thread cppnProcess;
@@ -198,11 +209,8 @@ public class Sculpture : MonoBehaviour {
     /// </summary>
     private void PopulateVoxelMapFromCPPN()
     {
-
         processingCPPN = true;
-
         cppn = new TWEANN(geno);
-
         outArr = new Vector4[VoxelData.SculptureWidth * VoxelData.SculptureHeight * VoxelData.SculptureWidth];
 
         for (int y = 0; y < VoxelData.SculptureHeight; y++)
@@ -220,10 +228,12 @@ public class Sculpture : MonoBehaviour {
                     float distfromCenterXY = GetDistFromCenterXY(actualX, actualY);
                     float[] outputs = cppn.Process(new float[] { actualY, actualX, actualZ, distFromCenter, distFromCenterXZ, distfromCenterYZ, distfromCenterXY, BIAS });
 
-                    outArr[x + (VoxelData.SculptureWidth * z) + (VoxelData.SculptureWidth * VoxelData.SculptureWidth  * y)] = new Vector4(
-                        outputs[THREE_DIMENSIONAL_HUE_INDEX], 
-                        outputs[THREE_DIMENSIONAL_SATURATION_INDEX], 
-                        outputs[THREE_DIMENSIONAL_BRIGHTNESS_INDEX], 
+                    MinMax(new Vector4(outputs[0], outputs[1], outputs[2], outputs[3]));
+
+                    outArr[x + (VoxelData.SculptureWidth * z) + (VoxelData.SculptureWidth * VoxelData.SculptureWidth * y)] = new Vector4(
+                        outputs[THREE_DIMENSIONAL_HUE_INDEX],
+                        outputs[THREE_DIMENSIONAL_SATURATION_INDEX],
+                        outputs[THREE_DIMENSIONAL_BRIGHTNESS_INDEX],
                         outputs[THREE_DIMENSIONAL_VOXEL_INDEX]);
                 }
             }
@@ -233,8 +243,22 @@ public class Sculpture : MonoBehaviour {
 
         processingCPPN = false;
         needsRedraw = true;
+    }
 
-
+    void MinMax(Vector4 output)
+    {
+        if (output.x < MinHueValue)
+            MinHueValue = output.x;
+        else if (output.x > MaxHueValue)
+            MaxHueValue = output.x;
+        if (output.y < MinSaturationValue)
+            MinSaturationValue = output.y;
+        else if (output.y > MinSaturationValue)
+            MinSaturationValue = output.y; 
+        if (output.z < MinBrightnessValue)
+            MinBrightnessValue = output.z;
+        else if (output.z > MinBrightnessValue)
+            MinBrightnessValue = output.z;
     }
 
     private void ColorSculpture(Vector4[] outArr)
@@ -249,57 +273,81 @@ public class Sculpture : MonoBehaviour {
                 {
                     voxelMap[x, y, z] = new Voxel();
 
-                    float[] o = FixHue(outArr[x + (VoxelData.SculptureWidth * z) + (VoxelData.SculptureWidth * VoxelData.SculptureWidth * y)]);
+                    Vector4 output = outArr[x + (VoxelData.SculptureWidth * z) + (VoxelData.SculptureWidth * VoxelData.SculptureWidth * y)];
+                    Color32 color = ColorAdjustment(output, MINMAXED_HSV);
 
-                    if (o[THREE_DIMENSIONAL_VOXEL_INDEX] > PRESENCE_THRESHOLD)
-                    //if (true)
+                    if (output.w > PRESENCE_THRESHOLD)
                     {
                         voxelMap[x, y, z].IsPresent = true;
-                        /* 
-                           Color colorHSV = Color.HSVToRGB(
-                             o[THREE_DIMENSIONAL_HUE_INDEX],
-                             o[THREE_DIMENSIONAL_SATURATION_INDEX],
-                             o[THREE_DIMENSIONAL_BRIGHTNESS_INDEX],
-                             true
-                             );
-                        */
-                        Color32 colorHSV = new Color(o[THREE_DIMENSIONAL_HUE_INDEX], o[THREE_DIMENSIONAL_SATURATION_INDEX], o[THREE_DIMENSIONAL_BRIGHTNESS_INDEX]);
-                        float alpha = 1f;
-                        //if (transparent)
-                        if (false)
-                        {
-                            alpha = ActivationFunctions.Activation(FTYPE.HLPIECEWISE, o[THREE_DIMENSIONAL_VOXEL_INDEX]);
-                        }
-
-                        //float alpha = -1.0f;
-                        Color32 color = new Color(colorHSV.r, colorHSV.g, colorHSV.b, alpha);
-                        voxelMap[x, y, z].Color = colorHSV;
+                        voxelMap[x, y, z].Color = color;
                     }
                     else
-                    {
-                        // This option will make the voxel turn off (requires matching  = true statement above)
-                        //voxelMap[x, z, y].Color = new Color(0f, 0f, 0f, 0f);
+                    { 
                         voxelMap[x, y, z].IsPresent = false;
-                        // This option will enable the "glass block" effect
-                        //rend.material.SetColor("_Color", new Color(0f, 0f, 0f, 0f));
                     }
                 }
             }
         }
     }
 
-    private float[] FixHue(Vector4 outputFromCPPN)
+    private Color32 ColorAdjustment(Vector4 output, int selection)
     {
-        float[] result = new float[4];
-        float range = MaxValue - MinValue;
+        switch (selection)
+        {
+            case STANDARD_RGB:
+                return FixHueSTANDAR_RGB(output);
+            case STANDARD_HSV:
+                return FixHueSTANDARD_HSV(output);
+            case MINMAXED_RGB:
+                return FixHueMINMAXED_RGB(output);
+            case MINMAXED_HSV:
+                return FixHueMINMAXED_HSV(output);
+            default:
+                return new Color32();
+        }
+    }
 
-        result[THREE_DIMENSIONAL_HUE_INDEX] = ((outputFromCPPN[THREE_DIMENSIONAL_HUE_INDEX] - MinValue) / range);
-        //result[TWO_DIMENSIONAL_HUE_INDEX] = Mathf.Abs((ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[TWO_DIMENSIONAL_HUE_INDEX])));
+    private Color32 FixHueSTANDAR_RGB(Vector4 output)
+    {
+        Color32 result = Color.HSVToRGB(
+            ActivationFunctions.Activation(FTYPE.HLPIECEWISE, output[THREE_DIMENSIONAL_HUE_INDEX]),
+            ActivationFunctions.Activation(FTYPE.HLPIECEWISE, output[THREE_DIMENSIONAL_SATURATION_INDEX]),
+            ActivationFunctions.Activation(FTYPE.HLPIECEWISE, output[THREE_DIMENSIONAL_BRIGHTNESS_INDEX]));
+        return result;
+    }
 
-        result[THREE_DIMENSIONAL_SATURATION_INDEX] = ActivationFunctions.Activation(FTYPE.HLPIECEWISE, outputFromCPPN[THREE_DIMENSIONAL_SATURATION_INDEX]);
-        result[THREE_DIMENSIONAL_BRIGHTNESS_INDEX] = Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, outputFromCPPN[THREE_DIMENSIONAL_BRIGHTNESS_INDEX]));
 
-        result[THREE_DIMENSIONAL_VOXEL_INDEX] = outputFromCPPN[THREE_DIMENSIONAL_VOXEL_INDEX];
+
+    private Color32 FixHueSTANDARD_HSV(Vector4 output)
+    {
+        Color32 result = new Color(
+            Mathf.Abs((ActivationFunctions.Activation(FTYPE.PIECEWISE, output[THREE_DIMENSIONAL_HUE_INDEX]))),
+            ActivationFunctions.Activation(FTYPE.HLPIECEWISE, output[THREE_DIMENSIONAL_SATURATION_INDEX]),
+            Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, output[THREE_DIMENSIONAL_BRIGHTNESS_INDEX])),
+            1f);
+        return result;
+    }
+
+    private Color32 FixHueMINMAXED_RGB(Vector4 output)
+    {
+        float range = MaxHueValue - MinHueValue;
+
+        Color32 result = Color.HSVToRGB(
+            (output[THREE_DIMENSIONAL_HUE_INDEX] - MinHueValue) / range,
+            (output[THREE_DIMENSIONAL_SATURATION_INDEX] - MinHueValue) / range,
+            (output[THREE_DIMENSIONAL_BRIGHTNESS_INDEX] - MinHueValue) / range);
+        return result;
+    }
+
+    private Color32 FixHueMINMAXED_HSV(Vector4 output)
+    {
+        float range = MaxHueValue - MinHueValue;
+
+        Color32 result = new Color(
+            (output[THREE_DIMENSIONAL_HUE_INDEX] - MinHueValue) / range,
+            ActivationFunctions.Activation(FTYPE.HLPIECEWISE, output[THREE_DIMENSIONAL_SATURATION_INDEX]),
+            Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, output[THREE_DIMENSIONAL_BRIGHTNESS_INDEX])),
+            1f);
         return result;
     }
 
@@ -349,10 +397,14 @@ public class Sculpture : MonoBehaviour {
             {
                 for (int c = 0; c < 4; c++)
                 {
+                    Vector3 offset = VoxelData.voxelVerts[VoxelData.voxelTris[face, c]];
+                    int widthScale = VoxelData.SculptureWidth;
+                    float adjustment = 1f / widthScale;
+
                     Vector3 scaledPos = new Vector3(
-                        Scale((int) (pos.x + VoxelData.voxelVerts[VoxelData.voxelTris[face, c]].x), VoxelData.SculptureWidth),
-                        Scale((int) (pos.y + VoxelData.voxelVerts[VoxelData.voxelTris[face, c]].y), VoxelData.SculptureWidth),
-                        Scale((int) (pos.z + VoxelData.voxelVerts[VoxelData.voxelTris[face, c]].z), VoxelData.SculptureWidth));
+                        adjustment * (pos.x + offset.x - (0.5f * widthScale) - adjustment),
+                        (adjustment) * (pos.y + offset.y - (0.5f * widthScale)),
+                        adjustment * (pos.z + offset.z - (0.5f * widthScale) - adjustment));
                     verticies.Add(scaledPos);
                     colors.Add(voxelColor);
 
@@ -380,9 +432,10 @@ public class Sculpture : MonoBehaviour {
 
         if (x < 0 || x >= VoxelData.SculptureWidth || y < 0 || y >= VoxelData.SculptureHeight || z < 0 || z >= VoxelData.SculptureWidth)
             return false;
+        else if (voxelMap[x, y, z].IsTransparent)
+            return false;
         else
             return voxelMap[x, y, z].IsPresent;
-            //return true;
     }
 
     private void CreateMesh()

@@ -27,7 +27,8 @@ public class Sculpture : MonoBehaviour {
     private const int STANDARD_HSV = 1;
     private const int MINMAXED_RGB = 2;
     private const int MINMAXED_HSV = 3;
-
+    private const int DIRECT_RGB = 4;
+    private const int DIRECT_HSV = 5;
 
 
     GameObject platform;
@@ -274,7 +275,7 @@ public class Sculpture : MonoBehaviour {
                     voxelMap[x, y, z] = new Voxel();
 
                     Vector4 output = outArr[x + (VoxelData.SculptureWidth * z) + (VoxelData.SculptureWidth * VoxelData.SculptureWidth * y)];
-                    Color32 color = ColorAdjustment(output, MINMAXED_HSV);
+                    Color32 color = ColorAdjustment(output, STANDARD_RGB);
 
                     if (output.w > PRESENCE_THRESHOLD)
                     {
@@ -295,24 +296,29 @@ public class Sculpture : MonoBehaviour {
         switch (selection)
         {
             case STANDARD_RGB:
-                return FixHueSTANDAR_RGB(output);
+                return FixHueSTANDARD_RGB(output);
             case STANDARD_HSV:
                 return FixHueSTANDARD_HSV(output);
             case MINMAXED_RGB:
                 return FixHueMINMAXED_RGB(output);
             case MINMAXED_HSV:
                 return FixHueMINMAXED_HSV(output);
+            case DIRECT_RGB:
+                return FixHueDIRECT_RGB(output);
+            case DIRECT_HSV:
+                return FixHueDIRECT_HSV(output);
             default:
                 return new Color32();
         }
     }
 
-    private Color32 FixHueSTANDAR_RGB(Vector4 output)
+    private Color32 FixHueSTANDARD_RGB(Vector4 output)
     {
-        Color32 result = Color.HSVToRGB(
-            ActivationFunctions.Activation(FTYPE.HLPIECEWISE, output[THREE_DIMENSIONAL_HUE_INDEX]),
-            ActivationFunctions.Activation(FTYPE.HLPIECEWISE, output[THREE_DIMENSIONAL_SATURATION_INDEX]),
-            ActivationFunctions.Activation(FTYPE.HLPIECEWISE, output[THREE_DIMENSIONAL_BRIGHTNESS_INDEX]));
+        Color32 result =  new Color(
+        output[THREE_DIMENSIONAL_HUE_INDEX],
+        ActivationFunctions.Activation(FTYPE.HLPIECEWISE, output[THREE_DIMENSIONAL_SATURATION_INDEX]),
+        Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, output[THREE_DIMENSIONAL_BRIGHTNESS_INDEX])));
+
         return result;
     }
 
@@ -320,11 +326,13 @@ public class Sculpture : MonoBehaviour {
 
     private Color32 FixHueSTANDARD_HSV(Vector4 output)
     {
-        Color32 result = new Color(
-            Mathf.Abs((ActivationFunctions.Activation(FTYPE.PIECEWISE, output[THREE_DIMENSIONAL_HUE_INDEX]))),
-            ActivationFunctions.Activation(FTYPE.HLPIECEWISE, output[THREE_DIMENSIONAL_SATURATION_INDEX]),
+        Color32 result = Color.HSVToRGB(
+            Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, output[THREE_DIMENSIONAL_HUE_INDEX])),
+            Mathf.Abs(ActivationFunctions.Activation(FTYPE.HLPIECEWISE, output[THREE_DIMENSIONAL_SATURATION_INDEX])),
             Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, output[THREE_DIMENSIONAL_BRIGHTNESS_INDEX])),
-            1f);
+            false
+        );
+
         return result;
     }
 
@@ -332,10 +340,11 @@ public class Sculpture : MonoBehaviour {
     {
         float range = MaxHueValue - MinHueValue;
 
-        Color32 result = Color.HSVToRGB(
-            (output[THREE_DIMENSIONAL_HUE_INDEX] - MinHueValue) / range,
-            (output[THREE_DIMENSIONAL_SATURATION_INDEX] - MinHueValue) / range,
-            (output[THREE_DIMENSIONAL_BRIGHTNESS_INDEX] - MinHueValue) / range);
+        Color32 result = new Color(
+        (output[THREE_DIMENSIONAL_HUE_INDEX] - MinHueValue) / range,
+        ActivationFunctions.Activation(FTYPE.HLPIECEWISE, output[THREE_DIMENSIONAL_SATURATION_INDEX]),
+        Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, output[THREE_DIMENSIONAL_BRIGHTNESS_INDEX])));
+
         return result;
     }
 
@@ -343,11 +352,34 @@ public class Sculpture : MonoBehaviour {
     {
         float range = MaxHueValue - MinHueValue;
 
-        Color32 result = new Color(
+        Color32 result = Color.HSVToRGB(
+            Mathf.Abs((ActivationFunctions.Activation(FTYPE.PIECEWISE, (output[THREE_DIMENSIONAL_HUE_INDEX] - MinHueValue)) / range)),
+            ActivationFunctions.Activation(FTYPE.HLPIECEWISE, output[THREE_DIMENSIONAL_SATURATION_INDEX]),
+            Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, output[THREE_DIMENSIONAL_BRIGHTNESS_INDEX])));
+        return result;
+    }
+
+    private Color32 FixHueDIRECT_RGB(Vector4 output)
+    {
+        float range = MaxHueValue - MinHueValue;
+
+        Color32 result = Color.HSVToRGB(
             (output[THREE_DIMENSIONAL_HUE_INDEX] - MinHueValue) / range,
             ActivationFunctions.Activation(FTYPE.HLPIECEWISE, output[THREE_DIMENSIONAL_SATURATION_INDEX]),
-            Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, output[THREE_DIMENSIONAL_BRIGHTNESS_INDEX])),
-            1f);
+            Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, output[THREE_DIMENSIONAL_BRIGHTNESS_INDEX])));
+
+        return result;
+    }
+
+    private Color32 FixHueDIRECT_HSV(Vector4 output)
+    {
+        float range = MaxHueValue - MinHueValue;
+
+        Color32 result = Color.HSVToRGB(
+            (output[THREE_DIMENSIONAL_HUE_INDEX] - MinHueValue) / range,
+            output[THREE_DIMENSIONAL_SATURATION_INDEX],
+            output[THREE_DIMENSIONAL_BRIGHTNESS_INDEX]);
+
         return result;
     }
 

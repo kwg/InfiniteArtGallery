@@ -53,6 +53,11 @@ public class Artwork
         img = new Texture2D(width, height, TextureFormat.ARGB32, false);
         pixels = new Color[width * height];
         //GenerateImageFromCPPN();  // non threaded version of generation
+        foreach (NodeGene node in geno.Nodes)
+        {
+            //node.fTYPE = ActivationFunctions.RandomFTYPE();
+            node.fTYPE = ActivationFunctions.RandomFTYPE2();
+        }
         cppnProcess.Start();
     }
 

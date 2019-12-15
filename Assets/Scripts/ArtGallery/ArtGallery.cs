@@ -22,6 +22,7 @@ public class ArtGallery : MonoBehaviour {
     public GameObject FPC; // Reference to the first person contoller ( set in the editor)
     public Player player;
 
+    // this is a change
 
 
     //command line args and default values
@@ -31,10 +32,10 @@ public class ArtGallery : MonoBehaviour {
     public float functionSpawnRate { get; private set; }
     public int artworkMutationChances { get; private set; }
     public int sculptureMutationChances { get; private set; }
-    public float gameTimer { get; private set; }
+    //public float gameTimer { get; private set; }
     const int DEFAULT_TESTERID = 9897;
     const bool DEFAULT_INVERTY = false;
-    const float DEFAULT_FUNCTION_SPAWN_RATE = .1f;
+    const float DEFAULT_FUNCTION_SPAWN_RATE = 1f;
     const int DEFAULT_ARTWORK_MUTATION_CHANCES = 15;
     const int DEFAULT_SCULPTURE_MUTATION_CHANCES = 15;
     const float MAX_GAME_TIME = 1200f;
@@ -100,7 +101,7 @@ public class ArtGallery : MonoBehaviour {
         functionSpawnRate = DEFAULT_FUNCTION_SPAWN_RATE;
         artworkMutationChances = DEFAULT_ARTWORK_MUTATION_CHANCES;
         sculptureMutationChances = DEFAULT_SCULPTURE_MUTATION_CHANCES;
-        gameTimer = MAX_GAME_TIME;
+        //gameTimer = MAX_GAME_TIME;
 
 
         //set reference to the player
@@ -154,11 +155,19 @@ public class ArtGallery : MonoBehaviour {
                     float result;
                     if (float.TryParse(args[i + 1], out result) && result <= MAX_GAME_TIME)
                     {
-                        gameTimer = result;
+                        //gameTimer = result;
                     }
 
                 }
             }
+        }
+
+        // starting functions
+        availableFunctions = new List<FTYPE> { FTYPE.ID, FTYPE.TANH, FTYPE.SQUAREWAVE, FTYPE.GAUSS, FTYPE.SINE, FTYPE.SAWTOOTH, FTYPE.ABSVAL };
+        if (activeFunctions == null)
+        {
+            activeFunctions = new List<FTYPE>();
+            ActivateFunction(FTYPE.TANH);
         }
     }
 
@@ -181,15 +190,6 @@ public class ArtGallery : MonoBehaviour {
         gameRoom = roomProp.GetComponent<Room>();
         gameRoom.SetArtGallery(this);
 
-        // starting functions
-        availableFunctions = new List<FTYPE> { FTYPE.ID, FTYPE.TANH, FTYPE.SQUAREWAVE, FTYPE.GAUSS, FTYPE.SINE, FTYPE.SAWTOOTH, FTYPE.ABSVAL };
-        if (activeFunctions == null)
-        {
-            activeFunctions = new List<FTYPE>();
-            ActivateFunction(FTYPE.ID);
-        }
-
-
         //activate functions
         // Testing: activating all functions
         //ActivationFunctions.ActivateAllFunctions();
@@ -205,6 +205,11 @@ public class ArtGallery : MonoBehaviour {
 
         lobby.SetSculptures(gameRoom.GetSculptures());
 
+    }
+
+    public List<FTYPE> GetAvailableActivationFunctions()
+    {
+        return availableFunctions;
     }
 
     private int ConvertToInt(String intString)
@@ -410,10 +415,10 @@ public class ArtGallery : MonoBehaviour {
     // Update is called once per frame
     void Update ()
     {
-        gameTimer -= Time.deltaTime;
-        if(gameTimer <= 0)
+        //gameTimer -= Time.deltaTime;
+        //if(gameTimer <= 0)
         {
-            GameOver();
+            //GameOver();
         }
 
         Artwork[] art = room.GetArtworks(); // FIXME This is not a very functional way of dealing with the threads. However removing threads is not an option.

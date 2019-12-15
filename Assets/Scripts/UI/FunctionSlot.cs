@@ -4,14 +4,24 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
+/// <summary>
+/// Independent slot inside of the function tray
+/// Holds functions and their amount
+/// selected slot interacts with function
+/// </summary>
 public class FunctionSlot : MonoBehaviour {
 
     public GameObject slotBorder;
     public GameObject thumbnailSlot;
+    public Text countDisplay;
+    public int Count { get; set; }
 
     public Sprite defaultThumbnail;
     public Sprite borderSelected;
     public Sprite borderDeselected;
+
+    //public FTYPE FType { get; set; }
+    public SavedFunction SavedFunction { get; set; }
 
     public void SelectSlot()
     {
@@ -21,6 +31,12 @@ public class FunctionSlot : MonoBehaviour {
     public void DeselectSlot()
     {
         slotBorder.GetComponent<Image>().sprite = borderDeselected;
+    }
+
+    public void SetCount(int count)
+    {
+        Count = count;
+        countDisplay.text = Count.ToString();   
     }
 
     public void SetThumbnail(Sprite sprite)
@@ -35,11 +51,11 @@ public class FunctionSlot : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-		
+        SetCount(0);
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		
-	}
+
+    }
 }

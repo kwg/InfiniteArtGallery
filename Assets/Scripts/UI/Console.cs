@@ -11,12 +11,13 @@ public class Console : MonoBehaviour
     public InputField consoleInputField;
     public string[] consoleInputArray;
     public HUD hud;
+    public Player player;
  
     
     // Start is called before the first frame update
     void Start()
     {
-            consoleIsActive = false;
+        consoleIsActive = false;
     }
 
     public void ToggleConsole()
@@ -30,6 +31,7 @@ public class Console : MonoBehaviour
         gameObject.SetActive(consoleIsActive);
         if (on)
         {
+            player.TogglePlayerControlls(false);
             Cursor.lockState = CursorLockMode.Confined;
             consoleInputField.ActivateInputField();
             UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(consoleInputField.gameObject, null);
@@ -40,9 +42,10 @@ public class Console : MonoBehaviour
         {
             consoleInputField.DeactivateInputField();
             Cursor.lockState = CursorLockMode.Confined;
+            player.TogglePlayerControlls(true);
             //Cursor.visible = false;
         }
-        consoleIsActive = on;
+        //consoleIsActive = on;
     }
 
     public Text text;
@@ -63,10 +66,12 @@ public class Console : MonoBehaviour
         {
             case "test":
                 Debug.Log("Test command entered");
+                consoleIsActive = !consoleIsActive;
                 ActivateConsole(false);
                 break;
 
             default:
+                consoleIsActive = !consoleIsActive;
                 ActivateConsole(false);
                 break;
         }

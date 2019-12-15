@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityStandardAssets.Characters.FirstPerson;
 
 public class Player : MonoBehaviour {
 
@@ -12,28 +13,29 @@ public class Player : MonoBehaviour {
     public GameObject FPC;
     private bool isInverted;
     float interactionDistance = 30f; // maximum distance to check for raycast collision
-
+    FirstPersonController controller;
 
 
     public void Start()
     {
+        controller = FPC.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>();
         camera = FindObjectOfType<Camera>();
         ag = FindObjectOfType<ArtGallery>();
         ag.player = this;
 
         //FPC = gameObject;
         isInverted = ag.invertY;
-        float yAxis = FPC.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.YSensitivity;
+        float yAxis = controller.m_MouseLook.YSensitivity;
         if (!isInverted && Mathf.Sign(yAxis) < 0)
         {
             yAxis = yAxis * -1;
-            FPC.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.YSensitivity = yAxis;
+            controller.m_MouseLook.YSensitivity = yAxis;
 
         }
         else if (isInverted && Mathf.Sign(yAxis) > 0)
         {
             yAxis = yAxis * -1;
-            FPC.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.YSensitivity = yAxis;
+            controller.m_MouseLook.YSensitivity = yAxis;
         }
 
     }
@@ -83,8 +85,13 @@ public class Player : MonoBehaviour {
         //FIXME find a good place to map all the key/joy binds and ref that here
         if (Input.GetKeyDown(KeyCode.I)) // invert mouse
         {
-            FPC.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.YSensitivity = FPC.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().m_MouseLook.YSensitivity * -1;
+            controller.m_MouseLook.YSensitivity = controller.m_MouseLook.YSensitivity * -1;
         }
 
+    }
+
+    public void TogglePlayerControlls(bool on)
+    {
+        controller.enabled = on;
     }
 }

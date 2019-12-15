@@ -43,16 +43,10 @@ public class HUD : MonoBehaviour
     void Start()
     {
         ArtGallery ag = FindObjectOfType<ArtGallery>();
-        testerID = ag.testerID;
-        testerIDObject.GetComponent<TesterIDTextBox>().SetTesterID(testerID.ToString());
+
     }
 
-    public void UpdateTesterID(int testerID)
-    {
-        this.testerID = testerID;
-    }
-
-    public void AddSlots(TRAYS tray, int count)
+    public List<GameObject> AddSlots(TRAYS tray, int count)
     {
         if (IsInitialized) // Avoid the NPEs
         {
@@ -65,7 +59,7 @@ public class HUD : MonoBehaviour
                         functionSlotProp.transform.SetParent(functionTray.transform, false);
                         functionSlots.Add(functionSlotProp);
                     }
-                    break;
+                    return functionSlots;
                 case TRAYS.inventory:
                     for (int i = 0; i < count; i++)
                     {
@@ -73,10 +67,14 @@ public class HUD : MonoBehaviour
                         inventorySlotProp.transform.SetParent(inventoryTray.transform, false);
                         inventorySlots.Add(inventorySlotProp);
                     }
-                    break;
+                    return inventorySlots;
                 default:
-                    break;
+                    return null;
             }
+        }
+        else
+        {
+            return null;
         }
     }
 
@@ -128,7 +126,9 @@ public class HUD : MonoBehaviour
                 // check for active function slot and change the decoration for it
                 foreach (GameObject functionSlotProp in functionSlots)
                 {
-                    functionSlotProp.GetComponent<FunctionSlot>().DeselectSlot();
+                    FunctionSlot slot = functionSlotProp.GetComponent<FunctionSlot>();
+                    slot.DeselectSlot();
+                    //slot.SetCount(slot.count);
                 }
 
                 functionSlots[selectedFunctionSlot].GetComponent<FunctionSlot>().SelectSlot();
@@ -190,42 +190,5 @@ public class HUD : MonoBehaviour
             console.GetComponent<Console>().ToggleConsole();
         }
 
-        UpdateTimer();
-    }
-
-    void UpdateTimer()
-    {
-        ArtGallery ag = ArtGallery.GetArtGallery();
-        CountdownTextBox ctb = countdownObject.GetComponent<CountdownTextBox>();
-
-
-        float timer = Mathf.Abs(ag.gameTimer);
-        int timerMin = (int)timer / 60;
-        int timerSec = (int)timer % 60;
-        string timerOutMin = timerMin.ToString() + ":";
-        string timerOutSec = "";
-
-        if(timer > 60)
-        {
-            ctb.SetCounterTextColor(Color.white);
-        }
-        else
-        {
-            ctb.SetCounterTextColor(Color.red);
-        }
-
-
-        if (timerSec < 10)
-        {
-            timerOutSec = "0" + timerSec.ToString();
-        }
-        else
-        {
-            timerOutSec = timerSec.ToString();
-        }
-
-        string timeOutFinal = timerOutMin + timerOutSec;
-
-        ctb.SetCounterText(timeOutFinal);
-    }
+    } 
 }

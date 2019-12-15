@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Activation function that can be saved to the tray or attached to an in game object
+/// </summary>
 public class SavedFunction : IFunctionItem {
 
     public string Name { get; set; }
@@ -11,6 +14,8 @@ public class SavedFunction : IFunctionItem {
     public Texture2D Texture { get; set; }
 
     public FTYPE fTYPE { get; set; }
+
+    public int Count { get; set; } = 0;
 
     public void GenerateThumbnail()
     {

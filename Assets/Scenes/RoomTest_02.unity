@@ -20,7 +20,7 @@ RenderSettings:
   m_FogDensity: 0.01
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0, g: 0, b: 0, a: 1}
+  m_AmbientSkyColor: {r: 0.8867924, g: 0.7966184, b: 0.6148985, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
@@ -156,8 +156,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 60.000008, y: 0}
-  m_SizeDelta: {x: 100, y: 500}
+  m_AnchoredPosition: {x: 60, y: -28.4}
+  m_SizeDelta: {x: 100, y: 680.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &186204843
 MonoBehaviour:
@@ -443,7 +443,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8820ec0adcb0923439ebe8642772fa75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  functionSlotObject: {fileID: 1509568239871360, guid: 6313dfaf121ad914094cbbf103e2ba9b,
+  functionSlotObject: {fileID: 8492490780449913395, guid: 0b583068eaaf5b44aa3924fef940b966,
     type: 3}
   inventorySlotObject: {fileID: 1434574183650032, guid: c88b08f7e7ca03543b4dfb7c547908e9,
     type: 3}
@@ -1110,6 +1110,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1094424839}
   m_CullTransparentMesh: 0
+--- !u!114 &1097076904 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 114157530462549172, guid: 5e9e851c0e142814dac026a256ba2ac0,
+    type: 3}
+  m_PrefabInstance: {fileID: 1612881966}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5357087f2b565a746923e59d60cf1b61, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1181009031
 GameObject:
   m_ObjectHideFlags: 0
@@ -1750,6 +1762,7 @@ MonoBehaviour:
   consoleInputField: {fileID: 1929230001}
   consoleInputArray: []
   hud: {fileID: 0}
+  player: {fileID: 1097076904}
   text: {fileID: 0}
 --- !u!1 &1989841064
 GameObject:

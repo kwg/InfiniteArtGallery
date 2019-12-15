@@ -67,6 +67,7 @@ public class Inventory : MonoBehaviour {
 
     public void AddItem(IInventoryItem item)
     {
+        /*
         if(items[ActiveSlot] == null && !Contains(item)) // Only add an item to the active slot if the slot is empty
         {
             items[ActiveSlot] = item;
@@ -74,9 +75,10 @@ public class Inventory : MonoBehaviour {
         }
         else // Overwrite inventory slot
         {
+        */
             items[ActiveSlot] = item;
             hud.UpdateInventoryThumbnail(ActiveSlot, item.Image);
-        }
+        //}
     }
 
     public void ChangeActiveSlot(int newSlot)
@@ -129,7 +131,8 @@ public class Inventory : MonoBehaviour {
 
                     };
                     AddItem(newArtwork);
-                    FindNextEmptySlot();
+                    //FindNextEmptySlot();
+                    CycleActiveSlot(1);
                 }
 
                 if (hit.collider.tag == "sculpture")
@@ -151,7 +154,8 @@ public class Inventory : MonoBehaviour {
 
                     };
                     AddItem(newArtwork);
-                    FindNextEmptySlot();
+                    //FindNextEmptySlot();
+                    CycleActiveSlot(1);
 
 
                     //ag.SelectSculpture(s);
@@ -179,8 +183,8 @@ public class Inventory : MonoBehaviour {
                         art.SetGenotype(GetActiveSlotItem().Geno); // FIXME Null ref possible here - add checks
                         art.Refresh();
                         art.ApplyImageProcess();
-                        items[ActiveSlot] = null;
-                        hud.UpdateInventoryThumbnail(ActiveSlot, null);
+                        //items[ActiveSlot] = null;
+                        //hud.UpdateInventoryThumbnail(ActiveSlot, null);
                     }
                     else
                     {
@@ -200,8 +204,8 @@ public class Inventory : MonoBehaviour {
                         s.SetGeno(GetActiveSlotItem().Geno); // FIXME Null ref possible here - add checks ALSO fix the names SetGeno vs SetGenotype
                         s.Refresh();
                         //s.ApplyImageProcess();
-                        items[ActiveSlot] = null;
-                        hud.UpdateInventoryThumbnail(ActiveSlot, null);
+                        //items[ActiveSlot] = null;
+                        //hud.UpdateInventoryThumbnail(ActiveSlot, null);
                     }
                     else
                     {

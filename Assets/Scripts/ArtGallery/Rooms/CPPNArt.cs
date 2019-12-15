@@ -1,9 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using System.Threading;
 using UnityEngine;
 
-public class Artwork
+class CPPNArt
 {
     private bool debug = ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE;
 
@@ -17,9 +16,11 @@ public class Artwork
     bool processingCPPN;  //FIXME PROTOTYPE this is no longer being checked 
     bool needsRedraw;
     const float BIAS = 1f;
-    public static int TWO_DIMENSIONAL_HUE_INDEX = 0;
-    public static int TWO_DIMENSIONAL_SATURATION_INDEX = 1;
-    public static int TWO_DIMENSIONAL_BRIGHTNESS_INDEX = 2;
+    static readonly int HUE_INDEX = 0;
+    static readonly int SATURATION_INDEX = 1;
+    static readonly int BRIGHTNESS_INDEX = 2;
+    static readonly int VOXEL_INDEX = 3;
+
 
     float Zoom = 5;
     float MaxValue = float.NegativeInfinity;
@@ -32,32 +33,27 @@ public class Artwork
     /// <summary>
     /// Default empty constructor
     /// </summary>
-    public Artwork() : this(new TWEANNGenotype(8, 4, 0)) { }
+    public CPPNArt() : this(new TWEANNGenotype(8, 4, 0)) { }
 
     /// <summary>
     /// Create a new artwork in a room with a new genotype. 
     /// </summary>
-    public Artwork(int archetypeIndex) : this(new TWEANNGenotype(8, 4, archetypeIndex)) { }
+    public CPPNArt(int archetypeIndex) : this(new TWEANNGenotype(8, 4, archetypeIndex)) { }
 
     /// <summary>
     /// Create a new artwork in a room with a given genotype
     /// </summary>
     /// <param name="geno">Genotype for this artwrok to use</param>
-    public Artwork(TWEANNGenotype geno)
+    public CPPNArt(TWEANNGenotype geno)
     {
         ag = ArtGallery.GetArtGallery();
         needsRedraw = false;
         processingCPPN = false;
-        this.geno = geno; 
-        cppnProcess = new Thread ( new ThreadStart (GenerateImageFromCPPN) );
+        this.geno = geno;
+        cppnProcess = new Thread(new ThreadStart(GenerateImageFromCPPN));
         img = new Texture2D(width, height, TextureFormat.ARGB32, false);
         pixels = new Color[width * height];
         //GenerateImageFromCPPN();  // non threaded version of generation
-        foreach (NodeGene node in geno.Nodes)
-        {
-            //node.fTYPE = ActivationFunctions.RandomFTYPE();
-            node.fTYPE = ActivationFunctions.RandomFTYPE2();
-        }
         cppnProcess.Start();
     }
 
@@ -77,7 +73,7 @@ public class Artwork
         img.SetPixels(pixels);
         img.Apply();
         //FIXME PROTOTYPE disabling to build new method
-        ag.SaveImage(this);
+        //ag.SaveImage(this);
     }
 
     public void Refresh()
@@ -119,12 +115,12 @@ public class Artwork
                 */
                 //Debug.Log(hsv[0] + ", " + hsv[1] + ", " + hsv[2]);
                 Color colorHSV = Color.HSVToRGB(
-                    Mathf.Abs(ActivationFunctions.Activation(FTYPE.HLPIECEWISE, ActivationFunctions.Activation(FTYPE.SINE, hsv[TWO_DIMENSIONAL_HUE_INDEX]))),
-                    Mathf.Abs(ActivationFunctions.Activation(FTYPE.HLPIECEWISE, hsv[TWO_DIMENSIONAL_SATURATION_INDEX])),
-                    Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[TWO_DIMENSIONAL_BRIGHTNESS_INDEX])),
+                    Mathf.Abs(ActivationFunctions.Activation(FTYPE.HLPIECEWISE, ActivationFunctions.Activation(FTYPE.SINE, hsv[HUE_INDEX]))),
+                    Mathf.Abs(ActivationFunctions.Activation(FTYPE.HLPIECEWISE, hsv[SATURATION_INDEX])),
+                    Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[BRIGHTNESS_INDEX])),
                     true
                     );
-                
+
 
                 //MaxValue = Mathf.Max(MaxValue, hsv[TWO_DIMENSIONAL_HUE_INDEX]);
                 //MinValue = Mathf.Min(MinValue, hsv[TWO_DIMENSIONAL_HUE_INDEX]);
@@ -133,14 +129,14 @@ public class Artwork
                 //Debug.Log(finalColor[0] + ", " + finalColor[1] + ", " + finalColor[2]);
 
                 pixels[x + y * width] = new Color(hsv[0], hsv[1], hsv[2]); // HACK switched to RGB for testing. This should be an option. Need to map a LOT of outputs for seperate effects
-                //hsvArr[x + y * width] = new Vector3(hsv[TWO_DIMENSIONAL_HUE_INDEX], hsv[TWO_DIMENSIONAL_SATURATION_INDEX], hsv[TWO_DIMENSIONAL_BRIGHTNESS_INDEX]);
+                                                                            //hsvArr[x + y * width] = new Vector3(hsv[TWO_DIMENSIONAL_HUE_INDEX], hsv[TWO_DIMENSIONAL_SATURATION_INDEX], hsv[TWO_DIMENSIONAL_BRIGHTNESS_INDEX]);
             }
         }
         //for (int i = 0; i < hsvArr.Length; i++)
         //{
         //    float[] v = FormatHSVMod(new float[] { hsvArr[i][TWO_DIMENSIONAL_HUE_INDEX], hsvArr[i][TWO_DIMENSIONAL_SATURATION_INDEX], hsvArr[i][TWO_DIMENSIONAL_BRIGHTNESS_INDEX] });
         //    pixels[i] = Color.HSVToRGB(v[TWO_DIMENSIONAL_HUE_INDEX], v[TWO_DIMENSIONAL_SATURATION_INDEX], v[TWO_DIMENSIONAL_BRIGHTNESS_INDEX], true);
-       //}
+        //}
         //Debug.Log("MaxValue: " + MaxValue + ", MinValue: " + MinValue);
 
         processingCPPN = false;
@@ -155,11 +151,11 @@ public class Artwork
         float[] result = new float[hsv.Length];
         float range = MaxValue - MinValue;
 
-        result[TWO_DIMENSIONAL_HUE_INDEX] = ((hsv[TWO_DIMENSIONAL_HUE_INDEX] - MinValue) / range);
+        result[HUE_INDEX] = ((hsv[HUE_INDEX] - MinValue) / range);
         //result[TWO_DIMENSIONAL_HUE_INDEX] = Mathf.Abs((ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[TWO_DIMENSIONAL_HUE_INDEX])));
 
-        result[TWO_DIMENSIONAL_SATURATION_INDEX] = ActivationFunctions.Activation(FTYPE.HLPIECEWISE, hsv[TWO_DIMENSIONAL_SATURATION_INDEX]);
-        result[TWO_DIMENSIONAL_BRIGHTNESS_INDEX] = Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[TWO_DIMENSIONAL_BRIGHTNESS_INDEX]));
+        result[SATURATION_INDEX] = ActivationFunctions.Activation(FTYPE.HLPIECEWISE, hsv[SATURATION_INDEX]);
+        result[BRIGHTNESS_INDEX] = Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[BRIGHTNESS_INDEX]));
 
         return result;
     }
@@ -169,18 +165,17 @@ public class Artwork
         float[] result = new float[hsv.Length];
         float range = MaxValue - MinValue;
 
-        result[TWO_DIMENSIONAL_HUE_INDEX] = ((hsv[TWO_DIMENSIONAL_HUE_INDEX] - MinValue) % 1);
+        result[HUE_INDEX] = ((hsv[HUE_INDEX] - MinValue) % 1);
         //result[TWO_DIMENSIONAL_HUE_INDEX] = Mathf.Abs((ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[TWO_DIMENSIONAL_HUE_INDEX])));
 
-        result[TWO_DIMENSIONAL_SATURATION_INDEX] = ActivationFunctions.Activation(FTYPE.HLPIECEWISE, hsv[TWO_DIMENSIONAL_SATURATION_INDEX]);
-        result[TWO_DIMENSIONAL_BRIGHTNESS_INDEX] = Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[TWO_DIMENSIONAL_BRIGHTNESS_INDEX]));
+        result[SATURATION_INDEX] = ActivationFunctions.Activation(FTYPE.HLPIECEWISE, hsv[SATURATION_INDEX]);
+        result[BRIGHTNESS_INDEX] = Mathf.Abs(ActivationFunctions.Activation(FTYPE.PIECEWISE, hsv[BRIGHTNESS_INDEX]));
 
         return result;
     }
 
     private float[] ProcessCPPNInput(float scaledX, float scaledY, float distCenter, float bias)
     {
-        //HACK FIXME scaledZ and sculpture distances hard coded to 0 - maybe combine all network processing to a utility function that figures all of that out
         return cppn.Process(new float[] { scaledX, scaledY, 0, distCenter, 0, 0, 0, bias });
     }
 
@@ -217,15 +212,5 @@ public class Artwork
     public TWEANNGenotype GetGenotype()
     {
         return geno;
-    }
-
-    int RandomInput()
-    {
-        return Random.Range(0, 4);
-    }
-
-    int RandomOut()
-    {
-        return Random.Range(0, 3);
     }
 }

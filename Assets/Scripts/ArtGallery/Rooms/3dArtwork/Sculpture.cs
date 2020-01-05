@@ -227,7 +227,17 @@ public class Sculpture : MonoBehaviour {
                     float distFromCenterXZ = GetDistFromCenterXZ(actualX, actualZ);
                     float distfromCenterYZ = GetDistFromCenterYZ(actualZ, actualY);
                     float distfromCenterXY = GetDistFromCenterXY(actualX, actualY);
-                    float[] outputs = cppn.Process(new float[] { actualY, actualX, actualZ, distFromCenter, distFromCenterXZ, distfromCenterYZ, distfromCenterXY, BIAS });
+                    
+                    float[] outputs = cppn.Process(new float[] { 
+                        actualY, 
+                        actualX, 
+                        actualZ, 
+                        distFromCenter, 
+                        distFromCenterXZ, 
+                        distfromCenterYZ, 
+                        distfromCenterXY, 
+                        BIAS 
+                    });
 
                     MinMax(new Vector4(outputs[0], outputs[1], outputs[2], outputs[3]));
 
@@ -254,11 +264,11 @@ public class Sculpture : MonoBehaviour {
             MaxHueValue = output.x;
         if (output.y < MinSaturationValue)
             MinSaturationValue = output.y;
-        else if (output.y > MinSaturationValue)
+        else if (output.y > MaxSaturationValue)
             MinSaturationValue = output.y; 
         if (output.z < MinBrightnessValue)
             MinBrightnessValue = output.z;
-        else if (output.z > MinBrightnessValue)
+        else if (output.z > MaxBrightnessValue)
             MinBrightnessValue = output.z;
     }
 

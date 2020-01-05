@@ -392,11 +392,11 @@ public class ArtGallery : MonoBehaviour {
         gameRoom.ConfigureRoom(room.GetParentID(), GetImagesFromArtworks(room.GetArtworks()), room.sculptures);
         gameRoom.RedrawRoom();
 
-        gameRoom.ClearReturnPortalDecorations();
-        if (room.GetParentID() > -1) gameRoom.SetReturnPortalDecoration(room.GetParentID());
+        //gameRoom.ClearReturnPortalDecorations();
+        //if (room.GetParentID() > -1) gameRoom.SetReturnPortalDecoration(room.GetParentID());
 
 
-        SaveRoom();
+        //SaveRoom();
     }
 
     public void RemoveRoom(int portalID)

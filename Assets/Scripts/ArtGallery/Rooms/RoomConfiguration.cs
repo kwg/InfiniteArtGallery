@@ -47,6 +47,8 @@ public class RoomConfiguration {
             else if(i == returnPortalID)
             {
                 // do nothing - save some cpu
+                geno.Mutate();
+
             }
             else
             {

@@ -54,8 +54,8 @@ public class Portal : MonoBehaviour, IArtworkDisplay {
 
     public void Update()
     {
-        rend.material.SetTexture("_MainTex", displayImg);
-        transform.Rotate(Vector3.up * (50f * Time.deltaTime));
+        //rend.material.SetTexture("_MainTex", displayImg);
+        //transform.Rotate(Vector3.up * (50f * Time.deltaTime));
     }
 
     /// <summary>

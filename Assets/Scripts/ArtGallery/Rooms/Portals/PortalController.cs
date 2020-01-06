@@ -49,12 +49,6 @@ public class PortalController : MonoBehaviour {
     }
 
 
-
-    public void DecoratePortal(int portalID, Color color)
-    {
-        GetPortalByID(portalID).PaintDoor(color);
-    }
-
     private Portal GetPortalByID(int portalID)
     {
         Portal p = null;

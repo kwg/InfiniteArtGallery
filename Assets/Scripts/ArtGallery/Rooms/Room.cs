@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,13 +13,12 @@ public class Room : MonoBehaviour
     private bool debug = ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE;
 
     public GameObject portalObject;
-    public GameObject sculptureObject;
-    public GameObject functionPickupObject;
-    public GameObject VoxelObject;
     public GameObject SculpturePlatformObject;
+    //public GameObject sculptureObject;
+    public GameObject functionPickupObject;
+
     SortedList<int, Portal> portals; // Portal index is door index
 
-    int PortalCount = 0; // TODO not in use - decide what to do with it
     int NUM_WALLS = 4;
     int NUM_PORTALS = 4;
     float xSpacing = 9.9f;
@@ -30,9 +28,16 @@ public class Room : MonoBehaviour
     // portal lockout
     public bool Locked { get; set; }
 
-    private int rewindPortalID; // Parent of this room
+    //private int rewindPortalID; // Parent of this room
     private bool isPopulated = false;  // is this room initialized?
+
+    private RoomConfiguration roomController;
+    
+    /*
+     * MOVE THIS TO PORTAL
     private Texture2D[] images;
+    */
+    
     private ArtGallery ag;
 
     private Sculpture[] sculptures;
@@ -45,93 +50,46 @@ public class Room : MonoBehaviour
     /// <summary>
     /// Initial creation of the room
     /// </summary>
-    /// <param name="numberArtworks"></param>
-    public void InitializeRoom(Texture2D[] images)
+    public void InitializeRoom(RoomConfiguration _roomController)
     {
-        this.images = images;
-        rewindPortalID = -1;
+        roomController = _roomController;
         portals = new SortedList<int, Portal>();
         sculptures = new Sculpture[4]; //HACK hardcoded values
         CreatePortals();
-        CreateSculptures();
+        //CreateSculptures();
         isPopulated = true;
-    }
-
-    /// <summary>
-    /// Initialize a room with given artworks and parent ID (loading a room)
-    /// </summary>
-    /// <param name="artworks">SortedList of artwork to be hung on the walls</param>
-    public void ConfigureRoom(int rewindPortalID, Texture2D[] images, Sculpture[] sculptures)
-    {
-        Locked = true;
-        foreach(FunctionPickup fp in FindObjectsOfType<FunctionPickup>())
-        {
-            Destroy(fp.GetPickup());
-        }
-        this.rewindPortalID = rewindPortalID;
-        /* Create art */
-        this.images = images;
-        this.sculptures = sculptures;
-        isPopulated = true;
-        SpawnPickups();
     }
 
     /* Public methods */
-    public void SetArtGallery(ArtGallery artGallery)
-    {
-        this.ag = artGallery;
-    }
-
-    public void SetParentID(int rewindPortalID)
-    {
-        this.rewindPortalID = rewindPortalID;
-    }
-
-    public int GetRewindPortalID()
-    {
-        return rewindPortalID;
-    }
 
     public bool IsPopulated()
     {
         return isPopulated;
     }
 
-    public void RedrawRoom()
-    {
-        foreach (KeyValuePair<int, Portal> p in portals)
-        {
-            p.Value.PaintDoor(images[p.Key]);
-        }
-        foreach(Sculpture scultpure in sculptures)
-        {
-            scultpure.Refresh();
-        }
-    }
+    ////create sculptures and position them
+    ////HACK hardcoded values and number of sculptures
+    //private void CreateSculptures()
+    //{
+    //    Vector3[] sculps = new Vector3[] { new Vector3(-7.5f, 1.25f, -7.5f), new Vector3(7.5f, 1.25f, -7.5f), new Vector3(7.5f, 1.25f, 7.5f), new Vector3(-7.5f, 1.25f, 7.5f) };
 
-    //create sculptures and position them
-    //HACK hardcoded values and number of sculptures
-    private void CreateSculptures()
-    {
-        Vector3[] sculps = new Vector3[] { new Vector3(-7.5f, 1.25f, -7.5f), new Vector3(7.5f, 1.25f, -7.5f), new Vector3(7.5f, 1.25f, 7.5f), new Vector3(-7.5f, 1.25f, 7.5f) };
+    //    for(int i = 0; i < sculps.Length; i++)
+    //    {
+    //        GameObject sculpture = Instantiate(sculptureObject) as GameObject;
+    //        sculpture.transform.SetParent(transform);
+    //        sculpture.transform.position = sculps[i];
+    //        sculpture.AddComponent<Sculpture>();
+    //        //sculpture.GetComponent<Sculpture>().VoxelObject = VoxelObject;
+    //        sculpture.GetComponent<Sculpture>().SculturePlatformObject = SculpturePlatformObject;
 
-        for(int i = 0; i < sculps.Length; i++)
-        {
-            GameObject sculpture = Instantiate(sculptureObject) as GameObject;
-            sculpture.transform.SetParent(transform);
-            sculpture.transform.position = sculps[i];
-            sculpture.AddComponent<Sculpture>();
-            //sculpture.GetComponent<Sculpture>().VoxelObject = VoxelObject;
-            sculpture.GetComponent<Sculpture>().SculturePlatformObject = SculpturePlatformObject;
+    //        if (UnityEngine.Random.Range(0,1) < .5f) //HACK hardcoded transparency chance
+    //        {
+    //            sculpture.GetComponent<Sculpture>().ToggleTransparency();
+    //        }
+    //        sculptures[i] = sculpture.GetComponent<Sculpture>();
+    //    }
 
-            if (UnityEngine.Random.Range(0,1) < .5f) //HACK hardcoded transparency chance
-            {
-                sculpture.GetComponent<Sculpture>().ToggleTransparency();
-            }
-            sculptures[i] = sculpture.GetComponent<Sculpture>();
-        }
-
-    }
+    //}
 
     private void SpawnPickups()
     {
@@ -154,7 +112,7 @@ public class Room : MonoBehaviour
     private void CreatePortals()
     {
         ArrayList walls = getWallObjects();
-        int numImagesPerWall = images.Length / NUM_WALLS;
+        int numImagesPerWall = 1;
         //used for portal id
         int idSet = 0;
 
@@ -205,7 +163,7 @@ public class Room : MonoBehaviour
                 float rotAmount = angle - (360/NUM_WALLS);
                 p.transform.Rotate(new Vector3(0, rotAmount, 0));
 
-                p.PaintDoor(images[i]);
+                //p.PaintDoor(images[i]);
             }
         }
     }
@@ -235,6 +193,8 @@ public class Room : MonoBehaviour
         p.SetDestinationID((2 + p.GetPortalID()) % NUM_PORTALS);
         if (debug) Debug.Log("Portal created with ID " + p.GetPortalID() + " and DestinationId " + p.GetDestinationID());
         portals.Add(portalID, p);
+        p.InitializePortal();
+        roomController.GetRoomArt()[portalID].SetParentUnityObject(p);
         return p;
     }
 
@@ -287,19 +247,5 @@ public class Room : MonoBehaviour
             Locked = false;
         }
 
-}
-
-    public void SetReturnPortalDecoration(int portalID)
-    {
-        if (portalID > -1) portals[portalID].SetEmmisive(Color.white);
-    }
-
-    public void ClearReturnPortalDecorations()
-    {
-        foreach (KeyValuePair<int, Portal> p in portals)
-        {
-            p.Value.SetEmmisive(new Color(0f, 0f, 0f, 0f));
-
-        }
     }
 }

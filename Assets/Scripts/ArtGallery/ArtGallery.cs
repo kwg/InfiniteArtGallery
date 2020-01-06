@@ -1,10 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using System.Diagnostics;
-using System;
+
 
 /// <summary>
 /// Primary controller. Handles rooms and portals (physical) of the scene and links them to the doors in the 
@@ -42,7 +39,6 @@ public class ArtGallery : MonoBehaviour {
 
 
     //private SortedList<int, RoomConfiguration> history;
-    private RoomConfiguration lobby; // Root of the room tree
     private RoomConfiguration room; // current room
     public static long roomID = 0;
 
@@ -188,7 +184,7 @@ public class ArtGallery : MonoBehaviour {
         // Build the game room
         GameObject roomProp = Instantiate(roomObject) as GameObject;
         gameRoom = roomProp.GetComponent<Room>();
-        gameRoom.SetArtGallery(this);
+        //gameRoom.SetArtGallery(this);
 
         //activate functions
         // Testing: activating all functions
@@ -196,14 +192,13 @@ public class ArtGallery : MonoBehaviour {
         ActivationFunctions.ActivateFunction(activeFunctions);
 
         // build the lobby
-        lobby = new RoomConfiguration(STARTING_NUM_ARTWORKS);
-        room = lobby;
-        gameRoom.InitializeRoom(GetImagesFromArtworks(room.GetArtworks()));
+        room = new RoomConfiguration(STARTING_NUM_ARTWORKS);
+        gameRoom.InitializeRoom(room);
 
         List<Artwork> artToSave = new List<Artwork>();
 
 
-        lobby.SetSculptures(gameRoom.GetSculptures());
+        //room.SetSculptures(gameRoom.GetSculptures());
 
     }
 
@@ -212,121 +207,6 @@ public class ArtGallery : MonoBehaviour {
         return availableFunctions;
     }
 
-    private int ConvertToInt(String intString)
-    {
-        int i = 0;
-        if (!Int32.TryParse(intString, out i))
-        {
-            i = -1;
-        }
-        return i;
-    }
-
-    private void SaveRoom()
-    {
-
-    }
-
-    public void SaveImage(Artwork artwork)
-    {
-        if (generatedImages == null)
-        {
-            generatedImages = new List<List<Artwork>>();
-        }
-        if (generatedImages.Count <= generatedImagesCounter)
-        {
-            generatedImages.Add(new List<Artwork>());
-        }
-        else if (generatedImages[generatedImagesCounter].Count >= 4)
-        {
-            generatedImages.Add(new List<Artwork>());
-            //generatedImagesCounter++;
-        }
-        generatedImages[generatedImagesCounter].Add(artwork);
-        SavePNG(artwork.GetImage(), generatedImagesCounter, (generatedImages[generatedImagesCounter].Count), generatedImagesSelectedID);
-    }
-
-    public void SavePNG(Texture2D tex, int seqID, int artworkID, int selectedArt)
-    {
-        // Encode texture into PNG
-        byte[] bytes = tex.EncodeToPNG();
-        //Destroy(tex);
-
-        // For testing purposes, also write to a file in the project folder
-        if(!Directory.Exists(Application.dataPath + "/../Subject-" + testerID + "/" + generatedImagesCounter))
-        {
-            Directory.CreateDirectory(Application.dataPath + "/../Subject-" + testerID + "/" + generatedImagesCounter);
-        }
-        File.WriteAllBytes(Application.dataPath + "/../Subject-" + testerID + "/" + generatedImagesCounter + "/artwork_" + artworkID + "_" + ((artworkID == selectedArt) ? "selected" : "not_selected") + ".png", bytes);
-    }
-
-    public void SaveVox(Color[,,] voxArray)
-    {
-        if (generatedSculptures == null)
-        {
-            generatedSculptures = new List<List<Color[,,]>>();
-        }
-        if (generatedSculptures.Count <= generatedSculpturesCounter)
-        {
-            generatedSculptures.Add(new List<Color[,,]>());
-        }
-        else if (generatedSculptures[generatedSculpturesCounter].Count >= 4)
-        {
-            generatedSculptures.Add(new List<Color[,,]>());
-            //generatedSculpturesCounter++;
-        }
-        generatedSculptures[generatedSculpturesCounter].Add(voxArray);
-        SaveCSV(voxArray, generatedSculpturesCounter, (generatedSculptures[generatedSculpturesCounter].Count));
-    }
-
-    public void ResetSculpture(Sculpture s)
-    {
-        s.NewSculpture();
-    }
-
-    public void SaveCSV(Color[,,] voxArray, int seqID, int sculptureID)
-    {
-        string voxCSV = "";
-        
-        for(int x = 0; x < voxArray.GetLength(0); x++)
-        {
-            for(int z = 0; z < voxArray.GetLength(1); z++)
-            {
-                for(int y = 0; y < voxArray.GetLength(2); y++)
-                {
-                    voxCSV += x + ", " + z + ", " + y + ", ";
-                    voxCSV += voxArray[x, z, y].r.ToString() + ", ";
-                    voxCSV += voxArray[x, z, y].g.ToString() + ", ";
-                    voxCSV += voxArray[x, z, y].b.ToString() + ", ";
-                    voxCSV += voxArray[x, z, y].a.ToString() + "\n";
-                }
-            }
-        }
-
-        byte[] bytes = Encoding.UTF8.GetBytes(voxCSV); 
-        if (!Directory.Exists(Application.dataPath + "/../Subject-" + testerID + "/" + generatedSculpturesCounter))
-        {
-            Directory.CreateDirectory(Application.dataPath + "/../Subject-" + testerID + "/" + generatedSculpturesCounter);
-        }
-        File.WriteAllBytes(Application.dataPath + "/../Subject-" + testerID + "/" + generatedSculpturesCounter + "/sculpture_" + sculptureID + "_" + ".csv", bytes);
-
-    }
-
-    public void SaveSeed(int seed)
-    {
-        byte[] bytes = Encoding.UTF8.GetBytes(seed.ToString());
-        if (!Directory.Exists(Application.dataPath + "/../Subject-" + testerID))
-        {
-            Directory.CreateDirectory(Application.dataPath + "/../Subject-" + testerID);
-        }
-        File.WriteAllBytes(Application.dataPath + "/../Subject-" + testerID + "/seed.txt", bytes);
-
-    }
-
-    public RoomConfiguration GetLobby()
-    {
-        return lobby;
-    }
 
     public FTYPE GetRandomCollectedFunction()
     {
@@ -365,32 +245,24 @@ public class ArtGallery : MonoBehaviour {
         }
     }
 
-    public Artwork GetArtwork(int portalID)
+    public GeneticArt GetArtwork(int portalID)
     {
-        return room.GetArtworks()[portalID];
+        return room.GetRoomArt()[portalID];
     }
 
     public void ChangeRoom(int portalID, int destinationID)
     {
-        // HACK PROTOTYPE manual manipulation of saving vars 
-        generatedImagesSelectedID = portalID;
-        generatedImagesCounter++;
-        generatedSculpturesCounter++;
-
         // is the desitnation a new room or a return?
-        if (room.GetRoomByPortalID(portalID) == null)
-        {
-            UnityEngine.Debug.Log("Making new room...");
-            room.AddRoom(portalID, new RoomConfiguration(room, destinationID, portalID, room.GetArtworks(), room.sculptures));
-        }
-        else
-        {
-            room.MutateSculptures();
-        }
-        room = room.GetRoomByPortalID(portalID);
-
-        gameRoom.ConfigureRoom(room.GetParentID(), GetImagesFromArtworks(room.GetArtworks()), room.sculptures);
-        gameRoom.RedrawRoom();
+        //if (room.GetRoomByPortalID(portalID) == null)
+        //{
+        //    UnityEngine.Debug.Log("Making new room...");
+        //    room.AddRoom(portalID, new RoomConfiguration(room, destinationID, portalID, room.GetArtworks(), room.sculptures));
+        //}
+        //else
+        //{
+            //room.MutateSculptures();
+        //}
+        room = new RoomConfiguration((portalID), room.GetRoomArt());
 
         //gameRoom.ClearReturnPortalDecorations();
         //if (room.GetParentID() > -1) gameRoom.SetReturnPortalDecoration(room.GetParentID());
@@ -399,13 +271,13 @@ public class ArtGallery : MonoBehaviour {
         //SaveRoom();
     }
 
-    public void RemoveRoom(int portalID)
-    {
-        if(room.GetRoomByPortalID(portalID) != null)
-        {
-            room.RemoveRoom(portalID);
-        }
-    }
+    //public void RemoveRoom(int portalID)
+    //{
+    //    if(room.GetRoomByPortalID(portalID) != null)
+    //    {
+    //        room.RemoveRoom(portalID);
+    //    }
+    //}
 
     public static long NextRoomID()
     {
@@ -415,51 +287,7 @@ public class ArtGallery : MonoBehaviour {
     // Update is called once per frame
     void Update ()
     {
-        //gameTimer -= Time.deltaTime;
-        //if(gameTimer <= 0)
-        {
-            //GameOver();
-        }
 
-        Artwork[] art = room.GetArtworks(); // FIXME This is not a very functional way of dealing with the threads. However removing threads is not an option.
-        for (int a = 0; a < art.Length; a++)
-        {
-            if (art[a].NeedsRedraw())
-            {
-                art[a].ApplyImageProcess();
-                gameRoom.Locked = false;
-            }
-        }
     }
 
-    void GameOver()
-    {
-        UnityEngine.Debug.Log("Quitting game due to timeout...");
-        Application.Quit();
-    }
-
-    private Texture2D[] GetImagesFromArtworks(Artwork[] artworks)
-    {
-        Texture2D[] images = new Texture2D[artworks.Length];
-        for(int a = 0; a < artworks.Length; a++)
-        {    
-            images[a] = artworks[a].GetArtwork();
-        }
-        return images;
-    }
-
-    public void SelectSculpture(Sculpture sculpture)
-    {
-        foreach(Sculpture s in room.sculptures)
-        {
-            if (s.Equals(sculpture))
-            {
-                s.SetSelected(!s.GetSelected());
-            }
-            else if (s.GetSelected())
-            {
-                s.SetSelected(false);
-            }
-        }
-    }
 }

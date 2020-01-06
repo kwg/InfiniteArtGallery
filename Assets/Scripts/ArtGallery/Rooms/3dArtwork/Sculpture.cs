@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
-public class Sculpture : MonoBehaviour {
+public class Sculpture : GeneticArt {
     
     public GameObject SculturePlatformObject;
     public MeshFilter meshFilter;
@@ -57,6 +57,11 @@ public class Sculpture : MonoBehaviour {
     private List<Color32> colors;
     private int vertexIndex;
 
+    public Sculpture() : base(new TWEANNGenotype(8, 4, 0), new int[] { 5, 5, 5 }, null)
+    {
+
+    }
+
     public bool NeedsRedraw()
     {
         return needsRedraw;
@@ -84,21 +89,21 @@ public class Sculpture : MonoBehaviour {
     }
 
 
-    private void Start()
-    {
-        cppnProcess = new Thread(new ThreadStart(PopulateVoxelMapFromCPPN));
-        meshFilter = GetComponent<MeshFilter>();
+    //private void Start()
+    //{
+    //    cppnProcess = new Thread(new ThreadStart(PopulateVoxelMapFromCPPN));
+    //    meshFilter = GetComponent<MeshFilter>();
 
-        //inputs: (x,y,z) outputs: r,g,b and presence
-        geno = new TWEANNGenotype(8, 4, 0); // Use archetype 0 for test chamber
+    //    //inputs: (x,y,z) outputs: r,g,b and presence
+    //    geno = new TWEANNGenotype(8, 4, 0); // Use archetype 0 for test chamber
 
-        platform = Instantiate(SculturePlatformObject) as GameObject;
-        platform.transform.position = new Vector3(transform.position.x, transform.position.y - 1.25f, transform.position.z);
-        GenerateCPPN();
-        cppnProcess.Start();
-        //TestPopulateVoxelMap();
-        //RedrawSculpture();
-    }
+    //    platform = Instantiate(SculturePlatformObject) as GameObject;
+    //    platform.transform.position = new Vector3(transform.position.x, transform.position.y - 1.25f, transform.position.z);
+    //    GenerateCPPN();
+    //    cppnProcess.Start();
+    //    //TestPopulateVoxelMap();
+    //    //RedrawSculpture();
+    //}
 
     public void Refresh()
     {
@@ -107,16 +112,16 @@ public class Sculpture : MonoBehaviour {
 
     }
 
-    private void Update()
-    {
+    //private void Update()
+    //{
 
-        if(needsRedraw && !processingCPPN)
-        {
-            RedrawSculpture();
-        }
+    //    if(needsRedraw && !processingCPPN)
+    //    {
+    //        RedrawSculpture();
+    //    }
 
-        transform.Rotate(Vector3.up * (RotationSpeed * Time.deltaTime));
-    }
+    //    transform.Rotate(Vector3.up * (RotationSpeed * Time.deltaTime));
+    //}
 
     /// <summary>
     /// Fill the sculpture space with voxels

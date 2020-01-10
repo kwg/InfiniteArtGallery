@@ -11,7 +11,7 @@ public abstract class GeneticArt
     protected int[] spatialInputLimits;
     protected int cppnSize;
     Thread cppnProcess;
-    protected IArtworkDisplay parentUnityObject;
+    public bool NeedsRedraw { get; protected set; }
 
 
     private int MUTATION_CYCLES = 2; // TODO move maximum mutations per evolution to config file
@@ -31,17 +31,10 @@ public abstract class GeneticArt
         //cppnOutput = new float[cppnSize][];
 
         colorChanger = new ColorSpaceStandardRGB();
-    }
-
-    public void SetParentUnityObject(IArtworkDisplay _parentUnityObject)
-    {
-        parentUnityObject = _parentUnityObject;
         ProcessGeno();
-        parentUnityObject.UpdateGeneratedArt(adjustedCPPNOutput, spatialInputLimits);
-
-        //cppnProcess = new Thread(() => ProcessGeno());
-        //cppnProcess.Start();
     }
+
+    abstract protected void UpdateCPPNArt();
 
     private void SetCPPNSize()
     {
@@ -53,6 +46,8 @@ public abstract class GeneticArt
 
     public void Mutate(GeneticArt _champion)
     {
+        Debug.Log("Starting geno mutation...");
+
         geno = _champion.GetGeno().Copy();
 
         // TODO detect if this is the champion and change how it mutates
@@ -62,26 +57,29 @@ public abstract class GeneticArt
             geno.Mutate();
         }
 
-        cppnProcess = new Thread(() => ProcessGeno());
-        cppnProcess.Start();
-        parentUnityObject.UpdateGeneratedArt(adjustedCPPNOutput, spatialInputLimits);
+        Debug.Log("Mutation complete ...");
+
+        //cppnProcess = new Thread(() => ProcessGeno());
+        //cppnProcess.Start();
+        ProcessGeno();
 
     }
 
     private void ProcessGeno()
     {
-
+        Debug.Log("Starting geno processing...");
         cppnOutput = genoProcesser.Process(geno, spatialInputLimits);
+        Debug.Log("Geno processing complete. Starting color adjustment...");
         adjustedCPPNOutput = colorChanger.AdjustColor(cppnOutput);
+        UpdateCPPNArt();
     }
 
     public void ReprocessArtwork()
     {
-        cppnProcess = new Thread(() => ProcessGeno());
-        cppnProcess.Start();
-        adjustedCPPNOutput = colorChanger.AdjustColor(cppnOutput);
-        parentUnityObject.UpdateGeneratedArt(adjustedCPPNOutput, spatialInputLimits);
-
+        //cppnProcess = new Thread(() => ProcessGeno());
+        //cppnProcess.Start();
+        ProcessGeno();
+        
     }
 
     public Color32[] GetProcessedOutput()
@@ -98,7 +96,6 @@ public abstract class GeneticArt
     {
         colorChanger = _colorChanger;
         adjustedCPPNOutput = colorChanger.AdjustColor(cppnOutput);
-        parentUnityObject.UpdateGeneratedArt(adjustedCPPNOutput, spatialInputLimits);
 
     }
 

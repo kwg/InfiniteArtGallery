@@ -5,13 +5,14 @@
 /// Physical portals in the room. Controls the decoration of a portal as well as storing the
 /// portal's ID and destination portal ID.
 /// </summary>
-public class Portal : MonoBehaviour, IArtworkDisplay {
+public class Portal : MonoBehaviour {
 
     public GameObject PortalObject;
     public int portalID;
     public Material mat;
     int destinationID;
     private Texture2D displayImg;
+    private Artwork artwork;
     MeshRenderer rend;
 
 
@@ -36,8 +37,9 @@ public class Portal : MonoBehaviour, IArtworkDisplay {
         return portalID;
     }
 
-    public void InitializePortal()
+    public void InitializePortal(Artwork _artwork)
     {
+        artwork = _artwork;
         rend = gameObject.GetComponent<MeshRenderer>();
         rend.material = mat;
 
@@ -48,16 +50,27 @@ public class Portal : MonoBehaviour, IArtworkDisplay {
         {
             for(int x = 0; x < 128; x++)
             {
-                displayImg.SetPixel(x, y, Color.blue); 
+                displayImg.SetPixel(x, y, Color.green); 
             }
         }
         displayImg.Apply();
 
-        rend.material.mainTexture = displayImg;
+        rend.material.SetTexture("_MainTex", displayImg);
     }
 
     public void Update()
     {
+        if (artwork.NeedsRedraw)
+        {
+            Color prevColor = displayImg.GetPixel(64, 64);
+            Debug.Log("Found updated texture for portalID " + portalID);
+            displayImg = artwork.GetTexture();
+            if(displayImg.GetPixel(64, 64) != prevColor)
+            {
+                Debug.Log("displayImg changed");
+            }
+            RefreshDecoration();
+        }
         //rend.material.SetTexture("_MainTex", displayImg);
         //transform.Rotate(Vector3.up * (50f * Time.deltaTime));
     }
@@ -85,12 +98,11 @@ public class Portal : MonoBehaviour, IArtworkDisplay {
         return displayImg;
     }
 
-    public void UpdateGeneratedArt(Color32[] _adjustedCPPNOutput, int[] _spatialInputLimits)
+    private void UpdateGeneratedArt(Color32[] _adjustedCPPNOutput, int[] _spatialInputLimits)
     {
-        Texture2D temp = (Texture2D)rend.material.mainTexture;
+        //Texture2D temp = (Texture2D)rend.material.mainTexture;
 
-        if(portalID == 0) Debug.Log("Starting color for pixel at 64x64 = " +
-                temp.GetPixel(64, 64));
+        //if(portalID == 0) Debug.Log("Starting color for pixel at 64x64 = " + temp.GetPixel(64, 64));
 
         int width = _spatialInputLimits[0];
         int height = _spatialInputLimits[1];
@@ -99,10 +111,8 @@ public class Portal : MonoBehaviour, IArtworkDisplay {
 
         displayImg.SetPixels32(_adjustedCPPNOutput);
 
-        if (portalID == 0) Debug.Log("refreshing color for pixel at 64x64 = " +
-            displayImg.GetPixel(64, 64));
-
-
+        //if (portalID == 0) Debug.Log("refreshing color for pixel at 64x64 = " + displayImg.GetPixel(64, 64));
+        
         RefreshDecoration();
     }
 
@@ -114,9 +124,8 @@ public class Portal : MonoBehaviour, IArtworkDisplay {
     {
         rend.material.SetTexture("_MainTex", displayImg);
 
-        Texture2D temp = (Texture2D) rend.material.mainTexture;
+        //Texture2D temp = (Texture2D) rend.material.mainTexture;
 
-        if (portalID == 0) Debug.Log("Refreshed color for pixel at 64x64 = " +
-                temp.GetPixel(64, 64));
+        //if (portalID == 0) Debug.Log("Refreshed color for pixel at 64x64 = " + temp.GetPixel(64, 64));
     }
 }

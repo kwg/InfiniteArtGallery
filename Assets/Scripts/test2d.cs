@@ -15,8 +15,8 @@ public class test2d : MonoBehaviour
     {
         art = new Artwork();
         Portal p = portalObject.GetComponent<Portal>();
-        p.InitializePortal();
-        art.SetParentUnityObject(p);
+        p.InitializePortal((Artwork) art);
+        //art.SetParentUnityObject(p);
         art.ReprocessArtwork();
     }
 

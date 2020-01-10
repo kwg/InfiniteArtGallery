@@ -193,8 +193,8 @@ public class Room : MonoBehaviour
         p.SetDestinationID((2 + p.GetPortalID()) % NUM_PORTALS);
         if (debug) Debug.Log("Portal created with ID " + p.GetPortalID() + " and DestinationId " + p.GetDestinationID());
         portals.Add(portalID, p);
-        p.InitializePortal();
-        roomController.GetRoomArt()[portalID].SetParentUnityObject(p);
+        p.InitializePortal((Artwork) roomController.GetRoomArt()[portalID]);
+        //roomController.GetRoomArt()[portalID].SetParentUnityObject(p);
         return p;
     }
 

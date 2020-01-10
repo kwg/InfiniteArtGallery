@@ -557,4 +557,9 @@ public class Sculpture : GeneticArt {
 
         return result;
     }
+
+    protected override void UpdateCPPNArt()
+    {
+        throw new NotImplementedException();
+    }
 }

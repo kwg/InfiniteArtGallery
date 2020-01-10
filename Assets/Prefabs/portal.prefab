@@ -107,3 +107,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PortalObject: {fileID: 7103804278043561128}
   portalID: 0
+  mat: {fileID: 2100000, guid: e05b9d7e49c41e34e9e65a720b9940df, type: 2}

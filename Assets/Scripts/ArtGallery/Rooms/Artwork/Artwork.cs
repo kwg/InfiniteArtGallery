@@ -4,7 +4,7 @@ public class Artwork : GeneticArt
 {
     private bool debug = ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE;
 
-    ArtGallery ag;
+    //ArtGallery ag;
     protected Portal parentPortal;
 
     //FIXME PROTOTYPE width, height - These are static for testing but we may want to make them change
@@ -28,7 +28,6 @@ public class Artwork : GeneticArt
     /// <param name="geno">Genotype for this artwork to use</param>
     public Artwork(TWEANNGenotype geno) : base(geno, new int[] { width, height, 0 }, new Process2D())
     {
-        ag = ArtGallery.GetArtGallery();        
     }
 
     int RandomInput()

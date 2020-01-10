@@ -79,6 +79,7 @@ public abstract class GeneticArt
     {
         cppnProcess = new Thread(() => ProcessGeno());
         cppnProcess.Start();
+        adjustedCPPNOutput = colorChanger.AdjustColor(cppnOutput);
         parentUnityObject.UpdateGeneratedArt(adjustedCPPNOutput, spatialInputLimits);
 
     }

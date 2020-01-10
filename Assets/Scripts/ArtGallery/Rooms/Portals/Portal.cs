@@ -9,10 +9,10 @@ public class Portal : MonoBehaviour, IArtworkDisplay {
 
     public GameObject PortalObject;
     public int portalID;
+    public Material mat;
     int destinationID;
     private Texture2D displayImg;
-    Renderer rend;
-
+    MeshRenderer rend;
 
 
 
@@ -38,18 +38,22 @@ public class Portal : MonoBehaviour, IArtworkDisplay {
 
     public void InitializePortal()
     {
+        rend = gameObject.GetComponent<MeshRenderer>();
+        rend.material = mat;
+
+        // HACK BUG HUNTING - remove this
         displayImg = new Texture2D(128, 128, TextureFormat.ARGB32, false);
 
         for(int y = 0; y < 128; y++)
         {
             for(int x = 0; x < 128; x++)
             {
-                displayImg.SetPixel(x, y, Color.red); 
+                displayImg.SetPixel(x, y, Color.blue); 
             }
         }
-        rend = gameObject.GetComponent<Renderer>();
+        displayImg.Apply();
 
-        rend.material.SetTexture("_MainTex", displayImg);
+        rend.material.mainTexture = displayImg;
     }
 
     public void Update()

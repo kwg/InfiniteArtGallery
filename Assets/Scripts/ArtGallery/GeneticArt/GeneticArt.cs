@@ -3,25 +3,25 @@ using UnityEngine;
 
 public abstract class GeneticArt
 {
-    private TWEANNGenotype geno;
-    protected IGenoProcess genoProcesser;
-    protected IColorChange colorChanger;
-    protected float[][] cppnOutput;
-    protected Color32[] adjustedCPPNOutput;
-    protected int[] spatialInputLimits;
-    protected int cppnSize;
-    Thread cppnProcess;
+    private TWEANNGenotype _geno;
+    protected IGenoProcess _genoProcesser;
+    protected IColorChange _colorChanger;
+    protected float[][] _cppnOutput;
+    protected Color32[] _adjustedCPPNOutput;
+    protected int[] _spatialInputLimits;
+    protected int _cppnSize;
+    private Thread _cppnProcess;
     public bool NeedsRedraw { get; protected set; }
 
 
     private int MUTATION_CYCLES = 2; // TODO move maximum mutations per evolution to config file
 
-    protected GeneticArt(TWEANNGenotype _geno, int[] _spatialInputLimits, IGenoProcess _processor)
+    protected GeneticArt(TWEANNGenotype _geno1, int[] _spatialInputLimits1, IGenoProcess _processor1)
     {
-        geno = _geno;
-        genoProcesser = _processor;
-        spatialInputLimits = _spatialInputLimits;
-        foreach (NodeGene node in geno.Nodes)
+        _geno = _geno1;
+        _genoProcesser = _processor1;
+        _spatialInputLimits = _spatialInputLimits1;
+        foreach (NodeGene node in _geno.Nodes)
         {
             //node.fTYPE = ActivationFunctions.RandomFTYPE();
             node.fTYPE = ActivationFunctions.RandomFTYPE2();
@@ -30,7 +30,7 @@ public abstract class GeneticArt
         SetCPPNSize();
         //cppnOutput = new float[cppnSize][];
 
-        colorChanger = new ColorSpaceStandardRGB();
+        _colorChanger = new ColorSpaceStandardRGB();
         ProcessGeno();
     }
 
@@ -38,23 +38,23 @@ public abstract class GeneticArt
 
     private void SetCPPNSize()
     {
-        int total = spatialInputLimits[0];
-        if (spatialInputLimits[1] != 0) total *= spatialInputLimits[1];
-        if (spatialInputLimits[2] != 0) total *= spatialInputLimits[2];
-        cppnSize = total;
+        int total = _spatialInputLimits[0];
+        if (_spatialInputLimits[1] != 0) total *= _spatialInputLimits[1];
+        if (_spatialInputLimits[2] != 0) total *= _spatialInputLimits[2];
+        _cppnSize = total;
     }
 
     public void Mutate(GeneticArt _champion)
     {
         Debug.Log("Starting geno mutation...");
 
-        geno = _champion.GetGeno().Copy();
+        _geno = _champion.GetGeno().Copy();
 
         // TODO detect if this is the champion and change how it mutates
 
         for(int m = 0; m < MUTATION_CYCLES; m++)
         {
-            geno.Mutate();
+            _geno.Mutate();
         }
 
         Debug.Log("Mutation complete ...");
@@ -68,9 +68,9 @@ public abstract class GeneticArt
     private void ProcessGeno()
     {
         Debug.Log("Starting geno processing...");
-        cppnOutput = genoProcesser.Process(geno, spatialInputLimits);
+        _cppnOutput = _genoProcesser.Process(_geno, _spatialInputLimits);
         Debug.Log("Geno processing complete. Starting color adjustment...");
-        adjustedCPPNOutput = colorChanger.AdjustColor(cppnOutput);
+        _adjustedCPPNOutput = _colorChanger.AdjustColor(_cppnOutput);
         UpdateCPPNArt();
     }
 
@@ -84,29 +84,29 @@ public abstract class GeneticArt
 
     public Color32[] GetProcessedOutput()
     {
-        return adjustedCPPNOutput;
+        return _adjustedCPPNOutput;
     }
 
     public TWEANNGenotype GetGeno()
     {
-        return geno;
+        return _geno;
     }
 
-    public void ChangeColorSpace(IColorChange _colorChanger)
+    public void ChangeColorSpace(IColorChange _colorChanger1)
     {
-        colorChanger = _colorChanger;
-        adjustedCPPNOutput = colorChanger.AdjustColor(cppnOutput);
+        _colorChanger = _colorChanger1;
+        _adjustedCPPNOutput = _colorChanger.AdjustColor(_cppnOutput);
 
     }
 
     public void SetGenotype(TWEANNGenotype geno)
     {
 
-        this.geno = geno;
+        this._geno = geno;
     }
 
     public TWEANNGenotype GetGenotype()
     {
-        return geno;
+        return _geno;
     }
 }

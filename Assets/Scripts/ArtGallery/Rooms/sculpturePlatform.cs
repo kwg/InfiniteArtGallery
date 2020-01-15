@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class sculpturePlatform : MonoBehaviour {
+public class SculpturePlatform : MonoBehaviour, IUnityGeneticArtwork {
 
-    Renderer rend;
+    private Renderer _rend;
+    private Sculpture _sculpture;
 
 
     // Use this for initialization
     void Start () {
 
-        rend = GetComponent<Renderer>();
+        _rend = GetComponent<Renderer>();
 	}
 	
 	// Update is called once per frame
@@ -20,6 +21,23 @@ public class sculpturePlatform : MonoBehaviour {
 
     public void SetColor(Color newColor)
     {
-        rend.material.color = newColor;
+        _rend.material.color = newColor;
+    }
+
+    /* IUnityGeneticArtwork */
+    public void UpdateGeneratedArt()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public GeneticArt GetGeneticArt()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public bool SetGeneticArt(GeneticArt newGeneticArt)
+    {
+
+        return true;
     }
 }

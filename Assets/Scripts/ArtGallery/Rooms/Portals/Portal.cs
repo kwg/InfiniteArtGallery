@@ -5,15 +5,16 @@
 /// Physical portals in the room. Controls the decoration of a portal as well as storing the
 /// portal's ID and destination portal ID.
 /// </summary>
-public class Portal : MonoBehaviour {
+public class Portal : MonoBehaviour, IUnityGeneticArtwork {
 
     public GameObject PortalObject;
-    public int portalID;
-    public Material mat;
-    int destinationID;
-    private Texture2D displayImg;
-    private Artwork artwork;
-    MeshRenderer rend;
+    public int PortalID;
+    public Material Mat;
+
+    private int _destinationID;
+    private Texture2D _displayImg;
+    private Artwork _artwork;
+    private MeshRenderer _rend;
 
 
 
@@ -25,7 +26,7 @@ public class Portal : MonoBehaviour {
     /// <param name="portalID">ID to set for this portal</param>
     public void SetPortalID(int portalID)
     {
-        this.portalID = portalID;
+        this.PortalID = portalID;
     }
 
     /// <summary>
@@ -34,38 +35,38 @@ public class Portal : MonoBehaviour {
     /// <returns>ID of this portal</returns>
     public int GetPortalID()
     {
-        return portalID;
+        return PortalID;
     }
 
-    public void InitializePortal(Artwork _artwork)
+    public void InitializePortal(Artwork artwork)
     {
-        artwork = _artwork;
-        rend = gameObject.GetComponent<MeshRenderer>();
-        rend.material = mat;
+        _artwork = artwork;
+        _rend = gameObject.GetComponent<MeshRenderer>();
+        _rend.material = Mat;
 
         // HACK BUG HUNTING - remove this
-        displayImg = new Texture2D(128, 128, TextureFormat.ARGB32, false);
+        _displayImg = new Texture2D(128, 128, TextureFormat.ARGB32, false);
 
         for(int y = 0; y < 128; y++)
         {
             for(int x = 0; x < 128; x++)
             {
-                displayImg.SetPixel(x, y, Color.green); 
+                _displayImg.SetPixel(x, y, Color.green); 
             }
         }
-        displayImg.Apply();
+        _displayImg.Apply();
 
-        rend.material.SetTexture("_MainTex", displayImg);
+        _rend.material.SetTexture("_MainTex", _displayImg);
     }
 
     public void Update()
     {
-        if (artwork.NeedsRedraw)
+        if (_artwork.NeedsRedraw)
         {
-            Color prevColor = displayImg.GetPixel(64, 64);
-            Debug.Log("Found updated texture for portalID " + portalID);
-            displayImg = artwork.GetTexture();
-            if(displayImg.GetPixel(64, 64) != prevColor)
+            Color prevColor = _displayImg.GetPixel(64, 64);
+            Debug.Log("Found updated texture for portalID " + PortalID);
+            _displayImg = _artwork.GetTexture();
+            if(_displayImg.GetPixel(64, 64) != prevColor)
             {
                 Debug.Log("displayImg changed");
             }
@@ -81,7 +82,7 @@ public class Portal : MonoBehaviour {
     /// <param name="newDestinationID">ID of portal to exit from</param>
     public void SetDestinationID(int newDestinationID)
     {
-        destinationID = newDestinationID;
+        _destinationID = newDestinationID;
     }
 
     /// <summary>
@@ -90,30 +91,31 @@ public class Portal : MonoBehaviour {
     /// <returns>ID of portal this portal exits from</returns>
     public int GetDestinationID()
     {
-        return destinationID;
+        return _destinationID;
     }
 
     public Texture2D GetImage()
     {
-        return displayImg;
+        return _displayImg;
     }
 
-    private void UpdateGeneratedArt(Color32[] _adjustedCPPNOutput, int[] _spatialInputLimits)
+
+    /* IUnityGeneticArtwork */
+    public void UpdateGeneratedArt()
     {
-        //Texture2D temp = (Texture2D)rend.material.mainTexture;
-
-        //if(portalID == 0) Debug.Log("Starting color for pixel at 64x64 = " + temp.GetPixel(64, 64));
-
-        int width = _spatialInputLimits[0];
-        int height = _spatialInputLimits[1];
-
-        displayImg = new Texture2D(width, height, TextureFormat.ARGB32, false);
-
-        displayImg.SetPixels32(_adjustedCPPNOutput);
-
-        //if (portalID == 0) Debug.Log("refreshing color for pixel at 64x64 = " + displayImg.GetPixel(64, 64));
-        
+        // trigger artwork update
         RefreshDecoration();
+    }
+
+    public GeneticArt GetGeneticArt()
+    {
+        return _artwork;
+    }
+
+    public bool SetGeneticArt(GeneticArt newGeneticArt)
+    {
+        _artwork = (Artwork) newGeneticArt;
+        return true;
     }
 
     /* Private Methods */
@@ -122,10 +124,12 @@ public class Portal : MonoBehaviour {
     /// </summary>
     private void RefreshDecoration()
     {
-        rend.material.SetTexture("_MainTex", displayImg);
+        _rend.material.SetTexture("_MainTex", _displayImg);
 
         //Texture2D temp = (Texture2D) rend.material.mainTexture;
 
         //if (portalID == 0) Debug.Log("Refreshed color for pixel at 64x64 = " + temp.GetPixel(64, 64));
     }
+
+
 }

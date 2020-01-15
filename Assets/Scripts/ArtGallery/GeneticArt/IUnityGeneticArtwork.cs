@@ -1,4 +1,8 @@
 ﻿public interface IUnityGeneticArtwork
 {
-    void UpdateGeneratedArt(UnityEngine.Color32[] _generatedArt);
+    void UpdateGeneratedArt();
+
+    GeneticArt GetGeneticArt();
+
+    bool SetGeneticArt(GeneticArt newGeneticArt);
 }

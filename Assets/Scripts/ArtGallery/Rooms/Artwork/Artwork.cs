@@ -40,12 +40,12 @@ public class Artwork : GeneticArt
 
     override protected void UpdateCPPNArt()
     {
-        int width = spatialInputLimits[0];
-        int height = spatialInputLimits[1];
+        int width = _spatialInputLimits[0];
+        int height = _spatialInputLimits[1];
 
         texture = new Texture2D(width, height, TextureFormat.ARGB32, false);
 
-        texture.SetPixels32(adjustedCPPNOutput);
+        texture.SetPixels32(_adjustedCPPNOutput);
         texture.Apply();
 
         Debug.Log("Texture updated and ready for painting on portal!");

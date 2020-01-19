@@ -1,16 +1,27 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
-public class Artwork : GeneticArt
+public class Artwork : IProcessable
 {
-    private bool debug = ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE;
-    protected Texture2D texture;
+
+    public bool NeedsRedraw { get; private set; }
+    public bool IsInitialized { get; private set; }
+    public GeneticArt Art { get; set; }
+    public CoordinateSpace SpatialInputLimits { get; private set; }
+
+
+    private Texture2D texture;
+    private IColorChange colorChanger;
+    private float[][] cppnOutput;
+
 
     //ArtGallery ag;
 
     //FIXME PROTOTYPE width, height - These are static for testing but we may want to make them change
-    static int width = 128;
-    static int height = 128;
-
+    private static int width = 128;
+    private static int height = 128;
+    private static float BIAS = 1f;
+    private static float ZOOM = 5f;
 
     public Texture2D GetTexture()
     {
@@ -18,48 +29,81 @@ public class Artwork : GeneticArt
         return texture;
     }
 
-
+    [Obsolete("This should only be sued for testing purposes.")]
     /// <summary>
-    /// Default empty constructor
+    /// Create a new artwork in a room with a new genetic art.
     /// </summary>
-    public Artwork() : this(new TWEANNGenotype(8, 4, 0)) { }
-
-    /// <summary>
-    /// Create a new artwork in a room with a new genotype. 
-    /// </summary>
-    public Artwork(int archetypeIndex) : this(new TWEANNGenotype(8, 4, archetypeIndex)) { }
+    public Artwork() : this(new GeneticArt()) { }
 
     /// <summary>
     /// Create a new artwork in a room with a given genotype
     /// </summary>
-    /// <param name="geno">Genotype for this artwork to use</param>
-    public Artwork(TWEANNGenotype geno) : base(geno, new int[] { width, height, 0 }, new Process2D())
+    public Artwork(GeneticArt Art) 
     {
-        NeedsRedraw = false;
+        this.Art = Art;
+        IsInitialized = false;
+
+        Init();
     }
 
-    override protected void UpdateCPPNArt()
+    private void Init()
     {
-        int width = _spatialInputLimits[0];
-        int height = _spatialInputLimits[1];
+        NeedsRedraw = false;
+        SpatialInputLimits = new CoordinateSpace(width, height);
+        texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+        colorChanger = new ColorSpaceStandardRGB();
+        UpdateCPPNArt();
 
+        IsInitialized = true;
+    }
+
+    public void UpdateCPPNArt()
+    {
+        cppnOutput = Process();
         texture = new Texture2D(width, height, TextureFormat.ARGB32, false);
 
-        texture.SetPixels32(_adjustedCPPNOutput);
+        texture.SetPixels32(colorChanger.AdjustColor(cppnOutput));
         texture.Apply();
-
-        Debug.Log("Texture updated and ready for painting on portal!");
 
         NeedsRedraw = true;
     }
 
-    int RandomInput()
+    private float[][] Process()
     {
-        return Random.Range(0, 4);
+        TWEANN cppn = new TWEANN(Art.GetGenotype());
+
+        float[][] hsvArr = new float[width * height][];
+
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                float scaledX = Scale(x, width);
+                float scaledY = Scale(y, height);
+                float distCenter = GetDistFromCenter(scaledX, scaledY);
+
+                hsvArr[x + (y * width)] = cppn.Process(new float[] { scaledX, scaledY, 0, distCenter, 0, 0, 0, BIAS });
+            }
+        }
+
+        return hsvArr;
     }
 
-    int RandomOut()
+    private float Scale(int toScale, int maxDimension)
     {
-        return Random.Range(0, 3);
+        float result;
+
+        result = (((toScale * 1f / (maxDimension)) * 2) - 1) * ZOOM;
+
+        return result;
+    }
+
+    private float GetDistFromCenter(float x, float y)
+    {
+        float result = float.NaN;
+
+        result = Mathf.Sqrt((x * x + y * y)) * Mathf.Sqrt(2);
+
+        return result;
     }
 }

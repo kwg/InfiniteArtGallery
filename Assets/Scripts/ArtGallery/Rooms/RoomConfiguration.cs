@@ -29,7 +29,7 @@ public class RoomConfiguration {
 
         for (int i = 0; i < numArtworks; i++)
         {
-            roomArt[i] = new Artwork(ArtArchetypeIndex);
+            roomArt[i] = new GeneticArt(ArtArchetypeIndex);
             //roomArt[i + 1] = new Sculpture();
         }
 

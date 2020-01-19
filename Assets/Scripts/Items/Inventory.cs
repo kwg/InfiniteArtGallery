@@ -181,7 +181,7 @@ public class Inventory : MonoBehaviour {
                     {
                         //ag.RemoveRoom(portalID);
                         art.SetGenotype(GetActiveSlotItem().Geno); // FIXME Null ref possible here - add checks
-                        art.ReprocessArtwork();
+                        p.UpdateGeneratedArt();
                         //art.ApplyImageProcess();
                         //items[ActiveSlot] = null;
                         //hud.UpdateInventoryThumbnail(ActiveSlot, null);

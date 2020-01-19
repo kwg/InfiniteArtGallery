@@ -15,9 +15,19 @@ public class SculpturePlatform : MonoBehaviour, IUnityGeneticArtwork {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		
+	void Update () 
+    {
+	    if(_sculpture.NeedsRedraw)
+        {
+            gameObject.GetComponent<MeshFilter>().mesh = _sculpture.GetMesh();
+        }	
 	}
+
+    public void InitArtDisplay(GeneticArt art)
+    {
+        _sculpture = new Sculpture(art);
+        _rend = gameObject.GetComponent<MeshRenderer>();
+    }
 
     public void SetColor(Color newColor)
     {

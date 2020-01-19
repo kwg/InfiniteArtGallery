@@ -2,25 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class test2d : MonoBehaviour
+public class test3d : MonoBehaviour
 {
-    public GameObject portalObject;
+    public GameObject sculptureObject;
 
-
-    
 
     // Start is called before the first frame update
     void Start()
     {
-        Portal p = portalObject.GetComponent<Portal>();
-        p.InitArtDisplay(new GeneticArt());
+        SculpturePlatform s = sculptureObject.GetComponent<SculpturePlatform>();
+        s.InitArtDisplay(new GeneticArt());
         //art.SetParentUnityObject(p);
-        p.UpdateGeneratedArt();
+        //s.UpdateGeneratedArt();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }
+

@@ -26,7 +26,7 @@ public class Portal : MonoBehaviour, IUnityGeneticArtwork {
     /// <param name="portalID">ID to set for this portal</param>
     public void SetPortalID(int portalID)
     {
-        this.PortalID = portalID;
+        PortalID = portalID;
     }
 
     /// <summary>
@@ -38,9 +38,9 @@ public class Portal : MonoBehaviour, IUnityGeneticArtwork {
         return PortalID;
     }
 
-    public void InitializePortal(Artwork artwork)
+    public void InitArtDisplay(GeneticArt art)
     {
-        _artwork = artwork;
+        _artwork = new Artwork(art);
         _rend = gameObject.GetComponent<MeshRenderer>();
         _rend.material = Mat;
 
@@ -63,13 +63,7 @@ public class Portal : MonoBehaviour, IUnityGeneticArtwork {
     {
         if (_artwork.NeedsRedraw)
         {
-            Color prevColor = _displayImg.GetPixel(64, 64);
-            Debug.Log("Found updated texture for portalID " + PortalID);
             _displayImg = _artwork.GetTexture();
-            if(_displayImg.GetPixel(64, 64) != prevColor)
-            {
-                Debug.Log("displayImg changed");
-            }
             RefreshDecoration();
         }
         //rend.material.SetTexture("_MainTex", displayImg);
@@ -109,12 +103,12 @@ public class Portal : MonoBehaviour, IUnityGeneticArtwork {
 
     public GeneticArt GetGeneticArt()
     {
-        return _artwork;
+        return _artwork.Art;
     }
 
     public bool SetGeneticArt(GeneticArt newGeneticArt)
     {
-        _artwork = (Artwork) newGeneticArt;
+        _artwork.Art = newGeneticArt;
         return true;
     }
 

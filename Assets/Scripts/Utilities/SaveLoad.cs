@@ -126,7 +126,7 @@ public class SaveGameArtwork
 
     SaveGameArtwork(Artwork art)
     {
-        TWEANNGenotype TGeno = art.GetGenotype();
+        TWEANNGenotype TGeno = art.Art.GetGenotype();
         geno = new SaveGameGenotype
         {
             ID = TGeno.ID,

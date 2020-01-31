@@ -5,6 +5,7 @@ public class GeneticArt
 {
     private TWEANNGenotype geno;
     private int MUTATION_CYCLES = 2; // TODO move maximum mutations per evolution to config file
+    public bool Mutated { get; set; }
 
     public GeneticArt() : this(new TWEANNGenotype(8, 4, 0)) { }
 
@@ -28,6 +29,8 @@ public class GeneticArt
         {
             geno.Mutate();
         }
+
+        Mutated = true;
     }
 
     public void SetGenotype(TWEANNGenotype geno)

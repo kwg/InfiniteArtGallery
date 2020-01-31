@@ -9,7 +9,6 @@ public class RoomConfiguration {
     {
         roomArt = _roomArt;
         GeneticArt champion = roomArt[championPortalID];
-
         for (int i = 0; i < roomArt.Length; i++)
         {
             roomArt[i].Mutate(champion);

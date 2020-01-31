@@ -13,7 +13,7 @@ public class ArtGallery : MonoBehaviour {
 
     public enum DEBUG { NONE = 0, POLITE = 1, VERBOSE = 2 };
     public static DEBUG DEBUG_LEVEL = DEBUG.NONE;
-    public const int STARTING_NUM_ARTWORKS = 4;
+    public const int STARTING_NUM_ARTWORKS = 8;
     public GameObject roomObject; // RoomObject for room to load (set in the editor)
     [HideInInspector] public Room gameRoom; // Reference to the in-game room that the player is currently in (set by the script)
     public GameObject FPC; // Reference to the first person contoller ( set in the editor)
@@ -50,6 +50,8 @@ public class ArtGallery : MonoBehaviour {
     List<List<Color[,,]>> generatedSculptures;
     int generatedSculpturesCounter = 0;
     int generatedSculpturesSelectedID = -1;
+
+    
     //FIXME PROTOTYPE SAVING AND COMMANDLINE DATA
 
     // active functions
@@ -260,9 +262,10 @@ public class ArtGallery : MonoBehaviour {
         //}
         //else
         //{
-            //room.MutateSculptures();
+        //room.MutateSculptures();
         //}
-        room = new RoomConfiguration((portalID), room.GetRoomArt());
+        UnityEngine.Debug.Log(room.roomArt.Length);
+        room = new RoomConfiguration(portalID, room.GetRoomArt());
 
         //gameRoom.ClearReturnPortalDecorations();
         //if (room.GetParentID() > -1) gameRoom.SetReturnPortalDecoration(room.GetParentID());

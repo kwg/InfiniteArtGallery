@@ -13,6 +13,7 @@ public class Sculpture : IProcessable {
     public GeneticArt Art { get; set; }
     public CoordinateSpace SpatialInputLimits { get; private set; }
 
+
     private Mesh mesh;
     private IColorChange colorChanger;
     private float[][] cppnOutput;

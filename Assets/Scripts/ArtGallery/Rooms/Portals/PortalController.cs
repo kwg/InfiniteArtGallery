@@ -14,7 +14,6 @@ public class PortalController : MonoBehaviour {
     // Use this for initialization
     void Start () {
         portals = new SortedList<int, Portal>();
-
 	}
 	
 	// Update is called once per frame
@@ -34,11 +33,11 @@ public class PortalController : MonoBehaviour {
         portalProp.AddComponent<Portal>();
         Portal p = portalProp.GetComponent<Portal>();
         // give each portal an ID
-        p.SetPortalID(portalID);
+        p.PortalID = portalID;
 
         // give each portal a destination ID
-        p.SetDestinationID((2 + p.GetPortalID()) % 4);
-        if(debug) Debug.Log("Portal created with ID " + p.GetPortalID() + " and DestinationId " + p.GetDestinationID());
+        p.DestinationID = ((2 + p.PortalID) % 4);
+        if(debug) Debug.Log("Portal created with ID " + p.PortalID + " and DestinationId " + p.DestinationID);
         portals.Add(portalID, p);
         return p;
     }

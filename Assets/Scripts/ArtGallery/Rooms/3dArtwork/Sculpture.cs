@@ -77,7 +77,6 @@ public class Sculpture : IProcessable {
 
     private void ApplyToVoxelMap()
     {
-        int numNotPresent = VoxelData.SculptureHeight * VoxelData.SculptureWidth * VoxelData.SculptureWidth;
         Color32[] processedColor = colorChanger.AdjustColor(cppnOutput);
         for (int y = 0; y < VoxelData.SculptureHeight; y++)
         {
@@ -90,13 +89,11 @@ public class Sculpture : IProcessable {
                     {
                         voxelMap[x, y, z].Color = processedColor[index];
                         voxelMap[x, y, z].IsPresent = true;
-                        numNotPresent--;
                     }
 
                 }
             }
         }
-        Debug.Log(numNotPresent + "voxels not drawn.");
     }
 
     /// <summary>
@@ -278,6 +275,7 @@ public class Sculpture : IProcessable {
     public Mesh GetMesh()
     {
         NeedsRedraw = false;
+        BuildSculpture();
         RedrawSculpture();
         return mesh;
     }

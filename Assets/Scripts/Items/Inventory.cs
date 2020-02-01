@@ -19,7 +19,6 @@ public class Inventory : MonoBehaviour {
     List<InventorySlot> slots;
 
     private IInventoryItem[] items;
-    private TWEANNGenotype sculptureGeno;
     private int ActiveSlot { get; set; }
 
     private void Start()
@@ -135,33 +134,28 @@ public class Inventory : MonoBehaviour {
                     CycleActiveSlot(1);
                 }
 
-                //if (hit.collider.tag == "sculpture")
-                //{
-                //    //Portal p = hit.collider.gameObject.GetComponent<Portal>();
-                //    Sculpture s = hit.collider.gameObject.GetComponent<Sculpture>();
+                if (hit.collider.tag == "sculpturePlatform")
+                {
+                    //Portal p = hit.collider.gameObject.GetComponent<Portal>();
+                    SculpturePlatform s = hit.collider.gameObject.GetComponent<SculpturePlatform>();
+                    int portalID = s.PortalID + 4;
+                    TWEANNGenotype geno = new TWEANNGenotype(ag.GetArtwork(portalID).GetGenotype().Copy());
 
-                //    sculptureGeno = s.GetComponent<Sculpture>().GetGenotype();
+                    SavedArtwork newArtwork = new SavedArtwork
+                    {
+                        Image = Sprite.Create(SculturePlaceholder, new Rect(0, 0, SculturePlaceholder.width, SculturePlaceholder.height), new Vector2(0.5f, 0.5f)) as Sprite,
+                        Geno = geno
 
-                //    //Texture2D img = new Texture2D(p.GetImage().width, p.GetImage().height, TextureFormat.ARGB32, false);
-                //    //Graphics.CopyTexture(p.GetImage(), img);
-                //    //int portalID = p.GetPortalID();
-                //    TWEANNGenotype geno = new TWEANNGenotype(sculptureGeno.Copy());
-
-                //    SavedArtwork newArtwork = new SavedArtwork
-                //    {
-                //        Image = Sprite.Create(SculturePlaceholder, new Rect(0, 0, SculturePlaceholder.width, SculturePlaceholder.height), new Vector2(0.5f, 0.5f)) as Sprite,
-                //        Geno = geno
-
-                //    };
-                //    AddItem(newArtwork);
-                //    //FindNextEmptySlot();
-                //    CycleActiveSlot(1);
+                    };
+                    AddItem(newArtwork);
+                    //FindNextEmptySlot();
+                    CycleActiveSlot(1);
 
 
-                //    //ag.SelectSculpture(s);
-                //    //s.GetComponent<Sculpture>().SetSelected(!s.GetComponent<Sculpture>().GetSelected());
+                    //ag.SelectSculpture(s);
+                    //s.GetComponent<Sculpture>().SetSelected(!s.GetComponent<Sculpture>().GetSelected());
 
-                //}
+                }
             }
         }
 
@@ -192,30 +186,30 @@ public class Inventory : MonoBehaviour {
                     }
                 }
 
-                //if (hit.collider.tag == "sculpture")
-                //{
-                //    Sculpture s = hit.collider.gameObject.GetComponent<Sculpture>();
+                if (hit.collider.tag == "sculpturePlatform")
+                {
+                    SculpturePlatform s = hit.collider.gameObject.GetComponent<SculpturePlatform>();
+                    int portalID = s.PortalID;
+                    GeneticArt art = ag.GetArtwork(portalID + 4);
 
-                //    sculptureGeno = s.GetComponent<Sculpture>().GetGenotype();
+                    if (GetActiveSlotItem() != null)
+                    {
+                        //ag.RemoveRoom(portalID);
+                        art.SetGenotype(GetActiveSlotItem().Geno); // FIXME Null ref possible here - add checks ALSO fix the names SetGeno vs SetGenotype
+                        s.UpdateGeneratedArt();
+                        //s.ApplyImageProcess();
+                        //items[ActiveSlot] = null;
+                        //hud.UpdateInventoryThumbnail(ActiveSlot, null);
+                    }
+                    else
+                    {
+                        // do nothing for now
+                    }
 
-                //    if (GetActiveSlotItem() != null)
-                //    {
-                //        //ag.RemoveRoom(portalID);
-                //        s.SetGeno(GetActiveSlotItem().Geno); // FIXME Null ref possible here - add checks ALSO fix the names SetGeno vs SetGenotype
-                //        s.Refresh();
-                //        //s.ApplyImageProcess();
-                //        //items[ActiveSlot] = null;
-                //        //hud.UpdateInventoryThumbnail(ActiveSlot, null);
-                //    }
-                //    else
-                //    {
-                //        // do nothing for now
-                //    }
+                    //ag.ResetSculpture(s);
+                    //s.GetComponent<Sculpture>().SetSelected(!s.GetComponent<Sculpture>().GetSelected());
 
-                //    //ag.ResetSculpture(s);
-                //    //s.GetComponent<Sculpture>().SetSelected(!s.GetComponent<Sculpture>().GetSelected());
-
-                //}
+                }
             }
         }
 

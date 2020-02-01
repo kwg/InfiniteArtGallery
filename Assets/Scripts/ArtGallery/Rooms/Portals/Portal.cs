@@ -63,6 +63,7 @@ public class Portal : MonoBehaviour, IUnityGeneticArtwork {
     public void UpdateGeneratedArt()
     {
         // trigger artwork update
+        _artwork.UpdateCPPNArt();
         RefreshDecoration();
     }
 

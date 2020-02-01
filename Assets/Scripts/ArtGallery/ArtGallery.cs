@@ -264,7 +264,6 @@ public class ArtGallery : MonoBehaviour {
         //{
         //room.MutateSculptures();
         //}
-        UnityEngine.Debug.Log(room.roomArt.Length);
         room = new RoomConfiguration(portalID, room.GetRoomArt());
 
         //gameRoom.ClearReturnPortalDecorations();

@@ -49,17 +49,18 @@ public class SculpturePlatform : MonoBehaviour, IUnityGeneticArtwork {
     /* IUnityGeneticArtwork */
     public void UpdateGeneratedArt()
     {
-        throw new System.NotImplementedException();
+        _sculpture.UpdateCPPNArt();
+        gameObject.GetComponent<MeshFilter>().mesh = _sculpture.GetMesh();
     }
 
     public GeneticArt GetGeneticArt()
     {
-        throw new System.NotImplementedException();
+        return _sculpture.Art;
     }
 
     public bool SetGeneticArt(GeneticArt newGeneticArt)
     {
-
+        _sculpture.Art = newGeneticArt;
         return true;
     }
 }

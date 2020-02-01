@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using UnityEngine;
 
 public class Artwork : IProcessable
@@ -14,6 +15,8 @@ public class Artwork : IProcessable
     private IColorChange colorChanger;
     private float[][] cppnOutput;
 
+    private Thread thread;
+    private bool threaded = true;
 
     //ArtGallery ag;
 
@@ -25,11 +28,15 @@ public class Artwork : IProcessable
 
     public Texture2D GetTexture()
     {
+        texture = new Texture2D(width, height, TextureFormat.ARGB32, false);
+
+        texture.SetPixels32(colorChanger.AdjustColor(cppnOutput));
+        texture.Apply();
         NeedsRedraw = false;
         return texture;
     }
 
-    [Obsolete("This should only be sued for testing purposes.")]
+    [Obsolete("This should only be used for testing purposes.")]
     /// <summary>
     /// Create a new artwork in a room with a new genetic art.
     /// </summary>
@@ -59,13 +66,23 @@ public class Artwork : IProcessable
 
     public void UpdateCPPNArt()
     {
-        cppnOutput = Process();
-        texture = new Texture2D(width, height, TextureFormat.ARGB32, false);
+        if (threaded)
+        {
+            thread = new Thread(new ThreadStart(CPPNProcess));
+            thread.Start();
+        }
+        else
+        {
+            CPPNProcess();
+        }
+    }
 
-        texture.SetPixels32(colorChanger.AdjustColor(cppnOutput));
-        texture.Apply();
+    private void CPPNProcess()
+    {
+            cppnOutput = Process();
 
-        NeedsRedraw = true;
+
+            NeedsRedraw = true;
     }
 
     private float[][] Process()

@@ -28,8 +28,8 @@ public class SculpturePlatform : MonoBehaviour, IUnityGeneticArtwork {
             }
             if (_sculpture.Art.Mutated)
             {
-                _sculpture.UpdateCPPNArt();
                 _sculpture.Art.Mutated = false;
+                _sculpture.UpdateCPPNArt();
             }
         }
 	}

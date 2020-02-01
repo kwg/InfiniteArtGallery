@@ -17,6 +17,8 @@ public class Sculpture : IProcessable {
     private Mesh mesh;
     private IColorChange colorChanger;
     private float[][] cppnOutput;
+    private Thread thread;
+    private bool threaded = true;
 
     //Config
     const float PRESENCE_THRESHOLD = .1f;
@@ -54,17 +56,28 @@ public class Sculpture : IProcessable {
 
     public void UpdateCPPNArt()
     {
-        //cppnProcess = new Thread(new ThreadStart(PopulateVoxelMapFromCPPN));
-        //cppnProcess.Start();
-        cppnOutput = Process();
-        ApplyToVoxelMap();
+        if (threaded)
+        {
+            thread = new Thread(new ThreadStart(CPPNProcess));
+            thread.Start();
+        }
+        else
+        {
+            CPPNProcess();
+        }
+    }
 
-        RedrawSculpture();
+    private void CPPNProcess()
+    {
+            cppnOutput = Process();
 
+
+            //RedrawSculpture();
     }
 
     private void ApplyToVoxelMap()
     {
+        int numNotPresent = VoxelData.SculptureHeight * VoxelData.SculptureWidth * VoxelData.SculptureWidth;
         Color32[] processedColor = colorChanger.AdjustColor(cppnOutput);
         for (int y = 0; y < VoxelData.SculptureHeight; y++)
         {
@@ -77,11 +90,13 @@ public class Sculpture : IProcessable {
                     {
                         voxelMap[x, y, z].Color = processedColor[index];
                         voxelMap[x, y, z].IsPresent = true;
+                        numNotPresent--;
                     }
 
                 }
             }
         }
+        Debug.Log(numNotPresent + "voxels not drawn.");
     }
 
     /// <summary>
@@ -167,14 +182,13 @@ public class Sculpture : IProcessable {
             }
         }
 
-        //NeedsRedraw = true;
+        NeedsRedraw = true;
         return hsvArr;
     }
 
     private void RedrawSculpture()
     {
-        NeedsRedraw = false;
-
+        ApplyToVoxelMap();
         CreateMeshData();
         CreateMesh();
     }
@@ -259,13 +273,12 @@ public class Sculpture : IProcessable {
         };
 
         mesh.RecalculateNormals();
-
-        //meshFilter.mesh = mesh;
-        NeedsRedraw = true;
     }
 
     public Mesh GetMesh()
     {
+        NeedsRedraw = false;
+        RedrawSculpture();
         return mesh;
     }
 

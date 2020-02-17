@@ -251,5 +251,7 @@ public class Room : MonoBehaviour
             Locked = false;
         }
 
+        SpawnPickups();
+
     }
 }

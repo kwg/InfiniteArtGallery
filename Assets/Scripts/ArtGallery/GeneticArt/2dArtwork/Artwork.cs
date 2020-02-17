@@ -80,6 +80,7 @@ public class Artwork : IProcessable
     private void CPPNProcess()
     {
             cppnOutput = Process();
+            NeedsRedraw = true;
 
     }
 
@@ -101,7 +102,6 @@ public class Artwork : IProcessable
             }
         }
 
-        NeedsRedraw = true;
         return hsvArr;
     }
 

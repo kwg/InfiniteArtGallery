@@ -15,12 +15,10 @@ public class ArtGallery : MonoBehaviour {
     public static DEBUG DEBUG_LEVEL = DEBUG.NONE;
     public const int STARTING_NUM_ARTWORKS = 8;
     public GameObject roomObject; // RoomObject for room to load (set in the editor)
-    [HideInInspector] public Room gameRoom; // Reference to the in-game room that the player is currently in (set by the script)
     public GameObject FPC; // Reference to the first person contoller ( set in the editor)
     public Player player;
 
-    // this is a change
-
+    [HideInInspector] public Room gameRoom; // Reference to the in-game room that the player is currently in (set by the script)
 
     //command line args and default values
     string[] args = System.Environment.GetCommandLineArgs();
@@ -37,22 +35,11 @@ public class ArtGallery : MonoBehaviour {
     const int DEFAULT_SCULPTURE_MUTATION_CHANCES = 15;
     const float MAX_GAME_TIME = 1200f;
 
-
-    //private SortedList<int, RoomConfiguration> history;
-    private RoomConfiguration room; // current room
+    private RoomConfiguration roomConfig; // current room
     public static long roomID = 0;
 
     //Game state information
     int seed;
-    List<List<Artwork>> generatedImages;
-    int generatedImagesCounter = 0;
-    int generatedImagesSelectedID = -1;
-    List<List<Color[,,]>> generatedSculptures;
-    int generatedSculpturesCounter = 0;
-    int generatedSculpturesSelectedID = -1;
-
-    
-    //FIXME PROTOTYPE SAVING AND COMMANDLINE DATA
 
     // active functions
     List<FTYPE> activeFunctions;
@@ -194,8 +181,8 @@ public class ArtGallery : MonoBehaviour {
         ActivationFunctions.ActivateFunction(activeFunctions);
 
         // build the lobby
-        room = new RoomConfiguration(STARTING_NUM_ARTWORKS);
-        gameRoom.InitializeRoom(room);
+        roomConfig = new RoomConfiguration(STARTING_NUM_ARTWORKS);
+        gameRoom.InitializeRoom(roomConfig);
 
         List<Artwork> artToSave = new List<Artwork>();
 
@@ -249,37 +236,13 @@ public class ArtGallery : MonoBehaviour {
 
     public GeneticArt GetArtwork(int portalID)
     {
-        return room.GetRoomArt()[portalID];
+        return roomConfig.GetRoomArt()[portalID];
     }
 
     public void ChangeRoom(int portalID, int destinationID)
     {
-        // is the desitnation a new room or a return?
-        //if (room.GetRoomByPortalID(portalID) == null)
-        //{
-        //    UnityEngine.Debug.Log("Making new room...");
-        //    room.AddRoom(portalID, new RoomConfiguration(room, destinationID, portalID, room.GetArtworks(), room.sculptures));
-        //}
-        //else
-        //{
-        //room.MutateSculptures();
-        //}
-        room = new RoomConfiguration(portalID, room.GetRoomArt());
-
-        //gameRoom.ClearReturnPortalDecorations();
-        //if (room.GetParentID() > -1) gameRoom.SetReturnPortalDecoration(room.GetParentID());
-
-
-        //SaveRoom();
+        roomConfig = new RoomConfiguration(portalID, roomConfig.GetRoomArt());
     }
-
-    //public void RemoveRoom(int portalID)
-    //{
-    //    if(room.GetRoomByPortalID(portalID) != null)
-    //    {
-    //        room.RemoveRoom(portalID);
-    //    }
-    //}
 
     public static long NextRoomID()
     {

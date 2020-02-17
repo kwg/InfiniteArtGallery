@@ -24,7 +24,7 @@ public class RoomConfiguration {
         ArtArchetypeIndex = EvolutionaryHistory.NextPopulationIndex();
         EvolutionaryHistory.archetypes[ArtArchetypeIndex] = new TWEANNGenotype(8, 4, ArtArchetypeIndex).Nodes;
 
-        roomArt = new GeneticArt[numArtworks]; // HACK still only doing 4 and making sure the numbers are even
+        roomArt = new GeneticArt[numArtworks]; 
 
         for (int i = 0; i < numArtworks; i++)
         {

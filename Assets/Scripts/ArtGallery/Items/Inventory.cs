@@ -176,7 +176,7 @@ public class Inventory : MonoBehaviour {
                         //ag.RemoveRoom(portalID);
                         art.SetGenotype(GetActiveSlotItem().Geno); // FIXME Null ref possible here - add checks
                         p.UpdateGeneratedArt();
-                        
+                        ag.SetGeneticArt(portalID, art);
                         //art.ApplyImageProcess();
                         //items[ActiveSlot] = null;
                         //hud.UpdateInventoryThumbnail(ActiveSlot, null);
@@ -198,6 +198,7 @@ public class Inventory : MonoBehaviour {
                         //ag.RemoveRoom(portalID);
                         art.SetGenotype(GetActiveSlotItem().Geno); // FIXME Null ref possible here - add checks ALSO fix the names SetGeno vs SetGenotype
                         s.UpdateGeneratedArt();
+                        ag.SetGeneticArt(portalID, art);
                         //s.ApplyImageProcess();
                         //items[ActiveSlot] = null;
                         //hud.UpdateInventoryThumbnail(ActiveSlot, null);

@@ -81,8 +81,6 @@ public class Artwork : IProcessable
     {
             cppnOutput = Process();
 
-
-            NeedsRedraw = true;
     }
 
     private float[][] Process()
@@ -103,6 +101,7 @@ public class Artwork : IProcessable
             }
         }
 
+        NeedsRedraw = true;
         return hsvArr;
     }
 

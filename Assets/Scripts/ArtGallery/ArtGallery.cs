@@ -239,6 +239,11 @@ public class ArtGallery : MonoBehaviour {
         return roomConfig.GetRoomArt()[portalID];
     }
 
+    public void SetGeneticArt(int portalID, GeneticArt newArt)
+    {
+        roomConfig.SetArtwork(portalID, newArt);
+    }
+
     public void ChangeRoom(int portalID, int destinationID)
     {
         roomConfig = new RoomConfiguration(portalID, roomConfig.GetRoomArt());

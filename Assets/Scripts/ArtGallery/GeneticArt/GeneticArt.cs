@@ -17,8 +17,8 @@ public class GeneticArt
 
         foreach (NodeGene node in this.geno.Nodes)
         {
-            //node.fTYPE = ActivationFunctions.RandomFTYPE();
-            node.fTYPE = ActivationFunctions.RandomFTYPE2();
+            node.fTYPE = ActivationFunctions.RandomFTYPE();
+            //node.fTYPE = ActivationFunctions.RandomFTYPE2();
         }
     }
 

@@ -10,8 +10,8 @@ using UnityEngine;
 public class Room : MonoBehaviour
 {
 
-    private bool debug = ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE;
-
+    //private bool debug = ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE;
+    private bool debug = true;
     public GameObject portalObject;
     public GameObject SculpturePlatformObject;
     //public GameObject sculptureObject;
@@ -204,34 +204,46 @@ public class Room : MonoBehaviour
 
     public void DoTeleport(Player player, int portalID)
     {
+        int destinationID = 0;
+        float bump = 0.25f;
         if (!Locked || Locked) //HACK PROTOTYPE - disabled lockout to prevent players getting stuck
         {
-            if (debug) Debug.Log("starting teleport form portal " + portalID + " = " + portals[portalID].PortalID);
+            if (debug) Debug.Log("starting teleport form portal " + portalID);
             Vector3 destination = new Vector3(0, 20, 0);
-            for (int i = 0; i < portals.Count; i++)
+            if (portalID < portals.Count)
             {
-                if (portals[i].PortalID == portals[portalID].DestinationID)
+                for (int i = 0; i < portals.Count; i++)
                 {
-                    destination = portals[i].gameObject.transform.position; // set destination to exit portal position
+                    if (portals[i].PortalID == portals[portalID].DestinationID)
+                    {
+                        destinationID = portals[i].DestinationID;
+                        destination = portals[i].gameObject.transform.position; // set destination to exit portal position
+                    }
                 }
+            }
+            else
+            {
+                bump = 1.5f;
+                destinationID = sculptures[portalID - 4].DestinationID;
+                destination = sculptures[destinationID].gameObject.transform.position; // set destination to exit portal position
             }
             // Bump player to just outside of the portal collision box based on the location of the portal relative to the center
             if (destination.x < 0)
             {
-                destination.x += 0.25f;
+                destination.x += bump;
             }
             else
             {
-                destination.x -= 0.25f;
+                destination.x -= bump;
             }
 
             if (destination.z < 0)
             {
-                destination.z += 0.25f;
+                destination.z += bump;
             }
             else
             {
-                destination.z -= 0.25f;
+                destination.z -= bump;
             }
 
             destination.y -= 1.6f; // Fix exit height for player (player is 1.8 tall, portal is 5, center of portal is 2.5, center of player is 0.9. 2.5 - 0.9 = 1.6)
@@ -243,7 +255,7 @@ public class Room : MonoBehaviour
              * 
              */
 
-            ag.ChangeRoom(portalID, portals[portalID].DestinationID);
+            ag.ChangeRoom(portalID, destinationID);
 
         }
         else

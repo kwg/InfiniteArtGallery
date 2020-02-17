@@ -20,7 +20,7 @@ public class Player : MonoBehaviour {
     {
         controller = FPC.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>();
         camera = FindObjectOfType<Camera>();
-        ag = FindObjectOfType<ArtGallery>();
+        ag = ArtGallery.GetArtGallery();
         ag.player = this;
 
         //FPC = gameObject;
@@ -59,7 +59,7 @@ public class Player : MonoBehaviour {
         {
             if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("player activating sculpture teleport ");
             /* Tell portal controller to handle collision between specified portal and this player */
-            FindObjectOfType<Room>().DoTeleport(this, collider.gameObject.GetComponent<SculpturePlatform>().PortalID);
+            FindObjectOfType<Room>().DoTeleport(this, collider.gameObject.GetComponent<SculpturePlatform>().PortalID + 4);
 
         }
 

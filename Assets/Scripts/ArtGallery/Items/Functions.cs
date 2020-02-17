@@ -28,10 +28,13 @@ public class Functions : MonoBehaviour {
     //private SavedFunction[] functions;
     private int ActiveSlot { get; set; }
 
-
+    private void Awake()
+    {
+    }
     // Use this for initialization
     void Start() {
         //camera = FindObjectOfType<Camera>();
+        //ag = ArtGallery.GetArtGallery();
         ag = FindObjectOfType<ArtGallery>();
         availableFunctions = ag.GetAvailableActivationFunctions();
         numberOfFunctionSlots = availableFunctions.Count;
@@ -105,14 +108,15 @@ public class Functions : MonoBehaviour {
 
     public void AddFunction(IFunctionItem function)
     {
-        Debug.Log("Function picked up");
+        //Debug.Log("Function picked up");
         foreach(FunctionSlot slot in slots)
         {
 
             if (slot.SavedFunction.fTYPE == function.fTYPE)
             {
-                Debug.Log("Found it");
+                //Debug.Log("Found it");
                 slot.SetCount(slot.Count + 1);
+                ag.ActivateFunction(function.fTYPE);
             }
         }
 

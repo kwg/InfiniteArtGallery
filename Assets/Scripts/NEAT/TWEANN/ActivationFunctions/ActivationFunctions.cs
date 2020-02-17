@@ -33,23 +33,23 @@ public class ActivationFunctions  {
     static List<FTYPE> inactiveFunctions = new List<FTYPE>
     {
         FTYPE.SINE,
-        FTYPE.COS,
+        //FTYPE.COS,
         FTYPE.GAUSS,
         FTYPE.TANH,
         FTYPE.ID,
-        FTYPE.SIGMOID,
-        FTYPE.SIGMOID, 
+        //FTYPE.SIGMOID,
+        //FTYPE.SIGMOID, 
         FTYPE.ABSVAL,
-        FTYPE.PIECEWISE,
-        FTYPE.HLPIECEWISE,
+        //FTYPE.PIECEWISE,
+        //FTYPE.HLPIECEWISE,
         FTYPE.SAWTOOTH,
-        FTYPE.FULLSAWTOOTH,
-        FTYPE.TRIANGLEWAVE,
+        //FTYPE.FULLSAWTOOTH,
+        //FTYPE.TRIANGLEWAVE,
         FTYPE.SQUAREWAVE,
-        FTYPE.FULLSIGMOID,
-        FTYPE.FULLGAUSS,
-        FTYPE.APPROX,
-        FTYPE.FULLAPPROX
+        //FTYPE.FULLSIGMOID,
+        //FTYPE.FULLGAUSS,
+        //FTYPE.APPROX,
+        //FTYPE.FULLAPPROX
     };
 
     public static void ActivateAllFunctions()
@@ -103,6 +103,11 @@ public class ActivationFunctions  {
             successful = true;
         }
         return successful;
+    }
+
+    public static int GetActiveFunctionCount()
+    {
+        return activeFunctions.Count;
     }
 
 
@@ -206,7 +211,15 @@ public class ActivationFunctions  {
 
     public static FTYPE RandomFTYPE()
     {
+        Debug.Log("count for ActivationFunctions active functions = " + activeFunctions.Count);
+        Debug.Log(activeFunctions[0].ToString());
+
         return activeFunctions[Random.Range(0, activeFunctions.Count)];
+    }
+
+    public static List<FTYPE> GetInactiveFunctions()
+    {
+        return inactiveFunctions;
     }
 
     public static string ActivationName(FTYPE fType)

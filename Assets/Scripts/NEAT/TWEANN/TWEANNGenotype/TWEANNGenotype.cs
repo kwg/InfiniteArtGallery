@@ -229,7 +229,9 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
     public void SpliceMutation()
     {
         //HACK just doing random ftypes for now (selected from active functions) we may want this to optionally use the parent function
-        SpliceMutation(ActivationFunctions.RandomFTYPE());
+        //SpliceMutation(ActivationFunctions.RandomFTYPE());
+        ArtGallery ag = ArtGallery.GetArtGallery();
+        SpliceMutation(ag.GetRandomCollectedFunction());
     }
 
     private void SpliceMutation(FTYPE fType) // TODO add a factor to change the weights impact (maybe a single factor or one for each weight)

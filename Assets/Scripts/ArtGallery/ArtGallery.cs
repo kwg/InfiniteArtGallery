@@ -149,10 +149,12 @@ public class ArtGallery : MonoBehaviour {
 
         // starting functions
         availableFunctions = new List<FTYPE> { FTYPE.ID, FTYPE.TANH, FTYPE.SQUAREWAVE, FTYPE.GAUSS, FTYPE.SINE, FTYPE.SAWTOOTH, FTYPE.ABSVAL };
+        //availableFunctions = ActivationFunctions.GetInactiveFunctions();
         if (activeFunctions == null)
         {
             activeFunctions = new List<FTYPE>();
-            ActivateFunction(FTYPE.TANH);
+            ActivateFunction(FTYPE.ID);
+
         }
     }
 
@@ -199,7 +201,8 @@ public class ArtGallery : MonoBehaviour {
 
     public FTYPE GetRandomCollectedFunction()
     {
-        return availableFunctions[UnityEngine.Random.Range(0, availableFunctions.Count)];
+        return activeFunctions[UnityEngine.Random.Range(0, activeFunctions.Count)];
+        //return ActivationFunctions.RandomFTYPE();
     }
 
     public bool ActivateFunctionsEmpty()
@@ -221,9 +224,9 @@ public class ArtGallery : MonoBehaviour {
         if (!activeFunctions.Contains(fTYPE))
         {
             activeFunctions.Add(fTYPE);
+            ActivationFunctions.ActivateFunction(fTYPE);
         }
 
-        ActivationFunctions.ActivateFunction(activeFunctions);
     }
 
     public void DeactivateFunction(FTYPE fTYPE)
@@ -247,6 +250,9 @@ public class ArtGallery : MonoBehaviour {
     public void ChangeRoom(int portalID, int destinationID)
     {
         roomConfig = new RoomConfiguration(portalID, roomConfig.GetRoomArt());
+        UnityEngine.Debug.Log("active functions = " + activeFunctions.Count);
+        UnityEngine.Debug.Log("ActivationFunctions = " + ActivationFunctions.GetActiveFunctionCount());
+
     }
 
     public static long NextRoomID()

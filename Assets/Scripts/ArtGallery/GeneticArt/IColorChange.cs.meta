@@ -1,11 +1,9 @@
 fileFormatVersion: 2
-guid: fba8e0a5a61c1464e928b566b3551d29
+guid: 17b016228e5d8bb4d877dd782e1a7592
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences:
-  - portalObject: {fileID: 1837445868807650, guid: cd4ab6e4ab9eb4448ab499de15d3ed02,
-      type: 2}
+  defaultReferences: []
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

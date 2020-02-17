@@ -19,7 +19,6 @@ public class Inventory : MonoBehaviour {
     List<InventorySlot> slots;
 
     private IInventoryItem[] items;
-    private TWEANNGenotype sculptureGeno;
     private int ActiveSlot { get; set; }
 
     private void Start()
@@ -121,7 +120,7 @@ public class Inventory : MonoBehaviour {
                     Portal p = hit.collider.gameObject.GetComponent<Portal>();
                     Texture2D img = new Texture2D(p.GetImage().width, p.GetImage().height, TextureFormat.ARGB32, false);
                     Graphics.CopyTexture(p.GetImage(), img);
-                    int portalID = p.GetPortalID();
+                    int portalID = p.PortalID;
                     TWEANNGenotype geno = new TWEANNGenotype(ag.GetArtwork(portalID).GetGenotype().Copy());
 
                     SavedArtwork newArtwork = new SavedArtwork
@@ -135,17 +134,12 @@ public class Inventory : MonoBehaviour {
                     CycleActiveSlot(1);
                 }
 
-                if (hit.collider.tag == "sculpture")
+                if (hit.collider.tag == "sculpturePlatform")
                 {
                     //Portal p = hit.collider.gameObject.GetComponent<Portal>();
-                    Sculpture s = hit.collider.gameObject.GetComponent<Sculpture>();
-
-                    sculptureGeno = s.GetComponent<Sculpture>().GetGenotype();
-
-                    //Texture2D img = new Texture2D(p.GetImage().width, p.GetImage().height, TextureFormat.ARGB32, false);
-                    //Graphics.CopyTexture(p.GetImage(), img);
-                    //int portalID = p.GetPortalID();
-                    TWEANNGenotype geno = new TWEANNGenotype(sculptureGeno.Copy());
+                    SculpturePlatform s = hit.collider.gameObject.GetComponent<SculpturePlatform>();
+                    int portalID = s.PortalID + 4;
+                    TWEANNGenotype geno = new TWEANNGenotype(ag.GetArtwork(portalID).GetGenotype().Copy());
 
                     SavedArtwork newArtwork = new SavedArtwork
                     {
@@ -175,14 +169,15 @@ public class Inventory : MonoBehaviour {
                 if (hit.collider.tag == "portal")
                 {
                     Portal p = hit.collider.gameObject.GetComponent<Portal>();
-                    int portalID = p.GetPortalID();
-                    Artwork art = ag.GetArtwork(portalID);
+                    int portalID = p.PortalID;
+                    GeneticArt art = ag.GetArtwork(portalID);
                     if(GetActiveSlotItem() != null)
                     {
-                        ag.RemoveRoom(portalID);
+                        //ag.RemoveRoom(portalID);
                         art.SetGenotype(GetActiveSlotItem().Geno); // FIXME Null ref possible here - add checks
-                        art.Refresh();
-                        art.ApplyImageProcess();
+                        p.UpdateGeneratedArt();
+                        ag.SetGeneticArt(portalID, art);
+                        //art.ApplyImageProcess();
                         //items[ActiveSlot] = null;
                         //hud.UpdateInventoryThumbnail(ActiveSlot, null);
                     }
@@ -192,17 +187,18 @@ public class Inventory : MonoBehaviour {
                     }
                 }
 
-                if (hit.collider.tag == "sculpture")
+                if (hit.collider.tag == "sculpturePlatform")
                 {
-                    Sculpture s = hit.collider.gameObject.GetComponent<Sculpture>();
-
-                    sculptureGeno = s.GetComponent<Sculpture>().GetGenotype();
+                    SculpturePlatform s = hit.collider.gameObject.GetComponent<SculpturePlatform>();
+                    int portalID = s.PortalID;
+                    GeneticArt art = ag.GetArtwork(portalID + 4);
 
                     if (GetActiveSlotItem() != null)
                     {
                         //ag.RemoveRoom(portalID);
-                        s.SetGeno(GetActiveSlotItem().Geno); // FIXME Null ref possible here - add checks ALSO fix the names SetGeno vs SetGenotype
-                        s.Refresh();
+                        art.SetGenotype(GetActiveSlotItem().Geno); // FIXME Null ref possible here - add checks ALSO fix the names SetGeno vs SetGenotype
+                        s.UpdateGeneratedArt();
+                        ag.SetGeneticArt(portalID, art);
                         //s.ApplyImageProcess();
                         //items[ActiveSlot] = null;
                         //hud.UpdateInventoryThumbnail(ActiveSlot, null);

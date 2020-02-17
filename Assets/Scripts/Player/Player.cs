@@ -49,17 +49,18 @@ public class Player : MonoBehaviour {
         /* TAG: portal */
         if(collider.gameObject.tag == "portal")
         {
-            if(ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("player activating portal " + collider.gameObject.GetComponent<Portal>().GetPortalID());
+            if(ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("player activating portal " + collider.gameObject.GetComponent<Portal>().PortalID);
             /* Tell portal controller to handle collision between specified portal and this player */
-            FindObjectOfType<Room>().DoTeleport(this, collider.gameObject.GetComponent<Portal>().GetPortalID());
+            FindObjectOfType<Room>().DoTeleport(this, collider.gameObject.GetComponent<Portal>().PortalID);
         }
 
         /* TAG: sculpturePlatform */
-        if (collider.gameObject.tag == "sculpture")
+        if (collider.gameObject.tag == "sculpturePlatform")
         {
             if (ArtGallery.DEBUG_LEVEL > ArtGallery.DEBUG.NONE) Debug.Log("player activating sculpture teleport ");
             /* Tell portal controller to handle collision between specified portal and this player */
-            
+            FindObjectOfType<Room>().DoTeleport(this, collider.gameObject.GetComponent<SculpturePlatform>().PortalID);
+
         }
 
         /* TAG: Function Pickup */

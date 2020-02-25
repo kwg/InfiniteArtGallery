@@ -8,7 +8,7 @@
 public class Portal : MonoBehaviour, IUnityGeneticArtwork {
 
     public GameObject PortalObject;
-    public Material Mat;
+    //public Material Mat;
 
     public int PortalID { get; set; }
     public int DestinationID { get; set; }
@@ -16,13 +16,14 @@ public class Portal : MonoBehaviour, IUnityGeneticArtwork {
     private Texture2D _displayImg;
     private Artwork _artwork;
     private MeshRenderer _rend;
+    private bool initialized = false;
 
     /* Public methods */
     public void InitArtDisplay(GeneticArt art)
     {
         _artwork = new Artwork(art);
         _rend = gameObject.GetComponent<MeshRenderer>();
-        _rend.material = Mat;
+        //_rend.material = GetComponent<Material>();
 
         // HACK BUG HUNTING - FIX this - pull width and height from central stats
         _displayImg = new Texture2D(128, 128, TextureFormat.ARGB32, false);
@@ -37,19 +38,23 @@ public class Portal : MonoBehaviour, IUnityGeneticArtwork {
         _displayImg.Apply();
 
         _rend.material.SetTexture("_MainTex", _displayImg);
+        initialized = true;
     }
 
     public void Update()
     {
-        if (_artwork.NeedsRedraw)
+        if (initialized)
         {
-            _displayImg = _artwork.GetTexture();
-            RefreshDecoration();
-        }
-        if (_artwork.Art.Mutated)
-        {
-            _artwork.UpdateCPPNArt();
-            _artwork.Art.Mutated = false;
+            if (_artwork.NeedsRedraw)
+            {
+                _displayImg = _artwork.GetTexture();
+                RefreshDecoration();
+            }
+            if (_artwork.Art.Mutated)
+            {
+                _artwork.UpdateCPPNArt();
+                _artwork.Art.Mutated = false;
+            }
         }
     }
 

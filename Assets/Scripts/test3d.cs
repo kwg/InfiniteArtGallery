@@ -10,6 +10,7 @@ public class test3d : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        ActivationFunctions.ActivateFunction(FTYPE.TANH);
         SculpturePlatform s = sculptureObject.GetComponent<SculpturePlatform>();
         s.InitArtDisplay(new GeneticArt());
         //art.SetParentUnityObject(p);

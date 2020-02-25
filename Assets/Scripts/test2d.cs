@@ -12,6 +12,7 @@ public class test2d : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        ActivationFunctions.ActivateFunction(FTYPE.TANH);
         Portal p = portalObject.GetComponent<Portal>();
         p.InitArtDisplay(new GeneticArt());
         //art.SetParentUnityObject(p);

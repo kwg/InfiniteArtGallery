@@ -211,9 +211,6 @@ public class ActivationFunctions  {
 
     public static FTYPE RandomFTYPE()
     {
-        Debug.Log("count for ActivationFunctions active functions = " + activeFunctions.Count);
-        Debug.Log(activeFunctions[0].ToString());
-
         return activeFunctions[Random.Range(0, activeFunctions.Count)];
     }
 

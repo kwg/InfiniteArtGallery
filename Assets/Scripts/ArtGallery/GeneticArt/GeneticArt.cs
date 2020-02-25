@@ -22,9 +22,12 @@ public class GeneticArt
         }
     }
 
-    public void Mutate(GeneticArt _champion)
+    public void Mutate(int cycles = 1)
     {
-        geno = _champion.GetGenotype().Copy();
+        if(cycles == 1)
+        {
+
+        }
         for(int m = 0; m < MUTATION_CYCLES; m++)
         {
             geno.Mutate();

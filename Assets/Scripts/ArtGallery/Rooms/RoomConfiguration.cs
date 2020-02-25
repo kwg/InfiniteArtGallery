@@ -11,7 +11,8 @@ public class RoomConfiguration {
         GeneticArt champion = roomArt[championPortalID];
         for (int i = 0; i < roomArt.Length; i++)
         {
-            roomArt[i].Mutate(champion);
+            roomArt[i].SetGenotype(champion.GetGenotype());
+            roomArt[i].Mutate();
         }
     }
 

@@ -30,15 +30,17 @@ public class Functions : MonoBehaviour {
 
     private void Awake()
     {
+
     }
+
     // Use this for initialization
     void Start() {
         //camera = FindObjectOfType<Camera>();
-        //ag = ArtGallery.GetArtGallery();
-        ag = FindObjectOfType<ArtGallery>();
-        availableFunctions = ag.GetAvailableActivationFunctions();
-        numberOfFunctionSlots = availableFunctions.Count;
-
+        ag = ArtGallery.GetArtGallery();
+        //ag = FindObjectOfType<ArtGallery>();
+        //availableFunctions = ag.GetAvailableActivationFunctions();
+        numberOfFunctionSlots = ActivationFunctions.GetActiveFunctionCount();
+        Debug.Log("Number of function slots = " + numberOfFunctionSlots);
         hud = HUD.GetComponent<HUD>();
         functionSlots = hud.AddSlots(tray, numberOfFunctionSlots);
         ActiveSlot = 0;
@@ -54,8 +56,9 @@ public class Functions : MonoBehaviour {
 
         ag.player.functions = this;
 
-        foreach(FTYPE f in availableFunctions)
+        foreach (FTYPE f in ActivationFunctions.GetFunctionList())
         {
+            Debug.Log("Building tray for " + f.ToString());
             SavedFunction sf = new SavedFunction
             {
                 fTYPE = f
@@ -65,7 +68,7 @@ public class Functions : MonoBehaviour {
         }
 
     }
-	
+
 	// Update is called once per frame
 	void Update () {
         if (Input.GetKeyDown(KeyCode.Keypad8))
@@ -92,7 +95,7 @@ public class Functions : MonoBehaviour {
     {
         if(slots[ActiveSlot].Count > 0)
         {
-            ag.DeactivateFunction(slots[ActiveSlot].SavedFunction.fTYPE);
+            ActivationFunctions.DeactivateFunction(slots[ActiveSlot].SavedFunction.fTYPE);
             slots[ActiveSlot].Count -= 1;
             //hud.UpdateFunctionThumbnail(ActiveSlot);
         }
@@ -115,8 +118,8 @@ public class Functions : MonoBehaviour {
             if (slot.SavedFunction.fTYPE == function.fTYPE)
             {
                 //Debug.Log("Found it");
+                ActivationFunctions.ActivateFunction(function.fTYPE);
                 slot.SetCount(slot.Count + 1);
-                ag.ActivateFunction(function.fTYPE);
             }
         }
 

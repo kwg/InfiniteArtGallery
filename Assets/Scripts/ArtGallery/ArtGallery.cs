@@ -42,9 +42,9 @@ public class ArtGallery : MonoBehaviour {
     int seed;
 
     // active functions
-    List<FTYPE> activeFunctions;
+    //List<FTYPE> activeFunctions;
     // collectedFunctions
-    List<FTYPE> availableFunctions;
+    //List<FTYPE> availableFunctions;
 
     public static ArtGallery GetArtGallery()
     {
@@ -148,20 +148,25 @@ public class ArtGallery : MonoBehaviour {
         }
 
         // starting functions
-        availableFunctions = new List<FTYPE> { FTYPE.ID, FTYPE.TANH, FTYPE.SQUAREWAVE, FTYPE.GAUSS, FTYPE.SINE, FTYPE.SAWTOOTH, FTYPE.ABSVAL };
-        //availableFunctions = ActivationFunctions.GetInactiveFunctions();
-        if (activeFunctions == null)
+        //List<FTYPE> availableFunctions = new List<FTYPE> { FTYPE.TANH};
+        List<FTYPE> availableFunctions = new List<FTYPE> { FTYPE.GAUSS, FTYPE.SINE, FTYPE.SAWTOOTH, FTYPE.ABSVAL, FTYPE.ID, FTYPE.TANH, FTYPE.SQUAREWAVE  };
+        ActivationFunctions.ActivateFunction(availableFunctions);
+        foreach(FTYPE f in ActivationFunctions.GetFunctionList())
         {
-            activeFunctions = new List<FTYPE>();
-            ActivateFunction(FTYPE.ID);
-
+            UnityEngine.Debug.Log("useableFunctions = " + f.ToString());
         }
+        //availableFunctions = ActivationFunctions.GetInactiveFunctions();
+        //if (activeFunctions == null)
+        //{
+        //    activeFunctions = new List<FTYPE>();
+        //
+        //}
+        artgallery = this;
     }
 
     // Use this for initialization
     void Start()
     {
-        artgallery = this;
 
         
         //FIXME PROTOTYPE set a random seed value here instead and save that value for a play session
@@ -180,7 +185,7 @@ public class ArtGallery : MonoBehaviour {
         //activate functions
         // Testing: activating all functions
         //ActivationFunctions.ActivateAllFunctions();
-        ActivationFunctions.ActivateFunction(activeFunctions);
+        //ActivationFunctions.ActivateFunction(activeFunctions);
 
         // build the lobby
         roomConfig = new RoomConfiguration(STARTING_NUM_ARTWORKS);
@@ -193,49 +198,49 @@ public class ArtGallery : MonoBehaviour {
 
     }
 
-    public List<FTYPE> GetAvailableActivationFunctions()
-    {
-        return availableFunctions;
-    }
+    //public List<FTYPE> GetAvailableActivationFunctions()
+    //{
+    //    return ActivationFunctions.G;
+    //}
 
 
-    public FTYPE GetRandomCollectedFunction()
-    {
-        return activeFunctions[UnityEngine.Random.Range(0, activeFunctions.Count)];
-        //return ActivationFunctions.RandomFTYPE();
-    }
+    //public FTYPE GetRandomCollectedFunction()
+    //{
+    //    return activeFunctions[UnityEngine.Random.Range(0, activeFunctions.Count)];
+    //    //return ActivationFunctions.RandomFTYPE();
+    //}
 
-    public bool ActivateFunctionsEmpty()
-    {
-        return activeFunctions.Count == 0;
-    }
+    //public bool ActivateFunctionsEmpty()
+    //{
+    //    return activeFunctions.Count == 0;
+    //}
 
-    public bool FunctionIsActive(FTYPE fTYPE)
-    {
-        return activeFunctions.Contains(fTYPE);
-    }
+    //public bool FunctionIsActive(FTYPE fTYPE)
+    //{
+    //    return activeFunctions.Contains(fTYPE);
+    //}
 
-    public void ActivateFunction(FTYPE fTYPE)
-    {
-        if(activeFunctions == null)
-        {
-            activeFunctions = new List<FTYPE>();
-        }
-        if (!activeFunctions.Contains(fTYPE))
-        {
-            activeFunctions.Add(fTYPE);
-            ActivationFunctions.ActivateFunction(fTYPE);
-        }
+    //public void ActivateFunction(FTYPE fTYPE)
+    //{
+    //    if(activeFunctions == null)
+    //    {
+    //        activeFunctions = new List<FTYPE>();
+    //    }
+    //    if (!activeFunctions.Contains(fTYPE))
+    //    {
+    //        activeFunctions.Add(fTYPE);
+    //        ActivationFunctions.ActivateFunction(fTYPE);
+    //    }
 
-    }
+    //}
 
-    public void DeactivateFunction(FTYPE fTYPE)
-    {
-        if (activeFunctions.Contains(fTYPE))
-        {
-            activeFunctions.Remove(fTYPE);
-        }
-    }
+    //public void DeactivateFunction(FTYPE fTYPE)
+    //{
+    //    if (activeFunctions.Contains(fTYPE))
+    //    {
+    //        activeFunctions.Remove(fTYPE);
+    //    }
+    //}
 
     public GeneticArt GetArtwork(int portalID)
     {
@@ -250,9 +255,6 @@ public class ArtGallery : MonoBehaviour {
     public void ChangeRoom(int portalID, int destinationID)
     {
         roomConfig = new RoomConfiguration(portalID, roomConfig.GetRoomArt());
-        UnityEngine.Debug.Log("active functions = " + activeFunctions.Count);
-        UnityEngine.Debug.Log("ActivationFunctions = " + ActivationFunctions.GetActiveFunctionCount());
-
     }
 
     public static long NextRoomID()

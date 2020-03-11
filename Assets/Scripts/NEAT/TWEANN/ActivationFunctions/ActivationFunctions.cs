@@ -29,85 +29,40 @@ public class ActivationFunctions  {
         { FTYPE.FULLAPPROX, new FullQuickSigmoidFunction() }
     };
 
-    static List<FTYPE> activeFunctions = new List<FTYPE>();
-    static List<FTYPE> inactiveFunctions = new List<FTYPE>
-    {
-        FTYPE.SINE,
-        //FTYPE.COS,
-        FTYPE.GAUSS,
-        FTYPE.TANH,
-        FTYPE.ID,
-        //FTYPE.SIGMOID,
-        //FTYPE.SIGMOID, 
-        FTYPE.ABSVAL,
-        //FTYPE.PIECEWISE,
-        //FTYPE.HLPIECEWISE,
-        FTYPE.SAWTOOTH,
-        //FTYPE.FULLSAWTOOTH,
-        //FTYPE.TRIANGLEWAVE,
-        FTYPE.SQUAREWAVE,
-        //FTYPE.FULLSIGMOID,
-        //FTYPE.FULLGAUSS,
-        //FTYPE.APPROX,
-        //FTYPE.FULLAPPROX
-    };
+
+    private static FunctionCollection functionCollection = new FunctionCollection();
 
     public static void ActivateAllFunctions()
     {
-        List<FTYPE> lastInactive = new List<FTYPE>(inactiveFunctions.Count);
-        foreach(FTYPE inactive in inactiveFunctions)
+        foreach(FTYPE f in System.Enum.GetValues(typeof(FTYPE)))
         {
-            lastInactive.Add(inactive);
-        }
-        foreach(FTYPE f in lastInactive)
-        {
-            ActivateFunction(f);
+            functionCollection.AddFunction(f);
         }
     }
 
+    public static List<FTYPE> GetFunctionList()
+    {
+        return functionCollection.GetFunctionList();
+    }
 
     public static bool ActivateFunction(FTYPE fType)
     {
-        bool successful = false;
-        if (inactiveFunctions.Contains(fType))
-        {
-            activeFunctions.Add(fType);
-            inactiveFunctions.Remove(fType);
-            successful = true;
-        }
-        return successful;
+        return functionCollection.AddFunction(fType); 
     }
 
     public static bool ActivateFunction(List<FTYPE> fTypes)
     {
-        bool successful = false;
-        foreach(FTYPE fType in fTypes)
-        {
-            if (inactiveFunctions.Contains(fType))
-            {
-                activeFunctions.Add(fType);
-                inactiveFunctions.Remove(fType);
-                successful = true;
-            }
-        }
-        return successful;
+        return functionCollection.AddFunction(fTypes);
     }
 
     public static bool DeactivateFunction(FTYPE fType)
     {
-        bool successful = false;
-        if (activeFunctions.Contains(fType))
-        {
-            inactiveFunctions.Add(fType);
-            activeFunctions.Remove(fType);
-            successful = true;
-        }
-        return successful;
+        return functionCollection.RemoveFunction(fType);
     }
 
     public static int GetActiveFunctionCount()
     {
-        return activeFunctions.Count;
+        return functionCollection.Count;
     }
 
 
@@ -126,98 +81,20 @@ public class ActivationFunctions  {
     /// Get a random activation function
     /// </summary>
     /// <returns>FTYPE</returns>
-    public static FTYPE RandomFTYPE2()
+    public static FTYPE GetRandom()
     {
-        FTYPE type = FTYPE.ID;
-        int rnd = Random.Range(0, 6) + 1;
-        switch (rnd)
-        {
-            case 1:
-                type = FTYPE.TANH;
-                break;
-            case 2:
-                type = FTYPE.SIGMOID;
-                break;
-            case 3:
-                type = FTYPE.SINE;
-                break;
-            case 4:
-                type = FTYPE.COS;
-                break;
-            case 5:
-                type = FTYPE.GAUSS;
-                break;
-            case 6:
-                type = FTYPE.ID;
-                break;
-            case 7:
-                type = FTYPE.FULLAPPROX;
-                break;
-            case 8:
-                type = FTYPE.APPROX;
-                break;
-            case 9:
-                type = FTYPE.ABSVAL;
-                break;
-            case 10:
-                type = FTYPE.PIECEWISE;
-                break;
-            case 11:
-                type = FTYPE.HLPIECEWISE;
-                break;
-            case 12:
-                type = FTYPE.SAWTOOTH;
-                break;
-            case 13:
-                type = FTYPE.STRETCHED_TANH;
-                break;
-            case 14:
-                type = FTYPE.RE_LU;
-                break;
-            case 15:
-                type = FTYPE.SOFTPLUS;
-                break;
-            case 16:
-                type = FTYPE.LEAKY_RE_LU;
-                break;
-            case 17:
-                type = FTYPE.FULLSAWTOOTH;
-                break;
-            case 18:
-                type = FTYPE.TRIANGLEWAVE;
-                break;
-            case 19:
-                type = FTYPE.SQUAREWAVE;
-                break;
-            case 20:
-                type = FTYPE.FULLSIGMOID;
-                break;
-            case 21:
-                type = FTYPE.FULLGAUSS;
-                break;
-            case 22:
-                type = FTYPE.SIL;
-                break;
-            case 23:
-                type = FTYPE.DSIL;
-                break;
-            default:
-                break;
-
-        }
-
-        return type;
+        return functionCollection.GetRandom();
     }
 
-    public static FTYPE RandomFTYPE()
+    public static FTYPE GetWeightedRandom()
     {
-        return activeFunctions[Random.Range(0, activeFunctions.Count)];
+        return functionCollection.GetWeightedRandom();
     }
 
-    public static List<FTYPE> GetInactiveFunctions()
-    {
-        return inactiveFunctions;
-    }
+    //public static List<FTYPE> GetInactiveFunctions()
+    //{
+    //    return inactiveFunctions;
+    //}
 
     public static string ActivationName(FTYPE fType)
     {

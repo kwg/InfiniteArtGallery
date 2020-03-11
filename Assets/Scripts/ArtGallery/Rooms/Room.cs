@@ -11,7 +11,7 @@ public class Room : MonoBehaviour
 {
 
     //private bool debug = ArtGallery.DEBUG_LEVEL < ArtGallery.DEBUG.NONE;
-    private bool debug = true;
+    private bool debug = ArtGallery.DEBUG_LEVEL > 0;
     public GameObject portalObject;
     public GameObject SculpturePlatformObject;
     //public GameObject sculptureObject;
@@ -97,10 +97,9 @@ public class Room : MonoBehaviour
 
     private void SpawnPickups()
     {
-        FTYPE fTYPE = ag.GetRandomCollectedFunction();
+        FTYPE fTYPE = ActivationFunctions.GetRandom();
 
-        if ((UnityEngine.Random.Range(0f, 1f) < ag.functionSpawnRate 
-            && !ag.FunctionIsActive(fTYPE)) || ag.ActivateFunctionsEmpty()) 
+        if (UnityEngine.Random.Range(0f, 1f) < ag.functionSpawnRate) 
         {
             GameObject functionPickup = Instantiate(functionPickupObject) as GameObject;
             FunctionPickup fp = functionPickup.GetComponent<FunctionPickup>();

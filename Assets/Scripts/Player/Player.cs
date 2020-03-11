@@ -89,6 +89,13 @@ public class Player : MonoBehaviour {
             controller.m_MouseLook.YSensitivity = controller.m_MouseLook.YSensitivity * -1;
         }
 
+        Vector3 vec = FPC.transform.position;
+        if (vec.y < -10)
+        {
+            vec.y = 10f;
+            FPC.transform.position = vec;
+        }
+
     }
 
     public void TogglePlayerControlls(bool on)

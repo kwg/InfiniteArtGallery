@@ -19,6 +19,7 @@ public class SavedFunction : IFunctionItem {
 
     public void GenerateThumbnail()
     {
+        Debug.Log("generating thumb for " + fTYPE.ToString());
         Texture2D thumb = new Texture2D(32, 32, TextureFormat.ARGB32, false);
         //create a new texture
         Color[] pixels = new Color[thumb.width * thumb.height];
@@ -28,6 +29,7 @@ public class SavedFunction : IFunctionItem {
             pixels[c] = new Color(0f, 0f, 0f, 1f);
         }
         // plot the function on a line
+        Color color = new Color(1f, 1f, 1f, 1f);
         for (int x = 0; x < thumb.width; x++)
         {
             // scale from -PI to PI
@@ -37,7 +39,6 @@ public class SavedFunction : IFunctionItem {
             //if (plot < -1 || plot > 1)
                 mappedPlot = Remap(plot, -Mathf.PI, Mathf.PI, 0, thumb.height - 1);
             //else mappedPlot = Remap(plot, -1, 1, 0, thumb.height - 1);
-            Color color = new Color(1f, 1f, 1f, 1f);
             if(ArtGallery.DEBUG_LEVEL >= ArtGallery.DEBUG.VERBOSE) Debug.Log(mappedPlot);
             pixels[x + mappedPlot * thumb.width] = color;
         }

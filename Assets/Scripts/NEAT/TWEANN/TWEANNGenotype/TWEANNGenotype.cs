@@ -229,9 +229,11 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
     public void SpliceMutation()
     {
         //HACK just doing random ftypes for now (selected from active functions) we may want this to optionally use the parent function
-        //SpliceMutation(ActivationFunctions.RandomFTYPE());
-        ArtGallery ag = ArtGallery.GetArtGallery();
-        SpliceMutation(ag.GetRandomCollectedFunction());
+
+        SpliceMutation(ActivationFunctions.GetRandom());
+
+        //ArtGallery ag = ArtGallery.GetArtGallery();
+        //SpliceMutation(ag.GetRandomCollectedFunction());
     }
 
     private void SpliceMutation(FTYPE fType) // TODO add a factor to change the weights impact (maybe a single factor or one for each weight)
@@ -277,7 +279,7 @@ public class TWEANNGenotype : INetworkGenotype<TWEANN>
         int nodeRoll = Random.Range(0, Nodes.Count);
         NodeGene ng = Nodes[nodeRoll];
         if (ng == null) throw new System.Exception("Node not found! " + nodeRoll);
-        FTYPE fTYPERoll = ActivationFunctions.RandomFTYPE();
+        FTYPE fTYPERoll = ActivationFunctions.GetWeightedRandom();
         if(fTYPERoll != ng.fTYPE)
         {
             debugMsg += " - Changing node " + nodeRoll + " from " + ng.GetFTYPE() + " to " + fTYPERoll;

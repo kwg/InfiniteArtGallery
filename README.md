@@ -1,7 +1,7 @@
 # InfiniteArtGallery
 
 ## About
-The Infinite Art Gallery is an experimental project to generate various forms of artwork using evoloving neural networks. This work expands on methods developed by Picbreeder: A Case Study in Collaborative Evolutionary Exploration of Design Space (Secretan et al 2008), Evolving 3D objects with a generative encoding inspired by developmental biology (Clune and Lipson 2011), and AnimationBreeder and ThreeDimensionalAnimationBreeder (Tweaser, Gillespie, and Schrum 2018) in its curent form, and has planned features based on Interactively Evolving Compositional Sound Synthesis Networks (Jónsson, Hoover, and Risi 2015) and Unshackling Evolution: Evolving Soft Robots with Multiple Materials and a Powerful Generative Encoding (Cheney, et al 2013)
+The Infinite Art Gallery is an experimental project to generate various forms of artwork using evolving neural networks. This work expands on methods developed by Picbreeder: A Case Study in Collaborative Evolutionary Exploration of Design Space (Secretan et al 2008), Evolving 3D objects with a generative encoding inspired by developmental biology (Clune and Lipson 2011), and AnimationBreeder and ThreeDimensionalAnimationBreeder (Tweaser, Gillespie, and Schrum 2018) in its curent form, and has planned features based on Interactively Evolving Compositional Sound Synthesis Networks (Jónsson, Hoover, and Risi 2015) and Unshackling Evolution: Evolving Soft Robots with Multiple Materials and a Powerful Generative Encoding (Cheney, et al 2013)
 
 This project includes code that was directly derived from MM-NEAT (c) 2014 The University of Texas and 2016 Southwestern University
 

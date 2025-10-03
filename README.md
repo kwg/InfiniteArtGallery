@@ -1,3 +1,6 @@
+# **WARNING**
+On 2025/10/03 Unity released a security vulnerability notice for all applications made on Unity 2017.1+. A patch is available for builds and for the edtior to address the issue. This notice is a warning that I have not yet completed that patch for this repo. Using this source will require you to handle that yourself, or wait until this notice has been removed after I have updated the project.
+
 # InfiniteArtGallery
 
 ## About
